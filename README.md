@@ -3,3 +3,4 @@ Repo for 6WCSERVER
 
 Group Name: MECCA
 Charles Garcia was here
+Alexander Manabat was here
