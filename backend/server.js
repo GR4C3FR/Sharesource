@@ -6,6 +6,8 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const noteRoutes = require('./routes/noteRoutes');
 const subjectRoutes = require('./routes/subjectRoutes');
+const commentRoutes = require('./routes/commentRoutes'); // <-- added
+const ratingRoutes = require('./routes/ratingRoutes');   // <-- added
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use(cors({
 app.use('/api/users', userRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/subjects', subjectRoutes);
+app.use('/api/comments', commentRoutes);  // <-- added
+app.use('/api/ratings', ratingRoutes);    // <-- added
 
 // Root route
 app.get('/', (req, res) => {

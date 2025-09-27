@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../api";
+import CommentsRatings from "../components/CommentsRatings";
 
 export default function Homepage() {
   const navigate = useNavigate();
@@ -130,9 +131,13 @@ export default function Homepage() {
     if (!newSubjectName) return alert("Enter a subject name");
 
     try {
-      await API.post("/api/subjects", { name: newSubjectName }, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
-      });
+      await API.post(
+        "/api/subjects",
+        { name: newSubjectName },
+        {
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        }
+      );
       alert("Subject added!");
       setNewSubjectName("");
 
@@ -146,7 +151,6 @@ export default function Homepage() {
     }
   };
 
-  // Determine if user can edit/delete a note
   const canEditOrDelete = (note) => {
     if (!profile) return false;
     if (profile.role === "Admin") return true;
@@ -161,7 +165,7 @@ export default function Homepage() {
   };
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h2>Homepage</h2>
       <p>Welcome, {email}!</p>
 
@@ -229,10 +233,10 @@ export default function Homepage() {
 
       <h3>All Notes</h3>
       {allNotes.map((note) => (
-        <div key={note._id} style={{ border: "1px solid gray", padding: "5px", margin: "5px" }}>
+        <div key={note._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
           <h4>{note.title}</h4>
           <p>{note.content}</p>
-          <p>Subject: {subjects.find(s => s._id === note.subjectID)?.name || note.subjectID}</p>
+          <p>Subject: {subjects.find((s) => s._id === note.subjectID)?.name || note.subjectID}</p>
           <p>Owner: {note.ownerUserID.username}</p>
 
           {canEditOrDelete(note) && (
@@ -241,10 +245,17 @@ export default function Homepage() {
               <button onClick={() => deleteNote(note._id)}>Delete</button>
             </>
           )}
+
+          {/* ===== Temporary Comments & Ratings Component ===== */}
+          <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
+            <CommentsRatings noteId={note._id} userId={profile?._id || "TEST_USER_ID"} />
+          </div>
         </div>
       ))}
 
-      <button onClick={handleLogout} style={{ marginTop: "20px" }}>Logout</button>
+      <button onClick={handleLogout} style={{ marginTop: "20px" }}>
+        Logout
+      </button>
     </div>
   );
 }
