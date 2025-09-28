@@ -13,7 +13,7 @@ export default function Login() {
       const res = await API.post("/api/users/login", { email, password });
       localStorage.setItem("accessToken", res.data.accessToken);
       localStorage.setItem("userEmail", email);
-      localStorage.setItem("userId", res.data.user._id);
+      // localStorage.setItem("userId", res.data.user._id);
       alert("Login successful!");
       navigate("/homepage");
     } catch (err) {
