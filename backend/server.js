@@ -8,6 +8,7 @@ const noteRoutes = require('./routes/noteRoutes');
 const subjectRoutes = require('./routes/subjectRoutes');
 const commentRoutes = require('./routes/commentRoutes'); // <-- added
 const ratingRoutes = require('./routes/ratingRoutes');   // <-- added
+const collaborativeSpaceRoutes = require("./routes/collaborativeSpaceRoutes");
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/notes', noteRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/comments', commentRoutes);  // <-- added
 app.use('/api/ratings', ratingRoutes);    // <-- added
+app.use("/api/collaborative-spaces", collaborativeSpaceRoutes);
 
 // Root route
 app.get('/', (req, res) => {
