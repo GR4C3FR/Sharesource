@@ -73,11 +73,17 @@ router.post('/login', async (req, res) => {
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
-
     res.json({
       message: "✅ Login successful",
       accessToken,
-      refreshToken
+      refreshToken,
+      user: {
+        _id: user._id,
+        email: user.email,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName
+      }
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../api";
 import CommentsRatings from "../components/CommentsRatings";
@@ -177,6 +177,9 @@ export default function Homepage() {
           <p>Role: {profile.role}</p>
         </div>
       )}
+      <div>
+        <Link to="/spaces">Go to Collaborative Spaces</Link>
+      </div>
 
       <h3>{editingNote ? "Edit Note" : "Create a New Note"}</h3>
       <input

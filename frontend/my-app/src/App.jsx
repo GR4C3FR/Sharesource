@@ -2,7 +2,8 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Homepage from "./pages/Homepage";
-import CollaborativeSpacesTest from "./components/CollaborativeSpacesTest";
+import CollaborativeSpaces from "./pages/CollaborativeSpacesTest";
+import SpaceDetails from "./pages/SpaceDetails";
 
 function App() {
   const isLoggedIn = !!localStorage.getItem("accessToken");
@@ -55,8 +56,14 @@ function App() {
       {/* Collaborative spaces testing */}
       <Route
         path="/spaces"
-        element={isLoggedIn ? <CollaborativeSpacesTest /> : <Navigate to="/login" />}
+        element={isLoggedIn ? <CollaborativeSpaces /> : <Navigate to="/login" />}
       />
+
+      {/* Single space details */}
+      <Route
+        path="/spaces/:spaceId"
+        element={isLoggedIn ? <SpaceDetails /> : <Navigate to="/login" />}
+      /> 
     </Routes>
   );
 }

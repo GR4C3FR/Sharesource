@@ -7,7 +7,10 @@ const {
   addMember,
   shareNote,
   shareGoogleDoc,
-  getAllSpaces
+  getAllSpaces,
+  updateSpace,
+  leaveSpace,
+  getSpaceById 
 } = require("../controllers/collaborativeSpaceController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -28,5 +31,14 @@ router.post("/:spaceId/share-doc", authMiddleware, shareGoogleDoc);
 
 // List all spaces
 router.get("/all", authMiddleware, getAllSpaces);
+
+// Edit Spaces
+router.put("/:spaceId", authMiddleware, updateSpace);
+
+// Leave a space
+router.delete("/:spaceId/leave", authMiddleware, leaveSpace);
+
+//  Get a single space by ID (with members + notes)
+router.get("/:spaceId", authMiddleware, getSpaceById);
 
 module.exports = router;
