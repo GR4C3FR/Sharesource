@@ -231,33 +231,44 @@ exports.updateSpace = async (req, res) => {
  */
 exports.leaveSpace = async (req, res) => {
   const { spaceId } = req.params;
-  const userId = req.user.userId; // from JWT
+  const userId = req.user.userId;
 
   try {
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
 
-    // Prevent owner from leaving their own space
-    if (String(space.ownerUserId) === String(userId)) {
-      return res.status(400).json({ message: "Owner cannot leave their own space" });
+    // Check if user is a member
+    const memberIndex = space.members.findIndex(
+      (m) => String(m.userId) === String(userId)
+    );
+    if (memberIndex === -1) {
+      return res.status(400).json({ message: "You are not a member of this space" });
     }
 
-    // Remove user from members
-    space.members = space.members.filter((m) => String(m.userId) !== String(userId));
+    // Remove member
+    space.members.splice(memberIndex, 1);
+
+    // If the user leaving is the owner
+    if (String(space.ownerUserId) === String(userId)) {
+      if (space.members.length > 0) {
+        // Transfer ownership to the first member
+        space.ownerUserId = space.members[0].userId;
+        space.members[0].role = "owner";
+      } else {
+        // No members left → delete the space entirely
+        await space.deleteOne();
+        return res.json({ message: "Space deleted as the owner left and no members remain" });
+      }
+    }
+
     await space.save();
-
-    const populated = await CollaborativeSpace.findById(space._id)
-      .populate("ownerUserId", "username email")
-      .populate({ path: "members.userId", select: "username email" });
-
-    res.json({ message: "✅ Left space successfully", space: populated });
+    res.json({ message: "You have left the space", space });
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to leave space",
-      error: error.message,
-    });
+    console.error("❌ [leaveSpace] error:", error.message);
+    res.status(500).json({ message: "Failed to leave space", error: error.message });
   }
 };
+
 
 exports.getSpaceById = async (req, res) => {
   try {
