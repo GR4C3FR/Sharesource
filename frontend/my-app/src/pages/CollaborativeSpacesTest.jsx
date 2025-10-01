@@ -158,6 +158,10 @@ export default function CollaborativeSpaces() {
             key={space._id}
             style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}
           >
+            
+            <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ marginLeft: "10px" }}>
+            View Space
+            </button>
             <h3>
               Title: {space.spaceName}{" "}
               <button onClick={() => startEdit(space)}>Edit</button>
@@ -199,11 +203,6 @@ export default function CollaborativeSpaces() {
                 })}
             </ul>
             )}
-
-            <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ marginLeft: "10px" }}>
-            View Space
-            </button>
-
 
             {/* Notes in this space */}
             <h4>Shared Notes:</h4>

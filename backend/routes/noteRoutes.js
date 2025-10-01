@@ -1,10 +1,11 @@
 const express = require("express");
 const Note = require("../models/Note");
 const User = require("../models/User");
-const authMiddleware = require("../middleware/authMiddleware"); 
+const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+// 🔒 Middleware: check if user can modify note
 async function canModifyNote(req, res, next) {
   try {
     const note = await Note.findById(req.params.id);
@@ -24,7 +25,7 @@ async function canModifyNote(req, res, next) {
   }
 }
 
-// Create note — owner only
+// ✅ Create note
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const { title, content, subjectID } = req.body;
@@ -36,39 +37,65 @@ router.post("/", authMiddleware, async (req, res) => {
     const newNote = new Note({ title, content, subjectID, ownerUserID });
     await newNote.save();
 
-    res.status(201).json({ message: "✅ Note created", note: newNote });
+    // 🔥 Correct way: re-fetch with populate
+    const populatedNote = await Note.findById(newNote._id)
+      .populate("ownerUserID", "username")
+      .populate("subjectID", "name");
+
+    res.status(201).json({ message: "✅ Note created", note: populatedNote });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-// Get all notes — everybody can view
+// ✅ Get all notes
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const notes = await Note.find().populate("ownerUserID", "username _id");
+    const notes = await Note.find()
+      .populate("ownerUserID", "username _id")
+      .populate("subjectID", "name");
+
     res.json({ notes });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Get note by ID — owner or admin only
-router.get("/:id", authMiddleware, canModifyNote, async (req, res) => {
-  res.json({ note: req.note });
+// ✅ Get single note
+router.get("/:id", authMiddleware, async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id)
+      .populate("ownerUserID", "username")
+      .populate("subjectID", "name");
+
+    if (!note) {
+      return res.status(404).json({ error: "❌ Note not found" });
+    }
+
+    res.json({ note });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Update note by ID — owner or admin only
+// ✅ Update note
 router.put("/:id", authMiddleware, canModifyNote, async (req, res) => {
   try {
     Object.assign(req.note, req.body, { lastEditedDate: Date.now() });
     await req.note.save();
-    res.json({ message: "✅ Note updated", note: req.note });
+
+    // 🔥 Re-fetch with populate to return fresh note
+    const updatedNote = await Note.findById(req.note._id)
+      .populate("ownerUserID", "username")
+      .populate("subjectID", "name");
+
+    res.json({ message: "✅ Note updated", note: updatedNote });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-// Delete note by ID — owner or admin only
+// ✅ Delete note
 router.delete("/:id", authMiddleware, canModifyNote, async (req, res) => {
   try {
     await req.note.deleteOne();

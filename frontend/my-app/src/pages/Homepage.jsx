@@ -9,8 +9,10 @@ export default function Homepage() {
   const [allNotes, setAllNotes] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [newNote, setNewNote] = useState({ title: "", content: "", subjectID: "" });
-  const [editingNote, setEditingNote] = useState(null);
+  const [editingNoteId, setEditingNoteId] = useState(null); // which note is being edited
+  const [editValues, setEditValues] = useState({ title: "", content: "", subjectID: "" });
   const [newSubjectName, setNewSubjectName] = useState("");
+  const [openComments, setOpenComments] = useState({}); // track which notes' comments are open
 
   const email = localStorage.getItem("userEmail");
   const token = localStorage.getItem("accessToken");
@@ -18,19 +20,16 @@ export default function Homepage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch user profile
         const profileRes = await API.get("/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProfile(profileRes.data.user);
 
-        // Fetch all notes (backend handles filtering by role)
         const notesRes = await API.get("/api/notes", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAllNotes(notesRes.data.notes);
 
-        // Fetch subjects
         const subjectsRes = await API.get("/api/subjects", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -47,8 +46,8 @@ export default function Homepage() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (editingNote) {
-      setEditingNote({ ...editingNote, [name]: value });
+    if (editingNoteId) {
+      setEditValues({ ...editValues, [name]: value });
     } else if (name === "subjectID") {
       setNewNote({ ...newNote, subjectID: value });
     } else {
@@ -81,27 +80,29 @@ export default function Homepage() {
     }
   };
 
-  const startEditing = (note) => setEditingNote(note);
+  const startEditing = (note) => {
+    setEditingNoteId(note._id);
+    setEditValues({ title: note.title, content: note.content, subjectID: note.subjectID });
+  };
 
   const saveEditedNote = async () => {
-    if (!editingNote.title || !editingNote.content || !editingNote.subjectID) {
+    if (!editValues.title || !editValues.content || !editValues.subjectID) {
       return alert("Please fill in all required note fields");
     }
 
     try {
-      await API.put(`/api/notes/${editingNote._id}`, editingNote, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      alert("Note updated.");
-      setEditingNote(null);
-
-      const notesRes = await API.get("/api/notes", {
+      await API.put(`/api/notes/${editingNoteId}`, editValues, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setAllNotes(notesRes.data.notes);
+      alert("Note updated.");
+
+      setAllNotes((prev) =>
+        prev.map((note) =>
+          note._id === editingNoteId ? { ...note, ...editValues } : note
+        )
+      );
+      setEditingNoteId(null);
+      setEditValues({ title: "", content: "", subjectID: "" });
     } catch (err) {
       console.error(err);
       alert("Failed to update note.");
@@ -116,11 +117,7 @@ export default function Homepage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Note deleted.");
-
-      const notesRes = await API.get("/api/notes", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setAllNotes(notesRes.data.notes);
+      setAllNotes((prev) => prev.filter((note) => note._id !== noteId));
     } catch (err) {
       console.error(err);
       alert("Failed to delete note.");
@@ -154,7 +151,11 @@ export default function Homepage() {
   const canEditOrDelete = (note) => {
     if (!profile) return false;
     if (profile.role === "Admin") return true;
-    return note.ownerUserID._id === profile._id;
+    return note.ownerUserID?._id === profile._id;
+  };
+
+  const toggleComments = (noteId) => {
+    setOpenComments((prev) => ({ ...prev, [noteId]: !prev[noteId] }));
   };
 
   const handleLogout = () => {
@@ -177,21 +178,30 @@ export default function Homepage() {
           <p>Role: {profile.role}</p>
         </div>
       )}
-      <div>
-        <Link to="/spaces">Go to Collaborative Spaces</Link>
+
+      <div style={{ margin: "20px 0" }}>
+        <Link to="/my-notes">
+          <button>View Your Notes</button>
+        </Link>
       </div>
 
-      <h3>{editingNote ? "Edit Note" : "Create a New Note"}</h3>
+      <div>
+        <Link to="/spaces">
+          <button>Go to Collaborative Spaces</button>
+        </Link>
+      </div>
+
+      <h3>Create a New Note</h3>
       <input
         name="title"
         placeholder="Title"
-        value={editingNote ? editingNote.title : newNote.title}
+        value={newNote.title}
         onChange={handleInputChange}
       />
       <textarea
         name="content"
         placeholder="Content"
-        value={editingNote ? editingNote.content : newNote.content}
+        value={newNote.content}
         onChange={handleInputChange}
       />
 
@@ -203,7 +213,7 @@ export default function Homepage() {
               type="radio"
               name="subjectID"
               value={subj._id}
-              checked={(editingNote ? editingNote.subjectID : newNote.subjectID) === subj._id}
+              checked={newNote.subjectID === subj._id}
               onChange={handleInputChange}
             />
             {subj.name}
@@ -211,16 +221,8 @@ export default function Homepage() {
         ))}
       </div>
 
-      {editingNote ? (
-        <>
-          <button onClick={saveEditedNote}>Save Edit</button>
-          <button onClick={() => setEditingNote(null)}>Cancel</button>
-        </>
-      ) : (
-        <button onClick={handleCreateNote}>Create Note</button>
-      )}
+      <button onClick={handleCreateNote}>Create Note</button>
 
-      {/* Admin-only: add new subject */}
       {profile?.role === "Admin" && (
         <div style={{ marginTop: "20px" }}>
           <h3>Add a New Subject</h3>
@@ -231,28 +233,88 @@ export default function Homepage() {
             onChange={(e) => setNewSubjectName(e.target.value)}
           />
           <button onClick={handleAddSubject}>Add Subject</button>
+
+          <h4 style={{ marginTop: "20px" }}>All Subjects</h4>
+          <ul>
+            {subjects.map((subj) => (
+              <li key={subj._id} style={{ marginBottom: "5px" }}>
+                {subj.name}{" "}
+                <button
+                  onClick={async () => {
+                    if (!window.confirm(`Delete subject "${subj.name}"?`)) return;
+                    try {
+                      await API.delete(`/api/subjects/${subj._id}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                      });
+                      alert(`Subject "${subj.name}" deleted!`);
+                      setSubjects((prev) => prev.filter((s) => s._id !== subj._id));
+                    } catch (err) {
+                      console.error(err);
+                      alert("Failed to delete subject");
+                    }
+                  }}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
+
 
       <h3>All Notes</h3>
       {allNotes.map((note) => (
         <div key={note._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
+          <Link to={`/notes/${note._id}`}>View Note</Link>
           <h4>{note.title}</h4>
           <p>{note.content}</p>
-          <p>Subject: {subjects.find((s) => s._id === note.subjectID)?.name || note.subjectID}</p>
-          <p>Owner: {note.ownerUserID.username}</p>
+          <p>Subject: {note.subjectID?.name || "No subject"}</p>
+          <p>Owner: {note.ownerUserID?.username || "Unknown"}</p>
 
           {canEditOrDelete(note) && (
-            <>
-              <button onClick={() => startEditing(note)}>Edit</button>
-              <button onClick={() => deleteNote(note._id)}>Delete</button>
-            </>
+            <button onClick={() => startEditing(note)}>Edit</button>
+          )}
+          {canEditOrDelete(note) && (
+            <button onClick={() => deleteNote(note._id)}>Delete</button>
+          )}
+          <button onClick={() => toggleComments(note._id)} style={{ marginLeft: "10px" }}>
+            {openComments[note._id] ? "Hide Comments" : "Show Comments"}
+          </button>
+
+          {/* Inline edit section */}
+          {editingNoteId === note._id && (
+            <div style={{ marginTop: "10px", padding: "10px", borderTop: "1px dashed gray" }}>
+              <input
+                name="title"
+                placeholder="Title"
+                value={editValues.title}
+                onChange={handleInputChange}
+                style={{ width: "100%", marginBottom: "10px" }}
+              />
+              <textarea
+                name="content"
+                placeholder="Content"
+                value={editValues.content}
+                onChange={handleInputChange}
+                style={{ width: "100%", marginBottom: "10px" }}
+              />
+              <div style={{ textAlign: "right" }}>
+                <button onClick={saveEditedNote} style={{ marginRight: "10px" }}>
+                  Save
+                </button>
+                <button onClick={() => setEditingNoteId(null)}>Cancel</button>
+              </div>
+            </div>
           )}
 
-          {/* ===== Temporary Comments & Ratings Component ===== */}
-          <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
-            <CommentsRatings noteId={note._id} userId={profile?._id || "TEST_USER_ID"} />
-          </div>
+          {/* Comments section */}
+          {openComments[note._id] && (
+            <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
+              <CommentsRatings noteId={note._id} userId={profile?._id || "TEST_USER_ID"} />
+            </div>
+          )}
         </div>
       ))}
 

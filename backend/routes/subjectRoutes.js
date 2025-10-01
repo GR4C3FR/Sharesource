@@ -30,4 +30,22 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
+// Delete a subject (Admin only)
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== "Admin") 
+      return res.status(403).json({ error: "Forbidden: Only Admin can delete subjects" });
+
+    const subject = await Subject.findById(req.params.id);
+    if (!subject) 
+      return res.status(404).json({ error: "Subject not found" });
+
+    await subject.deleteOne();
+    res.json({ message: "Subject deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;

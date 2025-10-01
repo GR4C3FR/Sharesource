@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import Homepage from "./pages/Homepage";
 import CollaborativeSpaces from "./pages/CollaborativeSpacesTest";
 import SpaceDetails from "./pages/SpaceDetails";
+import NoteView from "./pages/NoteView"; 
+import MyNotes from "./pages/MyNotes";
 
 function App() {
   const isLoggedIn = !!localStorage.getItem("accessToken");
@@ -64,6 +66,11 @@ function App() {
         path="/spaces/:spaceId"
         element={isLoggedIn ? <SpaceDetails /> : <Navigate to="/login" />}
       /> 
+      
+      <Route path="/notes/:id" element={<NoteView />} />
+
+      <Route path="/my-notes" element={<MyNotes />} />
+
     </Routes>
   );
 }

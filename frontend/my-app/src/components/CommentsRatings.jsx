@@ -51,6 +51,19 @@ const CommentsRatings = ({ noteId, userId }) => {
     }
   };
 
+  // 🔥 Delete a comment (only if user owns it)
+  const deleteComment = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/comments/${id}`, {
+        data: { userId }  
+      });
+      fetchComments(); 
+    } catch (err) {
+      console.error("Delete failed:", err.response?.data || err.message);
+    }
+  };
+
+
   // Submit rating
   const submitRating = async (value) => {
     try {
@@ -82,6 +95,15 @@ const CommentsRatings = ({ noteId, userId }) => {
         {comments.map((c) => (
           <li key={c._id}>
             <b>{c.userId.username || "User"}</b>: {c.text}
+            {/* 🔥 Show delete button only if current user is the owner */}
+            {c.userId._id === userId && (
+              <button
+                onClick={() => deleteComment(c._id)}
+                style={{ marginLeft: "10px", color: "red" }}
+              >
+                Delete
+              </button>
+            )}
           </li>
         ))}
       </ul>
