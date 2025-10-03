@@ -73,6 +73,8 @@ export default function Homepage() {
       const notesRes = await API.get("/api/notes", {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      // ✅ refresh with all notes
       setAllNotes(notesRes.data.notes);
     } catch (err) {
       console.error("Creation error:", err.response?.data || err.message);
@@ -262,7 +264,6 @@ export default function Homepage() {
           </ul>
         </div>
       )}
-
 
       <h3>All Notes</h3>
       {allNotes.map((note) => (
