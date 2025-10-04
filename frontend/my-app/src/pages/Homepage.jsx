@@ -7,6 +7,8 @@ export default function Homepage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [allNotes, setAllNotes] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [subjects, setSubjects] = useState([]);
   const [newNote, setNewNote] = useState({ title: "", content: "", subjectID: "" });
   const [editingNoteId, setEditingNoteId] = useState(null);
@@ -34,6 +36,11 @@ export default function Homepage() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
+
+        const filesRes = await API.get("/api/files", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUploadedFiles(Array.isArray(filesRes.data.files) ? filesRes.data.files : []);
       } catch (err) {
         console.error(err);
         alert("Failed to fetch data. Please login again.");
@@ -77,6 +84,35 @@ export default function Homepage() {
       alert("Failed to create note.");
     }
   };
+
+  const handleFileUpload = async (e) => {
+    e.preventDefault();
+    if (!selectedFile) return alert("Please select a file");
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("ownerUserID", profile?._id);
+
+
+    try {
+      await API.post("/api/files/upload", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("File uploaded successfully!");
+
+      const filesRes = await API.get("/api/files", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUploadedFiles(Array.isArray(filesRes.data.files) ? filesRes.data.files : []);
+      setSelectedFile(null);
+    } catch (err) {
+      console.error("Upload failed:", err.response?.data || err.message);
+      alert("Failed to upload file.");
+    }
+  }
 
   const startEditing = (note) => {
     setEditingNoteId(note._id);
@@ -257,6 +293,43 @@ export default function Homepage() {
         </div>
       )}
 
+      <h3>Upload a File</h3>
+      <form onSubmit={handleFileUpload}>
+        <input
+          type="file"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+          accept=".pdf,.doc,.docx,.txt"
+        />
+        <button type="submit">Upload</button>
+      </form>
+
+      <h3>Uploaded Files</h3>
+      {uploadedFiles.length === 0 ? (
+        <p>No files uploaded yet.</p>
+      ) : (
+        uploadedFiles.map((file) => (
+          <div key={file._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
+            <p>
+              <strong>Filename:</strong>{" "}
+              <a href={`http://localhost:5000/${file.path}`} target="_blank" rel="noopener noreferrer">
+                {file.originalName}
+              </a>
+            </p>
+            <p>Uploaded by: {file.user?.username || "Unknown"}</p>
+            <button onClick={() => toggleComments(file._id)}>
+              {openComments[file._id] ? "Hide Comments" : "Show Comments"}
+            </button>
+
+            {openComments[file._id] && (
+              <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
+                <CommentsRatings itemId={file._id} userId={profile?._id || "TEST_USER_ID"} />
+              </div>
+            )}
+          </div>
+        ))
+      )}
+
+
       <h3>All Notes</h3>
       {Array.isArray(allNotes) && allNotes.map((note) => (
         <div key={note._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
@@ -299,7 +372,7 @@ export default function Homepage() {
           {/* Comments section */}
           {openComments[note._id] && (
             <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
-              <CommentsRatings noteId={note._id} userId={profile?._id || "TEST_USER_ID"} />
+              <CommentsRatings itemId={note._id} userId={profile?._id || "TEST_USER_ID"} />
             </div>
           )}
         </div>

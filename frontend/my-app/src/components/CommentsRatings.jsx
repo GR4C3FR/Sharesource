@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const CommentsRatings = ({ noteId, userId }) => {
+const CommentsRatings = ({ itemId, userId }) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [ratingValue, setRatingValue] = useState(0);
@@ -11,7 +11,7 @@ const CommentsRatings = ({ noteId, userId }) => {
   // Fetch comments
   const fetchComments = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/comments/${noteId}`);
+      const res = await axios.get(`http://localhost:5000/api/comments/${itemId}`);
       setComments(res.data);
     } catch (err) {
       console.error(err);
@@ -21,7 +21,7 @@ const CommentsRatings = ({ noteId, userId }) => {
   // Fetch rating
   const fetchRating = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/ratings/${noteId}`);
+      const res = await axios.get(`http://localhost:5000/api/ratings/${itemId}`);
       setAvgRating(res.data.average);
       setTotalRatings(res.data.total);
     } catch (err) {
@@ -39,7 +39,7 @@ const CommentsRatings = ({ noteId, userId }) => {
     if (!commentText) return;
     try {
       await axios.post("http://localhost:5000/api/comments", {
-        noteId,
+        itemId,
         userId,
         text: commentText,
         parentCommentId: null,
@@ -68,7 +68,7 @@ const CommentsRatings = ({ noteId, userId }) => {
   const submitRating = async (value) => {
     try {
       await axios.post("http://localhost:5000/api/ratings", {
-        noteId,
+        itemId,
         userId,
         value,
       });
