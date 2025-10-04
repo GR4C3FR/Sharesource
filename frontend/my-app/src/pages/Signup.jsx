@@ -16,6 +16,7 @@ export default function Signup() {
     try {
       await API.post("/api/users/signup", {
         username,
+        // password,
         passwordHash: password,
         email,
         firstName,

@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
 
 const router = express.Router();
 
@@ -40,20 +41,26 @@ function authMiddleware(req, res, next) {
 // Signup
 router.post('/signup', async (req, res) => {
   try {
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) {
-      return res.status(400).json({ error: '❌ Email already in use' });
+    console.log("Signup request body:", req.body); // ✅ Step 2: Debug line
+
+    const { email, username, password, passwordHash, firstName, lastName, role } = req.body;
+    const rawPassword = password || passwordHash; // ✅ support both
+
+    if (!rawPassword) {
+      return res.status(400).json({ message: "Password is required" });
     }
 
-    const newUser = new User(req.body);
-    await newUser.save();
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ message: "User already exists" });
 
-    res.status(201).json({
-      message: '✅ User successfully added to the database',
-      user: newUser
-    });
+    const user = new User({ email, username, firstName, lastName, role });
+    await user.setPassword(rawPassword); // ✅ hash whichever one is available
+    await user.save();
+
+    res.status(201).json({ message: 'Signup successful', user });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Signup error:', err);
+    res.status(500).json({ message: 'Signup failed', error: err.message });
   }
 });
 
@@ -61,15 +68,43 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ error: "❌ Invalid email or password" });
+    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+
+    if (user.passwordHash && !user.passwordHash.startsWith('$2b$') && password === user.passwordHash) {
+      const salt = await bcrypt.genSalt(10);
+      user.passwordHash = await bcrypt.hash(password, salt);
+      await user.save();
+      console.log(`Upgraded password for ${email} to bcrypt hash`);
     }
 
-    if (password !== user.passwordHash) {
-      return res.status(400).json({ error: "❌ Invalid email or password" });
-    }
+    const isMatch = await user.matchPassword(password);
+
+    // let match = false;
+
+    // if (user.password.startsWith('$2b$') || user.password.startsWith('$2a$')) {
+    //   match = await bcrypt.compare(password, user.password);
+    // } else {
+    //   if (password === user.password) {
+    //     const salt = await bcrypt.genSalt(10);
+    //     user.password = await bcrypt.hash(password, salt);
+    //     await user.save();
+    //     match = true;
+    //   }
+    // }
+
+    // const match = await user.matchPassword(password);
+    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+    // const { email, password } = req.body;
+
+    // const user = await User.findOne({ email });
+    // if (!user) {
+    //   return res.status(400).json({ error: "❌ Invalid email or password" });
+    // }
+
+    // if (password !== user.passwordHash) {
+    //   return res.status(400).json({ error: "❌ Invalid email or password" });
+    // }
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
@@ -86,7 +121,8 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Server error'});
   }
 });
 
