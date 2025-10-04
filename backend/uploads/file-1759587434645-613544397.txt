@@ -1,0 +1,82 @@
+Backend URL Shortener
+
+1. clone then open in vs
+2. npm install mongodb
+3. change sample.env to .env
+4. in .env, add port if wala
+5. in .env, add MONGO_URI=<ur mongodb link>
+
+index.js
+import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
+import cors from 'cors';
+import { MongoClient } from 'mongodb';
+import dns from 'dns';
+import { parse as urlParse } from 'url';
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+async function main() {
+  const client = new MongoClient(process.env.MONGO_URI);
+  await client.connect();
+  console.log('Connected to MongoDB');
+
+  const db = client.db("urlshortener");
+  const urls = db.collection("url");
+
+  app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use('/public', express.static(`${process.cwd()}/public`));
+
+  app.get('/', (req, res) => {
+    res.sendFile(process.cwd() + '/views/index.html');
+  });
+
+  app.post('/api/shorturl', (req, res) => {
+    const url = req.body.url;
+    const hostname = urlParse(url).hostname;
+
+    if (!hostname) {
+      return res.json({ error: "Invalid URL" });
+    }
+
+    dns.lookup(hostname, async (err, address) => {
+      if (err || !address) {
+        return res.json({ error: "Invalid URL" });
+      }
+
+      const urlCount = await urls.countDocuments({});
+      const urlDoc = {
+        url,
+        short_url: urlCount + 1 // start from 1
+      };
+
+      const result = await urls.insertOne(urlDoc);
+      res.json({ original_url: url, short_url: urlDoc.short_url });
+    });
+  });
+
+  app.get('/api/shorturl/:short_url', async (req, res) => {
+    const shorturl = parseInt(req.params.short_url);
+    const urlDoc = await urls.findOne({ short_url: shorturl });
+
+    if (urlDoc) {
+      res.redirect(urlDoc.url);
+    } else {
+      res.json({ error: "No short URL found for the given input" });
+    }
+  });
+
+  app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+  });
+}
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

@@ -4,13 +4,13 @@ const Comment = require('../models/Comment');
 
 // POST new comment
 router.post('/', async (req, res) => {
-  const { noteId, userId, text, parentCommentId } = req.body;
+  const { itemId, userId, text, parentCommentId } = req.body;
   try {
-    if (!noteId || !userId || !text) {
-      return res.status(400).json({ error: "noteId, userId, and text are required" });
+    if (!itemId || !userId || !text) {
+      return res.status(400).json({ error: "itemId, userId, and text are required" });
     }
 
-    const comment = new Comment({ noteId, userId, text, parentCommentId });
+    const comment = new Comment({ itemId, userId, text, parentCommentId });
     await comment.save();
 
     // return with populated user info
@@ -22,10 +22,10 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET all comments for a note
-router.get('/:noteId', async (req, res) => {
+// GET all comments for a file
+router.get('/:itemId', async (req, res) => {
   try {
-    const comments = await Comment.find({ noteId: req.params.noteId })
+    const comments = await Comment.find({ itemId: req.params.itemId })
       .populate('userId', 'username')  // only return username field
       .sort({ createdAt: -1 });        // newest first
     res.json(comments);

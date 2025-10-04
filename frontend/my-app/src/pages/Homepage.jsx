@@ -193,7 +193,7 @@ export default function Homepage() {
             <p>
               <strong>Filename:</strong>{" "}
               <a
-                href={`http://localhost:5000/${file.path}`}
+                href={`http://localhost:5000/uploads/${file.filename}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

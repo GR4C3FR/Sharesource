@@ -14,13 +14,19 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-// Create a subject (Admin only)
+// Create a subject
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    if (req.user.role !== "Admin") return res.status(403).json({ error: "Forbidden" });
+    if (req.user.role !== "Admin")
+      return res.status(403).json({ error: "Forbidden" });
 
-    const { name } = req.body;
+    const name = req.body.name?.trim() || req.body.subjectName?.trim();
     if (!name) return res.status(400).json({ error: "Missing subject name" });
+
+    // Check for duplicate
+    const existing = await Subject.findOne({ name: { $regex: `^${name}$`, $options: "i" } });
+    if (existing)
+      return res.status(400).json({ error: "Subject already exists" });
 
     const newSubject = new Subject({ name });
     await newSubject.save();

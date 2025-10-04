@@ -21,7 +21,8 @@ router.post('/upload', authMiddleware, upload.single('file'), async (req, res) =
             size: req.file.size,
             path: req.file.path,
             title: req.body.title || req.file.originalname,
-            description: req.body.description || ''
+            description: req.body.description || '',
+            subject: req.body.subjectID || null
         });
 
         await fileDoc.save();
@@ -34,21 +35,25 @@ router.post('/upload', authMiddleware, upload.single('file'), async (req, res) =
 });
 
 router.get('/', authMiddleware, async (req, res) => {
-  try {
-    const files = await File.find()
-      .populate('user', 'username email')
-      .sort({ uploadDate: -1 });
-    res.json({ files });
-  } catch (err) {
-    console.error('Fetch files error:', err);
-    res.status(500).json({ message: err.message });
-  }
+    try {
+        const files = await File.find()
+        .populate('user', 'username email')
+        .populate('subject', 'name')
+        .sort({ uploadDate: -1 });
+        res.json({ files });
+    } catch (err) {
+        console.error('Fetch files error:', err);
+        res.status(500).json({ message: err.message });
+    }
 });
 
 // list authenticated user's files
 router.get('/my', authMiddleware, async (req, res) => {
     try {
-        const files = await File.find({ user: req.user.userId }).sort({ uploadDate: -1 });
+        const files = await File.find()
+        .populate('user', 'username email')
+        .populate('subject', 'name')
+        .sort({ uploadDate: -1 });
         res.json({ files });
     } catch (err) {
         res.status(500).json({ message: err.message });
