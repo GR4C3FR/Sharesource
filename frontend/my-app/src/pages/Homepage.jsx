@@ -19,17 +19,17 @@ export default function Homepage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profileRes = await API.get("/api/users/profile", {
+        const profileRes = await API.get("/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProfile(profileRes.data.user);
 
-        const subjectsRes = await API.get("/api/subjects", {
+        const subjectsRes = await API.get("/subjects", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
 
-        const filesRes = await API.get("/api/files", {
+        const filesRes = await API.get("/files", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUploadedFiles(Array.isArray(filesRes.data.files) ? filesRes.data.files : []);
@@ -55,7 +55,7 @@ export default function Homepage() {
     formData.append("subjectID", selectedSubject);
 
     try {
-      await API.post("/api/files/upload", formData, {
+      await API.post("/files/upload", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -63,7 +63,7 @@ export default function Homepage() {
       });
       alert("File uploaded successfully!");
 
-      const filesRes = await API.get("/api/files", {
+      const filesRes = await API.get("/files", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUploadedFiles(Array.isArray(filesRes.data.files) ? filesRes.data.files : []);
@@ -80,14 +80,14 @@ export default function Homepage() {
 
     try {
       await API.post(
-        "/api/subjects",
+        "/subjects",
         { name: newSubjectName },
         { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
       );
       alert("Subject added!");
       setNewSubjectName("");
 
-      const subjectsRes = await API.get("/api/subjects", {
+      const subjectsRes = await API.get("/subjects", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
@@ -123,8 +123,8 @@ export default function Homepage() {
       )}
 
       <div style={{ margin: "20px 0" }}>
-        <Link to="/my-notes">
-          <button>View Your Notes</button>
+        <Link to="/my-files">
+          <button>View Your Files</button>
         </Link>
       </div>
 

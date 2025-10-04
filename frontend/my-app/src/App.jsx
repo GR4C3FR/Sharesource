@@ -6,6 +6,7 @@ import CollaborativeSpaces from "./pages/CollaborativeSpacesTest";
 import SpaceDetails from "./pages/SpaceDetails";
 import NoteView from "./pages/NoteView"; 
 import MyNotes from "./pages/MyNotes";
+import MyFiles from './pages/MyFiles';
 
 function App() {
   const isLoggedIn = !!localStorage.getItem("accessToken");
@@ -70,6 +71,8 @@ function App() {
       <Route path="/notes/:id" element={<NoteView />} />
 
       <Route path="/my-notes" element={<MyNotes />} />
+
+      <Route path="/my-files" element={isLoggedIn ? <MyFiles /> : <Navigate to="/login" />} />
 
     </Routes>
   );

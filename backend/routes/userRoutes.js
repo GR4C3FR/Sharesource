@@ -38,6 +38,12 @@ function authMiddleware(req, res, next) {
   }
 }
 
+router.use((req, res, next) => {
+  console.log(`➡️  ${req.method} ${req.originalUrl} body:`, req.body);
+  next();
+});
+
+
 // Signup
 router.post('/signup', async (req, res) => {
   try {
@@ -57,6 +63,7 @@ router.post('/signup', async (req, res) => {
     const user = new User({ email, username, firstName, lastName, role });
     await user.setPassword(rawPassword); // ✅ hash whichever one is available
     await user.save();
+    console.log("✅ User saved to DB:", user);
 
     res.status(201).json({ message: 'Signup successful', user });
   } catch (err) {
@@ -68,9 +75,19 @@ router.post('/signup', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    console.log("🟢 Login attempt:", req.body);
+
+    const { email, password, passwordHash } = req.body;
+    const plainPassword = password || passwordHash;
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+
+    console.log("🔍 Login attempt:", { email, password });
+    console.log("🔍 Found user:", user ? { email: user.email, hash: user.passwordHash } : "not found");
+
+    if (!user) {
+      console.log("❌ User not found");
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
     if (user.passwordHash && !user.passwordHash.startsWith('$2b$') && password === user.passwordHash) {
       const salt = await bcrypt.genSalt(10);
@@ -79,36 +96,21 @@ router.post('/login', async (req, res) => {
       console.log(`Upgraded password for ${email} to bcrypt hash`);
     }
 
-    const isMatch = await user.matchPassword(password);
+    const isMatch = await user.matchPassword(plainPassword);
 
-    // let match = false;
+    console.log("🧩 Comparing passwords:");
+    console.log("Entered:", plainPassword);
+    console.log("Stored hash:", user.passwordHash);
 
-    // if (user.password.startsWith('$2b$') || user.password.startsWith('$2a$')) {
-    //   match = await bcrypt.compare(password, user.password);
-    // } else {
-    //   if (password === user.password) {
-    //     const salt = await bcrypt.genSalt(10);
-    //     user.password = await bcrypt.hash(password, salt);
-    //     await user.save();
-    //     match = true;
-    //   }
-    // }
 
-    // const match = await user.matchPassword(password);
-    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
-    // const { email, password } = req.body;
-
-    // const user = await User.findOne({ email });
-    // if (!user) {
-    //   return res.status(400).json({ error: "❌ Invalid email or password" });
-    // }
-
-    // if (password !== user.passwordHash) {
-    //   return res.status(400).json({ error: "❌ Invalid email or password" });
-    // }
+    if (!isMatch) {
+      console.log("❌ Password mismatch");
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
+
     res.json({
       message: "✅ Login successful",
       accessToken,
@@ -118,7 +120,8 @@ router.post('/login', async (req, res) => {
         email: user.email,
         username: user.username,
         firstName: user.firstName,
-        lastName: user.lastName
+        lastName: user.lastName,
+        role: user.role
       }
     });
   } catch (err) {

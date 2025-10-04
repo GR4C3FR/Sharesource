@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const File = require('../models/File');
 const upload = require('../middleware/upload');
-const { authMiddleware } = require('../routes/userRoutes');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -50,12 +50,14 @@ router.get('/', authMiddleware, async (req, res) => {
 // list authenticated user's files
 router.get('/my', authMiddleware, async (req, res) => {
     try {
-        const files = await File.find()
+        const userId = req.user._id || req.user.userId;
+        const files = await File.find({ user: userId })
         .populate('user', 'username email')
         .populate('subject', 'name')
         .sort({ uploadDate: -1 });
         res.json({ files });
     } catch (err) {
+        console.error("Fetch my files error:", err);
         res.status(500).json({ message: err.message });
     }
 });

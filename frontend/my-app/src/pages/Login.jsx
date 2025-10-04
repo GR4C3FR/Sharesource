@@ -10,7 +10,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post("/api/users/login", { email, password });
+      const res = await API.post("/users/login", { email, password });
       localStorage.setItem("accessToken", res.data.accessToken);
       localStorage.setItem("userEmail", email);
       // localStorage.setItem("userId", res.data.user._id);

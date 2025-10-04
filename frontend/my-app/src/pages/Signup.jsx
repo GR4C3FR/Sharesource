@@ -14,7 +14,7 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await API.post("/api/users/signup", {
+      await API.post("/users/signup", {
         username,
         // password,
         passwordHash: password,
