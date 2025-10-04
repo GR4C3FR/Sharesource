@@ -21,7 +21,7 @@ export default function Signup() {
         email,
         firstName,
         lastName,
-        role,  
+        role: "Student"  
       });
       alert("Signup successful! Please login.");
       navigate("/login");
@@ -42,10 +42,11 @@ export default function Signup() {
         <input placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
         <input placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
         
-        <select value={role} onChange={(e) => setRole(e.target.value)} required>
+        <input type="hidden" value="Student" />
+        {/* <select value={role} onChange={(e) => setRole(e.target.value)} required>
           <option value="Student">Student</option>
           <option value="Admin">Admin</option>
-        </select>
+        </select> */}
 
         <button type="submit">Signup</button>
       </form>

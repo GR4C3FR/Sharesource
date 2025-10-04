@@ -43,8 +43,9 @@ router.post('/signup', async (req, res) => {
   try {
     console.log("Signup request body:", req.body); // ✅ Step 2: Debug line
 
-    const { email, username, password, passwordHash, firstName, lastName, role } = req.body;
+    const { email, username, password, passwordHash, firstName, lastName } = req.body;
     const rawPassword = password || passwordHash; // ✅ support both
+    const role = "Student";
 
     if (!rawPassword) {
       return res.status(400).json({ message: "Password is required" });
