@@ -9,7 +9,7 @@ export default function Homepage() {
   const [allNotes, setAllNotes] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [newNote, setNewNote] = useState({ title: "", content: "", subjectID: "" });
-  const [editingNoteId, setEditingNoteId] = useState(null); // which note is being edited
+  const [editingNoteId, setEditingNoteId] = useState(null);
   const [editValues, setEditValues] = useState({ title: "", content: "", subjectID: "" });
   const [newSubjectName, setNewSubjectName] = useState("");
   const [openComments, setOpenComments] = useState({}); // track which notes' comments are open
@@ -28,13 +28,14 @@ export default function Homepage() {
         const notesRes = await API.get("/api/notes", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setAllNotes(notesRes.data.notes);
+        setAllNotes(Array.isArray(notesRes.data.notes) ? notesRes.data.notes : []);
 
         const subjectsRes = await API.get("/api/subjects", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setSubjects(subjectsRes.data.subjects);
+        setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
       } catch (err) {
+        console.error(err);
         alert("Failed to fetch data. Please login again.");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("userEmail");
@@ -62,10 +63,7 @@ export default function Homepage() {
 
     try {
       await API.post("/api/notes", newNote, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       alert("Note created.");
       setNewNote({ title: "", content: "", subjectID: "" });
@@ -73,9 +71,7 @@ export default function Homepage() {
       const notesRes = await API.get("/api/notes", {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      // ✅ refresh with all notes
-      setAllNotes(notesRes.data.notes);
+      setAllNotes(Array.isArray(notesRes.data.notes) ? notesRes.data.notes : []);
     } catch (err) {
       console.error("Creation error:", err.response?.data || err.message);
       alert("Failed to create note.");
@@ -99,9 +95,7 @@ export default function Homepage() {
       alert("Note updated.");
 
       setAllNotes((prev) =>
-        prev.map((note) =>
-          note._id === editingNoteId ? { ...note, ...editValues } : note
-        )
+        prev.map((note) => (note._id === editingNoteId ? { ...note, ...editValues } : note))
       );
       setEditingNoteId(null);
       setEditValues({ title: "", content: "", subjectID: "" });
@@ -133,9 +127,7 @@ export default function Homepage() {
       await API.post(
         "/api/subjects",
         { name: newSubjectName },
-        {
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        }
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
       );
       alert("Subject added!");
       setNewSubjectName("");
@@ -143,7 +135,7 @@ export default function Homepage() {
       const subjectsRes = await API.get("/api/subjects", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSubjects(subjectsRes.data.subjects);
+      setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
     } catch (err) {
       console.error(err);
       alert("Failed to add subject");
@@ -209,7 +201,7 @@ export default function Homepage() {
 
       <div>
         <p>Select Subject:</p>
-        {subjects.map((subj) => (
+        {Array.isArray(subjects) && subjects.map((subj) => (
           <label key={subj._id} style={{ marginRight: "10px" }}>
             <input
               type="radio"
@@ -238,7 +230,7 @@ export default function Homepage() {
 
           <h4 style={{ marginTop: "20px" }}>All Subjects</h4>
           <ul>
-            {subjects.map((subj) => (
+            {Array.isArray(subjects) && subjects.map((subj) => (
               <li key={subj._id} style={{ marginBottom: "5px" }}>
                 {subj.name}{" "}
                 <button
@@ -266,7 +258,7 @@ export default function Homepage() {
       )}
 
       <h3>All Notes</h3>
-      {allNotes.map((note) => (
+      {Array.isArray(allNotes) && allNotes.map((note) => (
         <div key={note._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
           <Link to={`/notes/${note._id}`}>View Note</Link>
           <h4>{note.title}</h4>
@@ -274,12 +266,8 @@ export default function Homepage() {
           <p>Subject: {note.subjectID?.name || "No subject"}</p>
           <p>Owner: {note.ownerUserID?.username || "Unknown"}</p>
 
-          {canEditOrDelete(note) && (
-            <button onClick={() => startEditing(note)}>Edit</button>
-          )}
-          {canEditOrDelete(note) && (
-            <button onClick={() => deleteNote(note._id)}>Delete</button>
-          )}
+          {canEditOrDelete(note) && <button onClick={() => startEditing(note)}>Edit</button>}
+          {canEditOrDelete(note) && <button onClick={() => deleteNote(note._id)}>Delete</button>}
           <button onClick={() => toggleComments(note._id)} style={{ marginLeft: "10px" }}>
             {openComments[note._id] ? "Hide Comments" : "Show Comments"}
           </button>
@@ -302,9 +290,7 @@ export default function Homepage() {
                 style={{ width: "100%", marginBottom: "10px" }}
               />
               <div style={{ textAlign: "right" }}>
-                <button onClick={saveEditedNote} style={{ marginRight: "10px" }}>
-                  Save
-                </button>
+                <button onClick={saveEditedNote} style={{ marginRight: "10px" }}>Save</button>
                 <button onClick={() => setEditingNoteId(null)}>Cancel</button>
               </div>
             </div>
@@ -319,7 +305,7 @@ export default function Homepage() {
         </div>
       ))}
 
-      <button onClick={handleLogout} style={{ marginTop: "20px" }}>
+      <button onClick={handleLogout} style={{ marginTop: "20px"}}>
         Logout
       </button>
     </div>
