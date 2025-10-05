@@ -259,7 +259,7 @@ useEffect(() => {
             </p>
 
             <p>Uploaded by: {file.user?.username || "Unknown"}</p>
-            <p>Subject: {file.subjectID?.name || "No subject"}</p>
+            <p>Subject: {file.subject?.name || "No subject"}</p>
       
       {/* 🗑️ Delete button (visible only to owner) */}
       {file.user?._id === profile?._id && (
