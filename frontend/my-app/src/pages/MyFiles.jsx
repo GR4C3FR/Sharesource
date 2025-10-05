@@ -13,7 +13,12 @@ export default function MyFiles() {
   const [openComments, setOpenComments] = useState({}); // ⭐ Toggle comments
   const [filterSubject, setFilterSubject] = useState("");
   const [sortOption, setSortOption] = useState("newest");
-
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [subjects, setSubjects] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState("");
+  const [newSubjectName, setNewSubjectName] = useState("");
+  const [description, setDescription] = useState("");
+  const [profile, setProfile] = useState(null);
 
   const token = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId"); // Ensure owner check
@@ -66,6 +71,29 @@ export default function MyFiles() {
   };
 
   useEffect(() => {
+    const fetchProfileAndSubjects = async () => {
+      try {
+        const profileRes = await API.get("/users/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProfile(profileRes.data.user);
+
+        const subjectsRes = await API.get("/subjects", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const subjectsData = Array.isArray(subjectsRes.data.subjects)
+          ? subjectsRes.data.subjects
+          : [];
+        setSubjects(subjectsData);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchProfileAndSubjects();
+  }, [token]);
+
+
+  useEffect(() => {
     const fetchMyFiles = async () => {
       try {
         const res = await API.get("/files/my", {
@@ -83,6 +111,64 @@ export default function MyFiles() {
 
   if (loading) return <p>Loading your files...</p>;
   if (error) return <p>{error}</p>;
+
+  // Upload File
+const handleFileUpload = async (e) => {
+  e.preventDefault();
+  if (!selectedFile) return alert("Please select a file");
+  if (!selectedSubject) return alert("Please select a subject before uploading");
+
+  const formData = new FormData();
+  formData.append("file", selectedFile);
+  formData.append("ownerUserID", profile?._id);
+  formData.append("subjectID", selectedSubject);
+  formData.append("description", description);
+
+  try {
+    await API.post("/files/upload", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    alert("File uploaded successfully!");
+
+    // Refresh files
+    const res = await API.get("/files/my", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setFiles(Array.isArray(res.data.files) ? res.data.files : []);
+    setSelectedFile(null);
+    setSelectedSubject("");
+    setDescription("");
+  } catch (err) {
+    console.error("Upload failed:", err.response?.data || err.message);
+    alert("Failed to upload file.");
+  }
+};
+
+// Add new subject
+  const handleAddSubject = async () => {
+    if (!newSubjectName) return alert("Enter a subject name");
+    try {
+      await API.post(
+        "/subjects",
+        { name: newSubjectName },
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+      );
+      alert("Subject added!");
+      setNewSubjectName("");
+
+      const subjectsRes = await API.get("/subjects", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add subject");
+    }
+  };
+
 
   // Filter & sort files before rendering
   const displayedFiles = files
@@ -147,6 +233,60 @@ export default function MyFiles() {
       >
         Back to Homepage
       </button>
+
+      <h3>Upload a File</h3>
+      <form onSubmit={handleFileUpload}>
+        <input
+          type="file"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+          accept=".pdf,.doc,.docx,.txt"
+        />
+
+        <div style={{ marginTop: "10px" }}>
+          <label>
+            Select Subject:{" "}
+            <select
+              value={selectedSubject}
+              onChange={(e) => setSelectedSubject(e.target.value)}
+              required
+            >
+              <option value="">-- Select a Subject --</option>
+              {subjects.map((subj) => (
+                <option key={subj._id} value={subj._id}>
+                  {subj.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div style={{ marginTop: "10px" }}>
+          <input
+            type="text"
+            placeholder="Add new subject"
+            value={newSubjectName}
+            onChange={(e) => setNewSubjectName(e.target.value)}
+          />
+          <button type="button" onClick={handleAddSubject}>
+            Add Subject
+          </button>
+        </div>
+
+        <div style={{ marginTop: "10px" }}>
+          <input
+            type="text"
+            placeholder="Add file description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </div>
+
+        <button type="submit" style={{ marginTop: "10px" }}>
+          Upload
+        </button>
+      </form>
+
 
       {files.length === 0 ? (
         <p>You haven’t uploaded any files yet.</p>
