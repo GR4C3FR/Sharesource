@@ -101,6 +101,8 @@ export default function MyFiles() {
               </a>
               <p>Subject: {file.subject?.name || "No subject"}</p>
               <p>Uploaded on: {new Date(file.uploadDate).toLocaleString()}</p>
+              <p><strong>Description:</strong> {file.description || "No description"}</p>
+
 
               {/* 🗑️ Delete button (owner only) */}
               {file.user?._id === userId && (

@@ -14,6 +14,7 @@ export default function Homepage() {
   const [newSubjectName, setNewSubjectName] = useState("");
   const [openComments, setOpenComments] = useState({});
   const [fileAverages, setFileAverages] = useState({}); // ⭐ Live average sync per file
+  const [description, setDescription] = useState("");
 
   const email = localStorage.getItem("userEmail");
   const token = localStorage.getItem("accessToken");
@@ -70,6 +71,8 @@ useEffect(() => {
     formData.append("file", selectedFile);
     formData.append("ownerUserID", profile?._id);
     formData.append("subjectID", selectedSubject);
+    formData.append("description", description);
+
 
     try {
       await API.post("/files/upload", formData, {
@@ -86,6 +89,7 @@ useEffect(() => {
       setUploadedFiles(Array.isArray(filesRes.data.files) ? filesRes.data.files : []);
       setSelectedFile(null);
       setSelectedSubject("");
+      setDescription("");
     } catch (err) {
       console.error("Upload failed:", err.response?.data || err.message);
       alert("Failed to upload file.");
@@ -225,6 +229,17 @@ useEffect(() => {
           </button>
         </div>
 
+        <div style={{ marginTop: "10px" }}>
+          <input
+            type="text"
+            placeholder="Add file description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+      </div>
+
+
         <button type="submit" style={{ marginTop: "10px" }}>
           Upload
         </button>
@@ -260,6 +275,8 @@ useEffect(() => {
 
             <p>Uploaded by: {file.user?.username || "Unknown"}</p>
             <p>Subject: {file.subject?.name || "No subject"}</p>
+            <p><strong>Description:</strong> {file.description || "No description"}</p>
+
       
       {/* 🗑️ Delete button (visible only to owner) */}
       {file.user?._id === profile?._id && (
