@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const File = require('../models/File');
+const Comment = require('../models/Comment');
+const Rating = require('../models/Rating');
 const upload = require('../middleware/upload');
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -81,21 +83,36 @@ router.get('/:id/download', authMiddleware, async (req, res) => {
 
 // delete file
 router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    const file = await File.findById(req.params.id);
+    if (!file) return res.status(404).json({ message: 'File not found' });
+
+    // ✅ Correct ownership check
+    const fileOwnerId = file.user._id ? file.user._id.toString() : file.user.toString();
+    const isOwner = fileOwnerId === (req.user._id?.toString() || req.user.userId?.toString());
+    if (!isOwner) return res.status(403).json({ message: 'Forbidden' });
+
+    // 🧹 Remove file from disk safely
     try {
-        const file = await File.findById(req.params.id);
-        if (!file) return res.status(404).json({ message: 'File not found' });
-
-        const isOwner = file.user.toString() === req.user.userId;
-        if (!isOwner) return res.status(403).json({ message: 'Forbidden '});
-
-        //remove file from disk
-        fs.unlinkSync(path.resolve(file.path));
-
-        await file.remove();
-        res.json({ message: 'File deleted' });
+      fs.unlinkSync(path.resolve(file.path));
     } catch (err) {
-        res.status(500).json({ message: err.message });
+      console.warn('⚠️ File not found on disk, skipping unlink:', file.path);
     }
+
+    // 🧹 Delete associated comments & ratings
+    await Promise.all([
+      Comment.deleteMany({ fileId: file._id }),
+      Rating.deleteMany({ fileId: file._id }),
+    ]);
+
+    // 🧹 Delete file record from DB
+    await file.deleteOne();
+
+    res.json({ message: 'File deleted successfully' });
+  } catch (err) {
+    console.error('Delete file error:', err);
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;

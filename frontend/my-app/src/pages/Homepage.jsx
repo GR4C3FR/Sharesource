@@ -120,6 +120,28 @@ export default function Homepage() {
     }));
   };
 
+  // 🔹 Delete File
+  const handleDeleteFile = async (fileId) => {
+    if (!window.confirm("Are you sure you want to delete this file?")) return;
+
+    try {
+      await API.delete(`/files/${fileId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // remove from local state without reloading
+      setUploadedFiles((prev) => prev.filter((file) => file._id !== fileId));
+
+      alert("File deleted successfully.");
+    } catch (err) {
+      console.error("Delete failed:", err.response?.data || err.message);
+      alert("Failed to delete file.");
+    }
+  };
+
+
+
+
   // 🔹 Logout
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -231,6 +253,24 @@ export default function Homepage() {
 
             <p>Uploaded by: {file.user?.username || "Unknown"}</p>
             <p>Subject: {file.subjectID?.name || "No subject"}</p>
+      
+      {/* 🗑️ Delete button (visible only to owner) */}
+      {file.user?._id === profile?._id && (
+        <button
+          onClick={() => handleDeleteFile(file._id)}
+          style={{
+            marginTop: "8px",
+            backgroundColor: "#e74c3c",
+            color: "white",
+            border: "none",
+            padding: "5px 10px",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Delete File
+        </button>
+      )}
 
             {/* ⭐ Show Average Rating (auto-updates) */}
             <RatingSection
