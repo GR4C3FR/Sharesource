@@ -11,6 +11,9 @@ export default function MyFiles() {
   const [error, setError] = useState(null);
   const [fileAverages, setFileAverages] = useState({});
   const [openComments, setOpenComments] = useState({}); // ⭐ Toggle comments
+  const [filterSubject, setFilterSubject] = useState("");
+  const [sortOption, setSortOption] = useState("newest");
+
 
   const token = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId"); // Ensure owner check
@@ -81,9 +84,54 @@ export default function MyFiles() {
   if (loading) return <p>Loading your files...</p>;
   if (error) return <p>{error}</p>;
 
+  // Filter & sort files before rendering
+  const displayedFiles = files
+    .filter(file => !filterSubject || file.subject?._id === filterSubject)
+    .sort((a, b) => {
+      if (sortOption === "newest") return new Date(b.uploadDate) - new Date(a.uploadDate);
+      if (sortOption === "oldest") return new Date(a.uploadDate) - new Date(b.uploadDate);
+      if (sortOption === "ratingDesc") return (fileAverages[b._id] || 0) - (fileAverages[a._id] || 0);
+      if (sortOption === "ratingAsc") return (fileAverages[a._id] || 0) - (fileAverages[b._id] || 0);
+      return 0;
+    });
+
   return (
     <div className="my-files-container" style={{ padding: "20px" }}>
       <h2>My Uploaded Files</h2>
+      {/* Filter & Sort */}
+      <div style={{ marginBottom: "15px", border: "1px solid #ccc", padding: "10px", borderRadius: "5px" }}>
+        <label>
+          Filter by Subject:{" "}
+          <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)}>
+            <option value="">All Subjects</option>
+            {Array.from(new Set(files.map(f => f.subject?._id))).map(subjId => {
+              const subjName = files.find(f => f.subject?._id === subjId)?.subject?.name || "No subject";
+              return <option key={subjId} value={subjId}>{subjName}</option>;
+            })}
+          </select>
+        </label>
+
+        <label style={{ marginLeft: "15px" }}>
+          Sort by:{" "}
+          <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+            <option value="newest">Newest - Oldest</option>
+            <option value="oldest">Oldest - Newest</option>
+            <option value="ratingDesc">High - Low</option>
+            <option value="ratingAsc">Low - High</option>
+          </select>
+        </label>
+
+        <button
+          style={{ marginLeft: "15px" }}
+          onClick={() => {
+            setFilterSubject("");
+            setSortOption("newest");
+          }}
+        >
+          Clear Filters
+        </button>
+      </div>
+
 
       <button
         onClick={() => navigate("/")}
@@ -104,7 +152,7 @@ export default function MyFiles() {
         <p>You haven’t uploaded any files yet.</p>
       ) : (
         <ul>
-          {files.map((file) => (
+          {displayedFiles.map((file) => (
             <li
               key={file._id}
               style={{
