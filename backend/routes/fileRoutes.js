@@ -39,10 +39,19 @@ router.post('/upload', authMiddleware, upload.single('file'), async (req, res) =
 router.get('/', authMiddleware, async (req, res) => {
     try {
         const files = await File.find()
-        .populate('user', 'username email')
-        .populate('subject', 'name')
-        .sort({ uploadDate: -1 });
-        res.json({ files });
+            .populate('user', 'username email')
+            .populate('subject', 'name')
+            .sort({ uploadDate: -1 });
+            
+        // ✅ map populated subject to subjectID for frontend compatibility
+        const filesMapped = files.map((file) => {
+        return {
+            ...file._doc,             // keep all other fields
+            subjectID: file.subject || null, // alias populated subject
+        };
+        });
+
+        res.json({ files: filesMapped });
     } catch (err) {
         console.error('Fetch files error:', err);
         res.status(500).json({ message: err.message });

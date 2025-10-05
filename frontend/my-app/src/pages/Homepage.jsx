@@ -18,40 +18,47 @@ export default function Homepage() {
   const email = localStorage.getItem("userEmail");
   const token = localStorage.getItem("accessToken");
 
-  // 🔹 Fetch profile, subjects, and files
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const profileRes = await API.get("/users/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setProfile(profileRes.data.user);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const profileRes = await API.get("/users/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfile(profileRes.data.user);
 
-        const subjectsRes = await API.get("/subjects", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setSubjects(
-          Array.isArray(subjectsRes.data.subjects)
-            ? subjectsRes.data.subjects
-            : []
-        );
+      // 🔹 fetch subjects first
+      const subjectsRes = await API.get("/subjects", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const subjectsData = Array.isArray(subjectsRes.data.subjects)
+        ? subjectsRes.data.subjects
+        : [];
+      setSubjects(subjectsData);
 
-        const filesRes = await API.get("/files", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUploadedFiles(
-          Array.isArray(filesRes.data.files) ? filesRes.data.files : []
-        );
-      } catch (err) {
-        console.error(err);
-        alert("Failed to fetch data. Please login again.");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("userEmail");
-        navigate("/login");
-      }
-    };
-    fetchData();
-  }, [navigate, token]);
+      // 🔹 fetch files after subjects
+      const filesRes = await API.get("/files", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const filesData = Array.isArray(filesRes.data.files) ? filesRes.data.files : [];
+
+      // 🔹 map subject objects into files
+      const filesWithSubjects = filesData.map((file) => {
+        const subject = subjectsData.find((subj) => subj._id === file.subjectID);
+        return { ...file, subjectID: subject || { name: "No subject" } };
+      });
+
+      setUploadedFiles(filesWithSubjects);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to fetch data. Please login again.");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("userEmail");
+      navigate("/login");
+    }
+  };
+  fetchData();
+}, [navigate, token]);
+
 
   // 🔹 Upload File
   const handleFileUpload = async (e) => {
