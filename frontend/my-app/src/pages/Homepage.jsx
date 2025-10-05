@@ -1,7 +1,8 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../api";
-import CommentsRatings from "../components/CommentsRatings";
+import CommentsSection from "../components/CommentsSection";
+import RatingSection from "../components/RatingSection";
 
 export default function Homepage() {
   const navigate = useNavigate();
@@ -12,10 +13,12 @@ export default function Homepage() {
   const [selectedSubject, setSelectedSubject] = useState("");
   const [newSubjectName, setNewSubjectName] = useState("");
   const [openComments, setOpenComments] = useState({});
+  const [fileAverages, setFileAverages] = useState({}); // ⭐ Live average sync per file
 
   const email = localStorage.getItem("userEmail");
   const token = localStorage.getItem("accessToken");
 
+  // 🔹 Fetch profile, subjects, and files
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -27,12 +30,18 @@ export default function Homepage() {
         const subjectsRes = await API.get("/subjects", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
+        setSubjects(
+          Array.isArray(subjectsRes.data.subjects)
+            ? subjectsRes.data.subjects
+            : []
+        );
 
         const filesRes = await API.get("/files", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUploadedFiles(Array.isArray(filesRes.data.files) ? filesRes.data.files : []);
+        setUploadedFiles(
+          Array.isArray(filesRes.data.files) ? filesRes.data.files : []
+        );
       } catch (err) {
         console.error(err);
         alert("Failed to fetch data. Please login again.");
@@ -44,6 +53,7 @@ export default function Homepage() {
     fetchData();
   }, [navigate, token]);
 
+  // 🔹 Upload File
   const handleFileUpload = async (e) => {
     e.preventDefault();
     if (!selectedFile) return alert("Please select a file");
@@ -75,9 +85,9 @@ export default function Homepage() {
     }
   };
 
+  // 🔹 Add new subject
   const handleAddSubject = async () => {
     if (!newSubjectName) return alert("Enter a subject name");
-
     try {
       await API.post(
         "/subjects",
@@ -97,10 +107,20 @@ export default function Homepage() {
     }
   };
 
+  // 🔹 Toggle comments visibility
   const toggleComments = (fileId) => {
     setOpenComments((prev) => ({ ...prev, [fileId]: !prev[fileId] }));
   };
 
+  // 🔹 Update live averages when rating changes
+  const handleAverageUpdate = (fileId, newAverage) => {
+    setFileAverages((prev) => ({
+      ...prev,
+      [fileId]: newAverage,
+    }));
+  };
+
+  // 🔹 Logout
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userEmail");
@@ -122,6 +142,7 @@ export default function Homepage() {
         </div>
       )}
 
+      {/* 🧭 Navigation Buttons */}
       <div style={{ margin: "20px 0" }}>
         <Link to="/my-files">
           <button>View Your Files</button>
@@ -134,8 +155,9 @@ export default function Homepage() {
         </Link>
       </div>
 
-      {/* Removed Create Note and All Notes sections */}
-
+      {/* =====================
+          Upload File Section
+      ===================== */}
       <h3>Upload a File</h3>
       <form onSubmit={handleFileUpload}>
         <input
@@ -144,7 +166,6 @@ export default function Homepage() {
           accept=".pdf,.doc,.docx,.txt"
         />
 
-        {/* Subject dropdown (required) */}
         <div style={{ marginTop: "10px" }}>
           <label>
             Select Subject:{" "}
@@ -163,7 +184,6 @@ export default function Homepage() {
           </label>
         </div>
 
-        {/* Add new subject below dropdown */}
         <div style={{ marginTop: "10px" }}>
           <input
             type="text"
@@ -181,6 +201,9 @@ export default function Homepage() {
         </button>
       </form>
 
+      {/* =====================
+          Uploaded Files
+      ===================== */}
       <h3>Uploaded Files</h3>
       {uploadedFiles.length === 0 ? (
         <p>No files uploaded yet.</p>
@@ -188,7 +211,12 @@ export default function Homepage() {
         uploadedFiles.map((file) => (
           <div
             key={file._id}
-            style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}
+            style={{
+              border: "1px solid gray",
+              padding: "10px",
+              margin: "10px 0",
+              borderRadius: "5px",
+            }}
           >
             <p>
               <strong>Filename:</strong>{" "}
@@ -200,11 +228,20 @@ export default function Homepage() {
                 {file.originalName}
               </a>
             </p>
+
             <p>Uploaded by: {file.user?.username || "Unknown"}</p>
             <p>Subject: {file.subjectID?.name || "No subject"}</p>
 
-            <button onClick={() => toggleComments(file._id)}>
-              {openComments[file._id] ? "Hide Comments" : "Show Comments"}
+            {/* ⭐ Show Average Rating (auto-updates) */}
+            <RatingSection
+              itemId={file._id}
+              userId={profile?._id}
+              showAverageOnly
+              liveAverage={fileAverages[file._id]}
+            />
+
+            <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>
+              {openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}
             </button>
 
             {openComments[file._id] && (
@@ -215,7 +252,13 @@ export default function Homepage() {
                   paddingTop: "10px",
                 }}
               >
-                <CommentsRatings itemId={file._id} userId={profile?._id || "TEST_USER_ID"} />
+                <CommentsSection fileId={file._id} userId={profile?._id} />
+                <RatingSection
+                  itemId={file._id}
+                  userId={profile?._id}
+                  allowRating
+                  onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
+                />
               </div>
             )}
           </div>

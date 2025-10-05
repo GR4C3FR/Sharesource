@@ -1,61 +1,71 @@
-const express = require('express');
+// backend/routes/commentRoutes.js
+const express = require("express");
 const router = express.Router();
-const Comment = require('../models/Comment');
+const Comment = require("../models/Comment");
 
-// POST new comment
-router.post('/', async (req, res) => {
-  const { itemId, userId, text, parentCommentId } = req.body;
+// POST new comment (expects { fileId, userId, text, parentCommentId? })
+router.post("/", async (req, res) => {
   try {
-    if (!itemId || !userId || !text) {
-      return res.status(400).json({ error: "itemId, userId, and text are required" });
+    const { fileId, userId, text, parentCommentId } = req.body;
+
+    if (!fileId || !userId || !text) {
+      return res
+        .status(400)
+        .json({ error: "fileId, userId, and text are required" });
     }
 
-    const comment = new Comment({ itemId, userId, text, parentCommentId });
-    await comment.save();
+    const newComment = new Comment({
+      fileId,
+      userId,
+      text,
+      parentCommentId: parentCommentId || null,
+    });
 
-    // return with populated user info
-    const populatedComment = await Comment.findById(comment._id).populate("userId", "username");
-    res.status(201).json(populatedComment);
+    const saved = await newComment.save();
 
+    // populate the user info for frontend convenience
+    const populated = await Comment.findById(saved._id)
+      .populate("userId", "username email firstName lastName")
+      .lean();
+
+    res.status(201).json({ message: "Comment added", comment: populated });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Failed to post comment:", err);
+    res.status(500).json({ error: "Failed to post comment", details: err.message });
   }
 });
 
-// GET all comments for a file
-router.get('/:itemId', async (req, res) => {
+// GET comments for a file
+router.get("/:fileId", async (req, res) => {
   try {
-    const comments = await Comment.find({ itemId: req.params.itemId })
-      .populate('userId', 'username')  // only return username field
-      .sort({ createdAt: -1 });        // newest first
-    res.json(comments);
+    const comments = await Comment.find({ fileId: req.params.fileId })
+      .populate("userId", "username email firstName lastName")
+      .sort({ createdAt: -1 });
+
+    res.json({ comments });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Failed to fetch comments:", err);
+    res.status(500).json({ error: "Failed to fetch comments", details: err.message });
   }
 });
 
-// DELETE a comment (only owner can delete)
-router.delete('/:id', async (req, res) => {
+// DELETE comment (body must include userId to verify owner)
+router.delete("/:id", async (req, res) => {
   try {
+    const { userId } = req.body;
     const comment = await Comment.findById(req.params.id);
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
 
-    if (!comment) {
-      return res.status(404).json({ error: "Comment not found" });
-    }
-
-    // Only check ownership if userId is passed
-    if (req.body.userId && comment.userId.toString() !== req.body.userId) {
+    if (!userId || comment.userId.toString() !== userId) {
       return res.status(403).json({ error: "Not authorized to delete this comment" });
     }
 
     await Comment.findByIdAndDelete(req.params.id);
-    res.json({ message: "Comment deleted successfully" });
-
+    res.json({ message: "Comment deleted" });
   } catch (err) {
-    console.error("Delete error:", err); // 👈 log the real issue
-    res.status(500).json({ error: err.message });
+    console.error("❌ Delete error:", err);
+    res.status(500).json({ error: "Failed to delete comment", details: err.message });
   }
 });
-
 
 module.exports = router;
