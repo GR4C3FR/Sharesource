@@ -179,7 +179,7 @@ useEffect(() => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userEmail");
     alert("Logged out");
-    navigate("/login");
+    navigate("/");
   };
 
   return (

@@ -1,10 +1,15 @@
-// models/CollaborativeSpace.js
 const mongoose = require("mongoose");
 
 const memberSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   role: { type: String, enum: ["owner", "editor", "viewer"], default: "viewer" },
   joinedAt: { type: Date, default: Date.now }
+});
+
+const fileSchema = new mongoose.Schema({
+  fileId: { type: mongoose.Schema.Types.ObjectId, ref: "File" }, // reference to actual File model
+  name: { type: String },
+  type: { type: String }
 });
 
 const CollaborativeSpaceSchema = new mongoose.Schema(
@@ -18,8 +23,7 @@ const CollaborativeSpaceSchema = new mongoose.Schema(
         role: { type: String, enum: ["owner", "member"], default: "member" },
       },
     ],
-    sharedNotesIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Note" }],
-    sharedDocIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "GoogleDoc" }], // ✅ now points to real model
+    sharedFilesIds: [fileSchema], // fixed to match controller
   },
   { timestamps: true }
 );

@@ -1,6 +1,4 @@
-// backend/controllers/collaborativeSpaceController.js
 const CollaborativeSpace = require("../models/CollaborativeSpace");
-const GoogleDoc = require("../models/GoogleDoc");
 
 /**
  * Create a new collaborative space
@@ -18,12 +16,13 @@ exports.createSpace = async (req, res) => {
       description: description || "",
       ownerUserId: req.user.userId,
       members: [{ userId: req.user.userId, role: "owner" }],
+      sharedFilesIds: [],
     });
 
-    // Return populated for convenience
     const populated = await CollaborativeSpace.findById(newSpace._id)
       .populate("ownerUserId", "username email")
-      .populate({ path: "members.userId", select: "username email" });
+      .populate({ path: "members.userId", select: "username email" })
+      .populate("sharedFilesIds");
 
     res.status(201).json(populated);
   } catch (error) {
@@ -42,10 +41,9 @@ exports.getUserSpaces = async (req, res) => {
     const spaces = await CollaborativeSpace.find({
       "members.userId": req.user.userId,
     })
-      .populate("sharedNotesIds")
-      .populate("sharedDocIds")
       .populate("ownerUserId", "username email")
-      .populate({ path: "members.userId", select: "username email" });
+      .populate({ path: "members.userId", select: "username email" })
+      .populate("sharedFilesIds");
 
     res.json(spaces);
   } catch (error) {
@@ -57,14 +55,15 @@ exports.getUserSpaces = async (req, res) => {
 };
 
 /**
- * Get ALL spaces (for discovery / joining)
+ * Get all spaces (for discovery / joining)
  */
 exports.getAllSpaces = async (req, res) => {
   try {
     const spaces = await CollaborativeSpace.find({})
-      .select("spaceName description ownerUserId members")
+      .select("spaceName description ownerUserId members sharedFilesIds")
       .populate("ownerUserId", "username email")
-      .populate({ path: "members.userId", select: "username email" });
+      .populate({ path: "members.userId", select: "username email" })
+      .populate("sharedFilesIds");
 
     res.json(spaces);
   } catch (error) {
@@ -76,7 +75,7 @@ exports.getAllSpaces = async (req, res) => {
 };
 
 /**
- * Add a new member to a collaborative space
+ * Add a new member (admin / owner) to a collaborative space
  */
 exports.addMember = async (req, res) => {
   const { spaceId } = req.params;
@@ -90,7 +89,6 @@ exports.addMember = async (req, res) => {
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
 
-    // Prevent duplicates
     if (space.members.some((m) => String(m.userId) === String(userId))) {
       return res.status(400).json({ message: "User is already a member" });
     }
@@ -98,10 +96,10 @@ exports.addMember = async (req, res) => {
     space.members.push({ userId, role });
     await space.save();
 
-    // return populated space for convenience
     const populated = await CollaborativeSpace.findById(space._id)
       .populate("ownerUserId", "username email")
-      .populate({ path: "members.userId", select: "username email" });
+      .populate({ path: "members.userId", select: "username email" })
+      .populate("sharedFilesIds");
 
     res.json(populated);
   } catch (error) {
@@ -113,87 +111,68 @@ exports.addMember = async (req, res) => {
 };
 
 /**
- * Share a note in a collaborative space
+ * Join a space (self)
  */
-exports.shareNote = async (req, res) => {
+exports.joinSpace = async (req, res) => {
   const { spaceId } = req.params;
-  const { noteId } = req.body;
+  const userId = req.user.userId;
 
   try {
-    if (!noteId) {
-      return res.status(400).json({ message: "noteId is required" });
-    }
-
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
 
-    if (space.sharedNotesIds.includes(noteId)) {
-      return res.status(400).json({ message: "Note already shared" });
+    if (space.members.some(m => String(m.userId) === String(userId))) {
+      return res.status(400).json({ message: "You are already a member" });
     }
 
-    space.sharedNotesIds.push(noteId);
+    space.members.push({ userId, role: "member" });
     await space.save();
 
     const populated = await CollaborativeSpace.findById(space._id)
       .populate("ownerUserId", "username email")
       .populate({ path: "members.userId", select: "username email" })
-      .populate("sharedNotesIds")
-      .populate("sharedDocIds");
+      .populate("sharedFilesIds");
 
     res.json(populated);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to share note",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Failed to join space", error: error.message });
   }
 };
 
 /**
- * Share a Google Doc in a collaborative space
+ * Share a file in a collaborative space
  */
-exports.shareGoogleDoc = async (req, res) => {
+exports.shareFile = async (req, res) => {
   const { spaceId } = req.params;
-  const { title, link } = req.body;
+  const { fileId, name, type } = req.body;
 
   try {
-    if (!title || !link) {
-      return res.status(400).json({ message: "title and link are required" });
-    }
+    if (!fileId) return res.status(400).json({ message: "fileId is required" });
 
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
 
-    const newDoc = await GoogleDoc.create({
-      title,
-      link,
-      createdBy: req.user.userId,
-    });
+    // prevent duplicates
+    if (space.sharedFilesIds.some(f => f.fileId === fileId)) {
+      return res.status(400).json({ message: "File already shared" });
+    }
 
-    space.sharedDocIds.push(newDoc._id);
+    space.sharedFilesIds.push({ fileId, name, type });
     await space.save();
 
     const populated = await CollaborativeSpace.findById(space._id)
       .populate("ownerUserId", "username email")
       .populate({ path: "members.userId", select: "username email" })
-      .populate("sharedDocIds")
-      .populate("sharedNotesIds");
+      .populate("sharedFilesIds");
 
-    res.json({
-      message: "Google Doc shared successfully",
-      doc: newDoc,
-      space: populated,
-    });
+    res.json(populated);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to share document",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Failed to share file", error: error.message });
   }
 };
 
 /**
- * Update space info (name, description)
+ * Update space info
  */
 exports.updateSpace = async (req, res) => {
   const { spaceId } = req.params;
@@ -203,7 +182,6 @@ exports.updateSpace = async (req, res) => {
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
 
-    // Allow only members to update
     if (!space.members.some(m => String(m.userId) === String(req.user.userId))) {
       return res.status(403).json({ message: "You are not a member of this space" });
     }
@@ -215,14 +193,12 @@ exports.updateSpace = async (req, res) => {
 
     const populated = await CollaborativeSpace.findById(space._id)
       .populate("ownerUserId", "username email")
-      .populate({ path: "members.userId", select: "username email" });
+      .populate({ path: "members.userId", select: "username email" })
+      .populate("sharedFilesIds");
 
-    res.json({ message: "✅ Space updated", space: populated });
+    res.json({ message: "Space updated", space: populated });
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to update space",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Failed to update space", error: error.message });
   }
 };
 
@@ -237,49 +213,42 @@ exports.leaveSpace = async (req, res) => {
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
 
-    // Check if user is a member
-    const memberIndex = space.members.findIndex(
-      (m) => String(m.userId) === String(userId)
-    );
-    if (memberIndex === -1) {
-      return res.status(400).json({ message: "You are not a member of this space" });
-    }
+    const memberIndex = space.members.findIndex(m => String(m.userId) === String(userId));
+    if (memberIndex === -1) return res.status(400).json({ message: "You are not a member" });
 
-    // Remove member
     space.members.splice(memberIndex, 1);
 
-    // If the user leaving is the owner
     if (String(space.ownerUserId) === String(userId)) {
       if (space.members.length > 0) {
-        // Transfer ownership to the first member
         space.ownerUserId = space.members[0].userId;
         space.members[0].role = "owner";
       } else {
-        // No members left → delete the space entirely
         await space.deleteOne();
-        return res.json({ message: "Space deleted as the owner left and no members remain" });
+        return res.json({ message: "Space deleted as owner left and no members remain" });
       }
     }
 
     await space.save();
     res.json({ message: "You have left the space", space });
   } catch (error) {
-    console.error("❌ [leaveSpace] error:", error.message);
     res.status(500).json({ message: "Failed to leave space", error: error.message });
   }
 };
 
-
+/**
+ * Get space by ID
+ */
 exports.getSpaceById = async (req, res) => {
   try {
     const space = await CollaborativeSpace.findById(req.params.spaceId)
       .populate("ownerUserId", "username email")
-      .populate("members.userId", "username email")
-      .populate("sharedNotesIds");
+      .populate({ path: "members.userId", select: "username email" })
+      .populate("sharedFilesIds");
+
     if (!space) return res.status(404).json({ message: "Space not found" });
+
     res.json(space);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch space", error: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch space", error: error.message });
   }
 };
-

@@ -13,12 +13,18 @@ export default function SpaceDetails() {
   // Fetch space by ID
   const fetchSpace = async () => {
     try {
-      const res = await API.get(`/api/collaborative-spaces/${spaceId}`, {
+      const res = await API.get(`/collaborative-spaces/${spaceId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
-      setSpace(res.data);
-      setTitle(res.data.spaceName);
-      setDesc(res.data.description);
+
+      const data = res.data;
+      // Ensure members and sharedNotesIds are arrays to prevent .map errors
+      data.members = data.members || [];
+      data.sharedNotesIds = data.sharedNotesIds || [];
+
+      setSpace(data);
+      setTitle(data.spaceName || "");
+      setDesc(data.description || "");
     } catch (err) {
       console.error("❌ Failed to fetch space:", err);
       alert("Failed to load space details");
@@ -33,7 +39,7 @@ export default function SpaceDetails() {
   const saveEdit = async () => {
     try {
       await API.put(
-        `/api/collaborative-spaces/${spaceId}`,
+        `/collaborative-spaces/${spaceId}`,
         { spaceName: title, description: desc },
         { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
       );
@@ -80,28 +86,28 @@ export default function SpaceDetails() {
       {/* Members */}
       <h3 style={{ marginTop: "20px" }}>Members ({space.members?.length || 0})</h3>
       <ul>
-        {space.members?.map((m) => (
-          <li key={m.userId?._id || m.userId}>
-            {m.userId?.username || m.userId?.email || "Unknown User"} ({m.role})
-          </li>
-        ))}
+        {space.members?.length > 0
+          ? space.members.map((m) => (
+              <li key={m.userId?._id || m.userId}>
+                {m.userId?.username || m.userId?.email || "Unknown User"} ({m.role})
+              </li>
+            ))
+          : <li>No members yet</li>}
       </ul>
 
       {/* Shared Notes */}
       <h3>Shared Notes</h3>
-      {space.sharedNotesIds?.length === 0 ? (
-        <p>No notes shared yet.</p>
-      ) : (
-        <ul>
-          {space.sharedNotesIds.map((note) => (
-            <li key={note._id}>
-              <strong>{note.title}</strong> – {note.content}
-              <br />
-              <em>Subject: {note.subjectID}</em>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul>
+        {space.sharedNotesIds?.length > 0
+          ? space.sharedNotesIds.map((note) => (
+              <li key={note._id}>
+                <strong>{note.title}</strong> – {note.content}
+                <br />
+                <em>Subject: {note.subjectID}</em>
+              </li>
+            ))
+          : <li>No notes shared yet.</li>}
+      </ul>
     </div>
   );
 }
