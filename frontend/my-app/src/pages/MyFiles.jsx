@@ -15,6 +15,27 @@ export default function MyFiles() {
   const token = localStorage.getItem("accessToken");
   const userId = localStorage.getItem("userId"); // Ensure owner check
 
+  const downloadFile = async (filename) => {
+  try {
+    const response = await fetch(`http://localhost:5000/uploads/${filename}`, {
+      headers: { Authorization: `Bearer ${token}` }, // only if needed for auth
+    });
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename; // use original filename
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Download failed:", err);
+    alert("Failed to download file.");
+  }
+};
+
+
   const handleAverageUpdate = (fileId, newAverage) => {
     setFileAverages((prev) => ({
       ...prev,
@@ -99,6 +120,13 @@ export default function MyFiles() {
               >
                 {file.originalName}
               </a>
+              <button
+                style={{ marginLeft: "10px" }}
+                onClick={() => downloadFile(file.filename)}
+              >
+                Download
+              </button>
+
               <p>Subject: {file.subject?.name || "No subject"}</p>
               <p>Uploaded on: {new Date(file.uploadDate).toLocaleString()}</p>
               <p><strong>Description:</strong> {file.description || "No description"}</p>
