@@ -1,10 +1,11 @@
 import { useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import API from "../api";
 import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
 
 export default function Homepage() {
+  console.debug("Homepage mount", { token: localStorage.getItem("accessToken") });
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -67,10 +68,10 @@ useEffect(() => {
       });
       const filesData = Array.isArray(filesRes.data.files) ? filesRes.data.files : [];
 
-      // 🔹 map subject objects into files
+      // 🔹 map subject objects into files (attach as `subject` so UI reads file.subject)
       const filesWithSubjects = filesData.map((file) => {
         const subject = subjectsData.find((subj) => subj._id === file.subjectID);
-        return { ...file, subjectID: subject || { name: "No subject" } };
+        return { ...file, subject: subject || { name: "No subject" } };
       });
 
       setUploadedFiles(filesWithSubjects);
@@ -190,6 +191,29 @@ useEffect(() => {
   fetchBookmarks();
 }, [token]);
 
+  // Batch-fetch averages for uploaded files so sorting by rating works immediately
+  useEffect(() => {
+    const fetchAverages = async () => {
+      try {
+        console.debug("Homepage: batch fetch averages start", { count: uploadedFiles.length });
+        const map = {};
+        await Promise.all(uploadedFiles.map(async (f) => {
+          try {
+            const res = await API.get(`/ratings/${f._id}`, { headers: { Authorization: `Bearer ${token}` } });
+            map[f._id] = res.data.average || 0;
+          } catch (err) {
+            map[f._id] = 0;
+          }
+        }));
+        setFileAverages(map);
+        console.debug("Homepage: batch fetch averages done", { map });
+      } catch (err) {
+        console.error('Failed to fetch averages', err);
+      }
+    };
+    if (uploadedFiles && uploadedFiles.length > 0) fetchAverages();
+  }, [uploadedFiles, token]);
+
 const toggleBookmark = async (fileID) => {
   try {
     if (bookmarkedFiles.includes(fileID)) {
@@ -221,16 +245,18 @@ const toggleBookmark = async (fileID) => {
     navigate("/");
   };
 
-  // Filter & sort files before rendering
-  const displayedFiles = uploadedFiles
-    .filter(file => !filterSubject || file.subject?.name === subjects.find(s => s._id === filterSubject)?.name)
-    .sort((a, b) => {
+  // Filter & sort files before rendering (useMemo for responsiveness)
+  const displayedFiles = useMemo(() => {
+    const filtered = uploadedFiles.filter(file => !filterSubject || file.subject?.name === subjects.find(s => s._id === filterSubject)?.name);
+    const sorted = filtered.slice().sort((a, b) => {
       if (sortOption === "newest") return new Date(b.uploadDate) - new Date(a.uploadDate);
       if (sortOption === "oldest") return new Date(a.uploadDate) - new Date(b.uploadDate);
       if (sortOption === "ratingDesc") return (fileAverages[b._id] || 0) - (fileAverages[a._id] || 0);
       if (sortOption === "ratingAsc") return (fileAverages[a._id] || 0) - (fileAverages[b._id] || 0);
       return 0;
     });
+    return sorted;
+  }, [uploadedFiles, filterSubject, sortOption, fileAverages, subjects]);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -432,6 +458,7 @@ const toggleBookmark = async (fileID) => {
               userId={profile?._id}
               showAverageOnly
               liveAverage={fileAverages[file._id]}
+              onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
             />
 
             <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>

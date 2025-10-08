@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
 import API from "../api";
 
 export default function MyFiles() {
+  console.debug("MyFiles mount", { token: localStorage.getItem("accessToken") });
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,30 +72,43 @@ export default function MyFiles() {
     }
   };
 
-  // Fetch bookmarks for user's files
+  // Consolidated fetch: bookmarks, profile, subjects
   useEffect(() => {
-    const fetchBookmarks = async () => {
+    const fetchAll = async () => {
       try {
-        const res = await API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } });
-        const validBookmarks = res.data.bookmarks.filter(b => b.fileId && b.fileId._id);
+        const [bkRes, profileRes, subjRes] = await Promise.all([
+          API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } }),
+          API.get("/users/profile", { headers: { Authorization: `Bearer ${token}` } }),
+          API.get("/subjects", { headers: { Authorization: `Bearer ${token}` } }),
+        ]);
+
+        const validBookmarks = Array.isArray(bkRes.data.bookmarks)
+          ? bkRes.data.bookmarks.filter(b => b.fileId && b.fileId._id)
+          : [];
         setBookmarkedFiles(validBookmarks.map(b => b.fileId._id));
+
+        setProfile(profileRes.data.user);
+
+        const subjectsData = Array.isArray(subjRes.data.subjects) ? subjRes.data.subjects : [];
+        setSubjects(subjectsData);
       } catch (err) {
-        // silent fail
+        console.error(err);
       }
     };
-    
+    fetchAll();
+  }, [token]);
 
+  // Bookmark toggle (component-scoped)
   const toggleBookmark = async (fileID) => {
     try {
       if (bookmarkedFiles.includes(fileID)) {
-        const res = await API.get("/bookmarks");
-        // const res = await API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } });
+        const res = await API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } });
         const bookmark = res.data.bookmarks.find(b => b.fileId._id === fileID);
         if (!bookmark) return alert("Bookmark not found");
-        await API.delete(`/bookmarks/${bookmark._id}`); // { headers: { Authorization: `Bearer ${token}` } });
+        await API.delete(`/bookmarks/${bookmark._id}`, { headers: { Authorization: `Bearer ${token}` } });
         setBookmarkedFiles(prev => prev.filter(id => id !== fileID));
       } else {
-        await API.post("/bookmarks/add", { fileId: fileID }); //{ headers: { Authorization: `Bearer ${token}` } });
+        await API.post("/bookmarks/add", { fileId: fileID }, { headers: { Authorization: `Bearer ${token}` } });
         setBookmarkedFiles(prev => [...prev, fileID]);
       }
     } catch (err) {
@@ -102,29 +116,6 @@ export default function MyFiles() {
       alert("Failed to update bookmark");
     }
   };
-
-  const fetchProfileAndSubjects = async () => {
-    try {
-      const profileRes = await API.get("/users/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setProfile(profileRes.data.user);
-
-      const subjectsRes = await API.get("/subjects", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const subjectsData = Array.isArray(subjectsRes.data.subjects)
-        ? subjectsRes.data.subjects
-        : [];
-      setSubjects(subjectsData);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-    fetchBookmarks();
-    fetchProfileAndSubjects();
-  }, [token]);
 
 
   useEffect(() => {
@@ -143,8 +134,6 @@ export default function MyFiles() {
     fetchMyFiles();
   }, [token]);
 
-  if (loading) return <p>Loading your files...</p>;
-  if (error) return <p>{error}</p>;
 
   // Upload File
 const handleFileUpload = async (e) => {
@@ -204,16 +193,43 @@ const handleFileUpload = async (e) => {
   };
 
 
-  // Filter & sort files before rendering
-  const displayedFiles = files
-    .filter(file => !filterSubject || file.subject?._id === filterSubject)
-    .sort((a, b) => {
+  // Filter & sort files before rendering (useMemo for immediate responsiveness)
+  const displayedFiles = useMemo(() => {
+    const filtered = files.filter(file => !filterSubject || file.subject?._id === filterSubject);
+    const sorted = filtered.slice().sort((a, b) => {
       if (sortOption === "newest") return new Date(b.uploadDate) - new Date(a.uploadDate);
       if (sortOption === "oldest") return new Date(a.uploadDate) - new Date(b.uploadDate);
       if (sortOption === "ratingDesc") return (fileAverages[b._id] || 0) - (fileAverages[a._id] || 0);
       if (sortOption === "ratingAsc") return (fileAverages[a._id] || 0) - (fileAverages[b._id] || 0);
       return 0;
     });
+    return sorted;
+  }, [files, filterSubject, sortOption, fileAverages]);
+
+  // Batch-fetch averages for files so sorting by rating works as expected
+  // Runs whenever the files list changes and must be inside component scope
+  useEffect(() => {
+    const fetchAverages = async () => {
+      try {
+        const map = {};
+        await Promise.all(files.map(async (f) => {
+          try {
+            const res = await API.get(`/ratings/${f._id}`, { headers: { Authorization: `Bearer ${token}` } });
+            map[f._id] = res.data.average || 0;
+          } catch (err) {
+            map[f._id] = 0;
+          }
+        }));
+        setFileAverages(map);
+      } catch (err) {
+        console.error('Failed to fetch averages', err);
+      }
+    };
+    if (files && files.length > 0) fetchAverages();
+  }, [files, token]);
+
+  if (loading) return <p>Loading your files...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="my-files-container" style={{ padding: "20px" }}>
@@ -353,24 +369,48 @@ const handleFileUpload = async (e) => {
               <p>Uploaded on: {new Date(file.uploadDate).toLocaleString()}</p>
               <p><strong>Description:</strong> {file.description || "No description"}</p>
 
+              {/* Buttons: Delete (owner) and Bookmark - placed together */}
+              <div style={{ marginTop: "8px", display: "flex", gap: "8px", alignItems: "center" }}>
+                {file.user?._id === userId && (
+                  <button
+                    onClick={() => handleDeleteFile(file._id)}
+                    style={{
+                      backgroundColor: "#e74c3c",
+                      color: "white",
+                      border: "none",
+                      padding: "5px 10px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Delete File
+                  </button>
+                )}
 
-              {/* 🗑️ Delete button (owner only) */}
-              {file.user?._id === userId && (
                 <button
-                  onClick={() => handleDeleteFile(file._id)}
+                  onClick={() => toggleBookmark(file._id)}
                   style={{
-                    marginTop: "8px",
-                    backgroundColor: "#e74c3c",
-                    color: "white",
+                    backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7",
                     border: "none",
                     padding: "5px 10px",
                     borderRadius: "4px",
                     cursor: "pointer",
                   }}
                 >
-                  Delete File
+                  {bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}
                 </button>
-              )}
+              </div>
+
+              {/* ⭐ Show Average Rating (auto-updates) - placed under buttons */}
+              <div style={{ marginTop: "8px" }}>
+                <RatingSection
+                  itemId={file._id}
+                  userId={profile?._id}
+                  showAverageOnly
+                  liveAverage={fileAverages[file._id]}
+                  onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
+                />
+              </div>
 
               {/* Show/hide comments & ratings */}
               <button
@@ -388,15 +428,7 @@ const handleFileUpload = async (e) => {
                     paddingTop: "10px",
                   }}
                 >
-                  {/* ⭐ Display current average rating above the stars */}
-                  <p>
-                    <strong>Average Rating:</strong>{" "}
-                    {fileAverages[file._id] !== undefined
-                      ? fileAverages[file._id].toFixed(1)
-                      : "No ratings yet"}
-                  </p>
-
-                  {/* Allow live rating */}
+                  {/* Allow live rating (interactive) */}
                   <RatingSection
                     itemId={file._id}
                     userId={file.user?._id}
@@ -415,3 +447,5 @@ const handleFileUpload = async (e) => {
     </div>
   );
 }
+
+// (Averages effect moved inside component above)
