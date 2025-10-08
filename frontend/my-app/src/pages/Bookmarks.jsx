@@ -14,6 +14,14 @@ export default function Bookmarks() {
         const validBookmarks = Array.isArray(res.data.bookmarks)
           ? res.data.bookmarks.filter(b => b.fileId && b.fileId._id)
           : [];
+
+      // ✅ Ensure each file has user info
+      const filesWithUser = validBookmarks.map(b => ({
+        ...b.fileId,
+        user: b.fileId.user || { username: "Unknown" },
+        subject: b.fileId.subject || { name: "No subject" },
+      }));
+
         setBookmarks(validBookmarks.length > 0 ? validBookmarks.map(b => b.fileId) : []);
       } catch (err) {
         console.error(err);
@@ -57,6 +65,7 @@ export default function Bookmarks() {
               </a>
               <button onClick={() => downloadFile(file.filename)} style={{ marginLeft: "10px" }}>Download</button>
               <p>Subject: {file.subject?.name || "No subject"}</p>
+              <p>Uploaded by: {file.user?.username || "Unknown"}</p>
               <p><strong>Description:</strong> {file.description || "No description"}</p>
             </li>
           ))}

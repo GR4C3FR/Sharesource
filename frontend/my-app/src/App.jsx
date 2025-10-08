@@ -10,6 +10,7 @@ import MyFiles from './pages/MyFiles';
 import GoogleDocView from "./pages/GoogleDocView";
 import FileManager from './pages/FileManager';
 import Viewer from './pages/Viewer';
+import Bookmarks from './pages/Bookmarks';
 
 
 function App() {
@@ -121,13 +122,15 @@ function App() {
 
       <Route path="/my-notes" element={<MyNotes />} />
 
-  <Route path="/my-files" element={isLoggedIn ? <MyFiles /> : <Navigate to="/login" />} />
+      <Route path="/my-files" element={isLoggedIn ? <MyFiles /> : <Navigate to="/login" />} />
 
       <Route path="/spaces/:spaceId/docs/:docId" element={<GoogleDocView />} />
 
       <Route path="/files" element={<FileManager />} />
 
       <Route path="/viewer/:id" element={<Viewer />} />
+
+      <Route path="/bookmarks" element={isLoggedIn ? <Bookmarks /> : <Navigate to="/login" />} />
 
     </Routes>
   );
