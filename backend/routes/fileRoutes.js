@@ -109,9 +109,11 @@ router.delete('/:id', authMiddleware, async (req, res) => {
       console.warn('⚠️ File not found on disk, skipping unlink:', file.path);
     }
 
+
     await Promise.all([
       Comment.deleteMany({ fileId: file._id }),
       Rating.deleteMany({ fileId: file._id }),
+      require("../models/Bookmark").deleteMany({ fileID: file._id }),
     ]);
 
     await file.deleteOne();

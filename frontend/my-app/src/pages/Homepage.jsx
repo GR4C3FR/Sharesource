@@ -17,6 +17,7 @@ export default function Homepage() {
   const [description, setDescription] = useState("");
   const [filterSubject, setFilterSubject] = useState(""); // "" = all subjects
   const [sortOption, setSortOption] = useState("newest"); // default newest → oldest
+  const [bookmarkedFiles, setBookmarkedFiles] = useState([]);
 
 
   const email = localStorage.getItem("userEmail");
@@ -174,6 +175,41 @@ useEffect(() => {
     }
   };
 
+// Fetch bookmarks on page load
+useEffect(() => {
+  const fetchBookmarks = async () => {
+    try {
+      const res = await API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } });
+      const validBookmarks = res.data.bookmarks.filter(b => b.fileId && b.fileId._id);
+      setBookmarkedFiles(validBookmarks.map(b => b.fileId._id));
+    } catch (err) {
+      setBookmarkedFiles([]);
+      console.error("Failed to fetch bookmarks:", err);
+    }
+  };
+  fetchBookmarks();
+}, [token]);
+
+const toggleBookmark = async (fileID) => {
+  try {
+    if (bookmarkedFiles.includes(fileID)) {
+      // Find the bookmark _id first
+      const res = await API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } });
+      const bookmark = res.data.bookmarks.find(b => b.fileId._id === fileID);
+      if (!bookmark) return alert("Bookmark not found");
+
+      await API.delete(`/bookmarks/${bookmark._id}`, { headers: { Authorization: `Bearer ${token}` } });
+      setBookmarkedFiles(prev => prev.filter(id => id !== fileID));
+    } else {
+      await API.post("/bookmarks/add", { fileId: fileID }, { headers: { Authorization: `Bearer ${token}` } });
+      setBookmarkedFiles(prev => [...prev, fileID]);
+    }
+  } catch (err) {
+    console.error("Bookmark action failed:", err);
+    alert("Failed to update bookmark");
+  }
+};
+
 
 
 
@@ -211,9 +247,14 @@ useEffect(() => {
       )}
 
       {/* 🧭 Navigation Buttons */}
+
       <div style={{ margin: "20px 0" }}>
         <Link to="/my-files">
-          <button>View Your Files</button>
+          <button style={{ marginBottom: "10px", padding: "5px 10px", backgroundColor: "#3498db", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}>View Your Files</button>
+        </Link>
+        <br />
+        <Link to="/bookmarks">
+          <button style={{ marginBottom: "10px", padding: "5px 10px", backgroundColor: "#f1c40f", color: "black", border: "none", borderRadius: "4px", cursor: "pointer" }}>Bookmarks</button>
         </Link>
       </div>
 
@@ -370,6 +411,20 @@ useEffect(() => {
           Delete File
         </button>
       )}
+
+      <button
+        onClick={() => toggleBookmark(file._id)}
+        style={{
+          marginLeft: "10px",
+          backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7",
+          border: "none",
+          padding: "5px 10px",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        {bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}
+      </button>
 
             {/* ⭐ Show Average Rating (auto-updates) */}
             <RatingSection

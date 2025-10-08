@@ -14,6 +14,7 @@ const ratingRoutes = require('./routes/ratingRoutes');
 const collaborativeSpaceRoutes = require('./routes/collaborativeSpaceRoutes');
 const fileRoutes = require('./routes/fileRoutes'); // Handles Google Docs links or uploads
 const googleDocRoutes = require('./routes/googleDocRoutes');
+const bookmarkRoutes = require('./routes/bookmarkRoutes');
 
 const app = express();
 
@@ -44,6 +45,8 @@ app.use('/api/ratings', ratingRoutes);
 app.use('/api/collaborative-spaces', collaborativeSpaceRoutes);
 app.use('/api/files', fileRoutes); // <-- This will handle Google Docs link submission
 app.use('/api/google-docs', googleDocRoutes);
+app.use("/api/bookmarks", bookmarkRoutes);
+
 
 // =======================
 // Root Route (Health Check)

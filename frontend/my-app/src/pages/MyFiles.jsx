@@ -9,6 +9,7 @@ export default function MyFiles() {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+    const [bookmarkedFiles, setBookmarkedFiles] = useState([]);
   const [fileAverages, setFileAverages] = useState({});
   const [openComments, setOpenComments] = useState({}); // ⭐ Toggle comments
   const [filterSubject, setFilterSubject] = useState("");
@@ -70,25 +71,58 @@ export default function MyFiles() {
     }
   };
 
+  // Fetch bookmarks for user's files
   useEffect(() => {
-    const fetchProfileAndSubjects = async () => {
+    const fetchBookmarks = async () => {
       try {
-        const profileRes = await API.get("/users/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setProfile(profileRes.data.user);
-
-        const subjectsRes = await API.get("/subjects", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const subjectsData = Array.isArray(subjectsRes.data.subjects)
-          ? subjectsRes.data.subjects
-          : [];
-        setSubjects(subjectsData);
+        const res = await API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } });
+        const validBookmarks = res.data.bookmarks.filter(b => b.fileId && b.fileId._id);
+        setBookmarkedFiles(validBookmarks.map(b => b.fileId._id));
       } catch (err) {
-        console.error(err);
+        // silent fail
       }
     };
+    
+
+  const toggleBookmark = async (fileID) => {
+    try {
+      if (bookmarkedFiles.includes(fileID)) {
+        const res = await API.get("/bookmarks");
+        // const res = await API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } });
+        const bookmark = res.data.bookmarks.find(b => b.fileId._id === fileID);
+        if (!bookmark) return alert("Bookmark not found");
+        await API.delete(`/bookmarks/${bookmark._id}`); // { headers: { Authorization: `Bearer ${token}` } });
+        setBookmarkedFiles(prev => prev.filter(id => id !== fileID));
+      } else {
+        await API.post("/bookmarks/add", { fileId: fileID }); //{ headers: { Authorization: `Bearer ${token}` } });
+        setBookmarkedFiles(prev => [...prev, fileID]);
+      }
+    } catch (err) {
+      console.error('Bookmark action failed:', err);
+      alert("Failed to update bookmark");
+    }
+  };
+
+  const fetchProfileAndSubjects = async () => {
+    try {
+      const profileRes = await API.get("/users/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfile(profileRes.data.user);
+
+      const subjectsRes = await API.get("/subjects", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const subjectsData = Array.isArray(subjectsRes.data.subjects)
+        ? subjectsRes.data.subjects
+        : [];
+      setSubjects(subjectsData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+    fetchBookmarks();
     fetchProfileAndSubjects();
   }, [token]);
 
@@ -99,7 +133,7 @@ export default function MyFiles() {
         const res = await API.get("/files/my", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setFiles(res.data.files);
+  setFiles(Array.isArray(res.data.files) ? res.data.files : []);
       } catch (err) {
         setError("Failed to load your files");
       } finally {
