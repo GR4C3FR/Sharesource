@@ -7,6 +7,10 @@ import SpaceDetails from "./pages/SpaceDetails";
 import NoteView from "./pages/NoteView"; 
 import MyNotes from "./pages/MyNotes";
 import MyFiles from './pages/MyFiles';
+import GoogleDocView from "./pages/GoogleDocView";
+import FileManager from './pages/FileManager';
+import Viewer from './pages/Viewer';
+
 
 function App() {
   const isLoggedIn = !!localStorage.getItem("accessToken");
@@ -117,7 +121,13 @@ function App() {
 
       <Route path="/my-notes" element={<MyNotes />} />
 
-      <Route path="/my-files" element={isLoggedIn ? <MyFiles /> : <Navigate to="/login" />} />
+  <Route path="/my-files" element={isLoggedIn ? <MyFiles /> : <Navigate to="/login" />} />
+
+      <Route path="/spaces/:spaceId/docs/:docId" element={<GoogleDocView />} />
+
+      <Route path="/files" element={<FileManager />} />
+
+      <Route path="/viewer/:id" element={<Viewer />} />
 
     </Routes>
   );

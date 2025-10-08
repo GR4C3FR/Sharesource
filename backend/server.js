@@ -9,10 +9,11 @@ const path = require('path');
 // =======================
 const userRoutes = require('./routes/userRoutes');
 const subjectRoutes = require('./routes/subjectRoutes');
-const commentRoutes = require('./routes/commentRoutes'); 
+const commentRoutes = require('./routes/commentRoutes');
 const ratingRoutes = require('./routes/ratingRoutes');
 const collaborativeSpaceRoutes = require('./routes/collaborativeSpaceRoutes');
-const fileRoutes = require('./routes/fileRoutes');
+const fileRoutes = require('./routes/fileRoutes'); // Handles Google Docs links or uploads
+const googleDocRoutes = require('./routes/googleDocRoutes');
 
 const app = express();
 
@@ -24,13 +25,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5173", // Your React frontend
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
-// Serve uploaded files statically
+// Serve uploaded files statically (for images, documents, etc.)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // =======================
@@ -41,9 +42,12 @@ app.use('/api/subjects', subjectRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api/collaborative-spaces', collaborativeSpaceRoutes);
-app.use('/api/files', fileRoutes);
+app.use('/api/files', fileRoutes); // <-- This will handle Google Docs link submission
+app.use('/api/google-docs', googleDocRoutes);
 
-// Root route (for sanity check)
+// =======================
+// Root Route (Health Check)
+// =======================
 app.get('/', (req, res) => {
   res.send('🚀 Server is running and connected to MongoDB ✅');
 });

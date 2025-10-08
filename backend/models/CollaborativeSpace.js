@@ -28,4 +28,24 @@ const CollaborativeSpaceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// When a space document is deleted (document.deleteOne()), remove any linked GoogleDoc records
+CollaborativeSpaceSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
+  try {
+    // require here to avoid circular requires at module load time
+    const GoogleDoc = require('./GoogleDoc');
+    const docsToDelete = (this.sharedFilesIds || [])
+      .filter((f) => f.type === 'googledoc' && f.fileId)
+      .map((f) => f.fileId);
+
+    if (docsToDelete.length > 0) {
+      await GoogleDoc.deleteMany({ _id: { $in: docsToDelete } });
+      console.log(`[CollaborativeSpace] deleted ${docsToDelete.length} linked GoogleDoc(s) for removed space ${this._id}`);
+    }
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = mongoose.model("CollaborativeSpace", CollaborativeSpaceSchema);

@@ -7,8 +7,14 @@ const Rating = require('../models/Rating');
 const upload = require('../middleware/upload');
 const authMiddleware = require('../middleware/authMiddleware');
 
+// 🆕 Import the GoogleDoc model
+const GoogleDoc = require('../models/GoogleDoc');
+
 const router = express.Router();
 
+// =============================================
+// 🔹 ORIGINAL FILE UPLOAD ROUTES (UNCHANGED)
+// =============================================
 
 // upload a single file; field name: 'file'
 router.post('/upload', authMiddleware, upload.single('file'), async (req, res) => {
@@ -43,13 +49,10 @@ router.get('/', authMiddleware, async (req, res) => {
             .populate('subject', 'name')
             .sort({ uploadDate: -1 });
             
-        // ✅ map populated subject to subjectID for frontend compatibility
-        const filesMapped = files.map((file) => {
-        return {
-            ...file._doc,             // keep all other fields
-            subjectID: file.subject || null, // alias populated subject
-        };
-        });
+        const filesMapped = files.map((file) => ({
+            ...file._doc,
+            subjectID: file.subject || null,
+        }));
 
         res.json({ files: filesMapped });
     } catch (err) {
@@ -96,30 +99,82 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     const file = await File.findById(req.params.id);
     if (!file) return res.status(404).json({ message: 'File not found' });
 
-    // ✅ Correct ownership check
     const fileOwnerId = file.user._id ? file.user._id.toString() : file.user.toString();
     const isOwner = fileOwnerId === (req.user._id?.toString() || req.user.userId?.toString());
     if (!isOwner) return res.status(403).json({ message: 'Forbidden' });
 
-    // 🧹 Remove file from disk safely
     try {
       fs.unlinkSync(path.resolve(file.path));
     } catch (err) {
       console.warn('⚠️ File not found on disk, skipping unlink:', file.path);
     }
 
-    // 🧹 Delete associated comments & ratings
     await Promise.all([
       Comment.deleteMany({ fileId: file._id }),
       Rating.deleteMany({ fileId: file._id }),
     ]);
 
-    // 🧹 Delete file record from DB
     await file.deleteOne();
 
     res.json({ message: 'File deleted successfully' });
   } catch (err) {
     console.error('Delete file error:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// =============================================
+// 🆕 NEW GOOGLE DOCS LINK ROUTES
+// =============================================
+
+// Add a Google Docs link (must be public)
+router.post('/google-docs', authMiddleware, async (req, res) => {
+  try {
+    const { title, link } = req.body;
+
+    if (!title || !link)
+      return res.status(400).json({ message: 'Title and link are required' });
+
+    if (!link.includes('docs.google.com'))
+      return res.status(400).json({ message: 'Invalid Google Docs link' });
+
+    const googleDoc = new GoogleDoc({
+      title,
+      link,
+      createdBy: req.user.userId,
+    });
+
+    await googleDoc.save();
+    res.status(201).json({ message: 'Google Doc link added', googleDoc });
+  } catch (err) {
+    console.error('Google Docs add error:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get all Google Docs links
+router.get('/google-docs', authMiddleware, async (req, res) => {
+  try {
+    const docs = await GoogleDoc.find()
+      .populate('createdBy', 'username email')
+      .sort({ createdAt: -1 });
+
+    res.json({ docs });
+  } catch (err) {
+    console.error('Fetch Google Docs error:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get single Google Doc by ID
+router.get('/google-docs/:id', authMiddleware, async (req, res) => {
+  try {
+    const doc = await GoogleDoc.findById(req.params.id).populate('createdBy', 'username email');
+    if (!doc) return res.status(404).json({ message: 'Google Doc not found' });
+
+    res.json({ doc });
+  } catch (err) {
+    console.error('Fetch single Google Doc error:', err);
     res.status(500).json({ message: err.message });
   }
 });
