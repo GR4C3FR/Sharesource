@@ -23,7 +23,14 @@ router.post("/add", auth, async (req, res) => {
 // Get user's bookmarks
 router.get("/", auth, async (req, res) => {
   try {
-    const bookmarks = await Bookmark.find({ userID: req.user.userId }).populate("fileID");
+    // populate fileID and also populate the file's user and subject so frontend can show uploader and subject
+    const bookmarks = await Bookmark.find({ userID: req.user.userId }).populate({
+      path: "fileID",
+      populate: [
+        { path: "user", select: "username firstName lastName" },
+        { path: "subject", select: "name" },
+      ],
+    });
     // Only keep bookmarks with a valid populated fileID
     const filtered = bookmarks.filter(b => b.fileID);
     // Remap fileID to fileId for frontend compatibility

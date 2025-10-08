@@ -11,18 +11,29 @@ export default function Bookmarks() {
     const fetchBookmarks = async () => {
       try {
         const res = await API.get("/bookmarks", { headers: { Authorization: `Bearer ${token}` } });
+
         const validBookmarks = Array.isArray(res.data.bookmarks)
           ? res.data.bookmarks.filter(b => b.fileId && b.fileId._id)
           : [];
 
-      // ✅ Ensure each file has user info
-      const filesWithUser = validBookmarks.map(b => ({
-        ...b.fileId,
-        user: b.fileId.user || { username: "Unknown" },
-        subject: b.fileId.subject || { name: "No subject" },
-      }));
+        // Use the populated file objects directly. Ensure safe fallbacks for user and subject.
+        const files = validBookmarks.map(b => {
+          const file = b.fileId;
+          const user = file.user || { username: "Unknown", firstName: "", lastName: "" };
+          const subject = file.subject || { name: "No subject" };
+          const uploaderName = user.firstName || user.lastName
+            ? `${(user.firstName || "").trim()} ${(user.lastName || "").trim()}`.trim()
+            : (user.username || "Unknown");
 
-        setBookmarks(validBookmarks.length > 0 ? validBookmarks.map(b => b.fileId) : []);
+          return {
+            ...file,
+            user,
+            subject,
+            uploaderName,
+          };
+        });
+
+        setBookmarks(files);
       } catch (err) {
         console.error(err);
         alert("Failed to load bookmarks");
@@ -65,7 +76,7 @@ export default function Bookmarks() {
               </a>
               <button onClick={() => downloadFile(file.filename)} style={{ marginLeft: "10px" }}>Download</button>
               <p>Subject: {file.subject?.name || "No subject"}</p>
-              <p>Uploaded by: {file.user?.username || "Unknown"}</p>
+              <p>Uploaded by: {file.uploaderName || file.user?.username || "Unknown"}</p>
               <p><strong>Description:</strong> {file.description || "No description"}</p>
             </li>
           ))}
