@@ -201,7 +201,7 @@ useEffect(() => {
           try {
             const res = await API.get(`/ratings/${f._id}`, { headers: { Authorization: `Bearer ${token}` } });
             map[f._id] = res.data.average || 0;
-          } catch (err) {
+          } catch {
             map[f._id] = 0;
           }
         }));
@@ -259,7 +259,164 @@ const toggleBookmark = async (fileID) => {
   }, [uploadedFiles, filterSubject, sortOption, fileAverages, subjects]);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="w-auto h-auto flex flex-col items-center justify-center">
+      {/* Header */}
+      <div className="w-[1500px] flex justify-between items-center space-y-8 py-8 mb-7">
+      {/* Logo Section */}
+      <section className="flex items-center justify-center gap-4">
+        <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
+        <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
+      </section>
+
+      {/* Buttons Section */}
+      <section>
+        <button onClick={handleLogout} style={{ marginTop: "20px" }}>
+          <img src="public/logout-icon.png"/>
+        </button>
+      </section>
+      </div>
+
+      <div className="flex w-[1500px] gap-35">
+        <section>
+          <section className="w-max h-auto flex flex-col justify-center mb-35">
+            <h1 class="text-[45px] font-inter font-normal leading-[16px] tracking-[0%] text-[#1D2F58]">Dashboard</h1>
+          </section>
+
+          <section className="flex flex-col gap-10">
+            <Link to="/homepage">
+              <section className="flex gap-3">
+                <img src="public/dashboard-logo.png"/>
+                <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Dashboard</button>
+              </section>
+            </Link>
+            <Link to="/bookmarks">
+              <section className="flex gap-3">
+                <img src="public/bookmarks-logo.png"/>
+                <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Bookmarks</button>
+              </section>
+            </Link>
+            <Link to="/my-files">
+              <section className="flex gap-3">
+                <img src="public/yourfiles-logo.png"/>
+                <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Your Files</button>
+              </section>
+            </Link>
+            <Link to="/spaces">
+              <section className="flex gap-3">
+                <img src="public/collaborate-logo.png"/>
+                <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Collaboration</button>
+              </section>
+            </Link>
+          </section>
+        </section>
+        
+        <section className="mt-17 w-[700px]">
+          {profile && (
+            <h1 className="text-[32px] font-inter font-normal leading-[16px] tracking-[0%] mb-10">Welcome Back, {profile.firstName}! </h1>
+          )}
+
+         {uploadedFiles.length === 0 ? (
+            <p>No files uploaded yet.</p>
+          ) : (
+            displayedFiles.map((file) => (
+              <div
+                key={file._id}
+                className="py-7 px-5 bg-white mb-8 rounded-lg shadow-md"
+              >
+                <p>
+                  <strong>Filename:</strong>{" "}
+                  <a
+                    href={`http://localhost:5000/uploads/${file.filename}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {file.originalName}
+                  </a>
+                  <button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() => downloadFile(file.filename)}
+                  >
+                    Download
+                  </button>
+
+                </p>
+
+                <p>Uploaded by: {file.user?.username || "Unknown"}</p>
+                <p>Subject: {file.subject?.name || "No subject"}</p>
+                <p><strong>Description:</strong> {file.description || "No description"}</p>
+
+          
+          {/* 🗑️ Delete button (visible only to owner) */}
+          {file.user?._id === profile?._id && (
+            <button
+              onClick={() => handleDeleteFile(file._id)}
+              style={{
+                marginTop: "8px",
+                backgroundColor: "#e74c3c",
+                color: "white",
+                border: "none",
+                padding: "5px 10px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Delete File
+            </button>
+          )}
+
+          <button
+            onClick={() => toggleBookmark(file._id)}
+            style={{
+              marginLeft: "10px",
+              backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7",
+              border: "none",
+              padding: "5px 10px",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            {bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}
+          </button>
+
+                {/* ⭐ Show Average Rating (auto-updates) */}
+                <RatingSection
+                  itemId={file._id}
+                  userId={profile?._id}
+                  showAverageOnly
+                  liveAverage={fileAverages[file._id]}
+                  onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
+                />
+
+                <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>
+                  {openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}
+                </button>
+
+                {openComments[file._id] && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      borderTop: "1px dashed gray",
+                      paddingTop: "10px",
+                    }}
+                  >
+                    <CommentsSection fileId={file._id} userId={profile?._id} />
+                    <RatingSection
+                      itemId={file._id}
+                      userId={profile?._id}
+                      allowRating
+                      onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
+                    />
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+
+          
+        </section>
+
+      </div>
+
       <h2>Homepage</h2>
       <p>Welcome, {email}!</p>
 
@@ -384,111 +541,6 @@ const toggleBookmark = async (fileID) => {
         </button>
       </div>
 
-      {uploadedFiles.length === 0 ? (
-        <p>No files uploaded yet.</p>
-      ) : (
-        displayedFiles.map((file) => (
-          <div
-            key={file._id}
-            style={{
-              border: "1px solid gray",
-              padding: "10px",
-              margin: "10px 0",
-              borderRadius: "5px",
-            }}
-          >
-            <p>
-              <strong>Filename:</strong>{" "}
-              <a
-                href={`http://localhost:5000/uploads/${file.filename}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {file.originalName}
-              </a>
-              <button
-                style={{ marginLeft: "10px" }}
-                onClick={() => downloadFile(file.filename)}
-              >
-                Download
-              </button>
-
-            </p>
-
-            <p>Uploaded by: {file.user?.username || "Unknown"}</p>
-            <p>Subject: {file.subject?.name || "No subject"}</p>
-            <p><strong>Description:</strong> {file.description || "No description"}</p>
-
-      
-      {/* 🗑️ Delete button (visible only to owner) */}
-      {file.user?._id === profile?._id && (
-        <button
-          onClick={() => handleDeleteFile(file._id)}
-          style={{
-            marginTop: "8px",
-            backgroundColor: "#e74c3c",
-            color: "white",
-            border: "none",
-            padding: "5px 10px",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          Delete File
-        </button>
-      )}
-
-      <button
-        onClick={() => toggleBookmark(file._id)}
-        style={{
-          marginLeft: "10px",
-          backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7",
-          border: "none",
-          padding: "5px 10px",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        {bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}
-      </button>
-
-            {/* ⭐ Show Average Rating (auto-updates) */}
-            <RatingSection
-              itemId={file._id}
-              userId={profile?._id}
-              showAverageOnly
-              liveAverage={fileAverages[file._id]}
-              onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
-            />
-
-            <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>
-              {openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}
-            </button>
-
-            {openComments[file._id] && (
-              <div
-                style={{
-                  marginTop: "10px",
-                  borderTop: "1px dashed gray",
-                  paddingTop: "10px",
-                }}
-              >
-                <CommentsSection fileId={file._id} userId={profile?._id} />
-                <RatingSection
-                  itemId={file._id}
-                  userId={profile?._id}
-                  allowRating
-                  onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
-                />
-              </div>
-            )}
-          </div>
-        ))
-      )}
-
-      <button onClick={handleLogout} style={{ marginTop: "20px" }}>
-        Logout
-      </button>
     </div>
   );
 }
