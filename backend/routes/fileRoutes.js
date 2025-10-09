@@ -44,8 +44,8 @@ router.post('/upload', authMiddleware, upload.single('file'), async (req, res) =
 
 router.get('/', authMiddleware, async (req, res) => {
     try {
-        const files = await File.find()
-            .populate('user', 'username email')
+    const files = await File.find()
+      .populate('user', 'username email profileImageURL')
             .populate('subject', 'name')
             .sort({ uploadDate: -1 });
             
@@ -65,8 +65,8 @@ router.get('/', authMiddleware, async (req, res) => {
 router.get('/my', authMiddleware, async (req, res) => {
     try {
         const userId = req.user._id || req.user.userId;
-        const files = await File.find({ user: userId })
-        .populate('user', 'username email')
+  const files = await File.find({ user: userId })
+  .populate('user', 'username email profileImageURL')
         .populate('subject', 'name')
         .sort({ uploadDate: -1 });
         res.json({ files });

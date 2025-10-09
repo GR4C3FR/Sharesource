@@ -4,6 +4,8 @@ import API from "../api";
 import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
 import { useMemo } from "react";
+import TopRatedPanel from "../components/TopRatedPanel";
+import FilePreviewModal from "../components/FilePreviewModal";
 
 export default function Bookmarks() {
   const navigate = useNavigate();
@@ -35,6 +37,7 @@ export default function Bookmarks() {
     };
     fetchSubjects();
   }, [token]);
+  const [previewFile, setPreviewFile] = useState(null);
 
   // Batch fetch averages for bookmarked files to support immediate sorting
   useEffect(() => {
@@ -63,8 +66,7 @@ export default function Bookmarks() {
     const sorted = filtered.slice().sort((a, b) => {
       if (sortOption === 'newest') return new Date(b.uploadDate) - new Date(a.uploadDate);
       if (sortOption === 'oldest') return new Date(a.uploadDate) - new Date(b.uploadDate);
-      if (sortOption === 'ratingDesc') return (fileAverages[b._id] || 0) - (fileAverages[a._id] || 0);
-      if (sortOption === 'ratingAsc') return (fileAverages[a._id] || 0) - (fileAverages[b._id] || 0);
+      // rating-based sorting removed; TopRatedPanel provides top-rated listing
       return 0;
     });
     return sorted;
@@ -160,8 +162,6 @@ export default function Bookmarks() {
           <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
             <option value="newest">Newest - Oldest</option>
             <option value="oldest">Oldest - Newest</option>
-            <option value="ratingDesc">High - Low</option>
-            <option value="ratingAsc">Low - High</option>
           </select>
         </label>
 
@@ -169,55 +169,62 @@ export default function Bookmarks() {
           Clear Filters
         </button>
       </div>
-      {displayedBookmarks.filter(file => file && file._id).length === 0 ? (
-        <p>No bookmarks yet.</p>
-      ) : (
-        <ul>
-          {displayedBookmarks.filter(file => file && file._id).map(file => (
-            <li key={file._id} style={{ marginBottom: "15px" }}>
-              <a href={`http://localhost:5000/uploads/${file.filename}`} target="_blank" rel="noopener noreferrer">
-                {file.originalName}
-              </a>
-              <button onClick={() => downloadFile(file.filename)} style={{ marginLeft: "10px" }}>Download</button>
-                <button
-                  onClick={() => toggleBookmark(file._id)}
-                  style={{
-                    marginLeft: "10px",
-                    backgroundColor: "#f1c40f",
-                    border: "none",
-                    padding: "5px 10px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
-                >
-                  Remove Bookmark
-                </button>
-              <p>Subject: {file.subject?.name || "No subject"}</p>
-              <p>Uploaded by: {file.uploaderName || file.user?.username || "Unknown"}</p>
-              <p><strong>Description:</strong> {file.description || "No description"}</p>
+      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+        <div style={{ flex: 1 }}>
+          {displayedBookmarks.filter(file => file && file._id).length === 0 ? (
+            <p>No bookmarks yet.</p>
+          ) : (
+            <ul>
+              {displayedBookmarks.filter(file => file && file._id).map(file => (
+                <li key={file._id} style={{ marginBottom: "15px" }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
+                        <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
+                      </div>
+                  <button onClick={() => downloadFile(file.filename)} style={{ marginLeft: "10px" }}>Download</button>
+                  <button
+                    onClick={() => toggleBookmark(file._id)}
+                    style={{
+                      marginLeft: "10px",
+                      backgroundColor: "#f1c40f",
+                      border: "none",
+                      padding: "5px 10px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Remove Bookmark
+                  </button>
+                  <p>Subject: {file.subject?.name || "No subject"}</p>
+                  <p>Uploaded by: {file.uploaderName || file.user?.username || "Unknown"}</p>
+                  <p><strong>Description:</strong> {file.description || "No description"}</p>
 
-              {/* ⭐ Show Average Rating (auto-updates) - outside dropdown to match Homepage */}
-              <RatingSection itemId={file._id} userId={file.user?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
-              <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>
-                {openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}
-              </button>
+                  {/* ⭐ Show Average Rating (auto-updates) - outside dropdown to match Homepage */}
+                  <RatingSection itemId={file._id} userId={file.user?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
+                  <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>
+                    {openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}
+                  </button>
 
-              {openComments[file._id] && (
-                <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
-                  <CommentsSection fileId={file._id} userId={file.user?._id} />
-                  <RatingSection
-                    itemId={file._id}
-                    userId={file.user?._id}
-                    allowRating
-                    onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
-                    liveAverage={fileAverages[file._id]}
-                  />
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+                  {openComments[file._id] && (
+                    <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
+                      <CommentsSection fileId={file._id} userId={file.user?._id} />
+                      <RatingSection
+                        itemId={file._id}
+                        userId={file.user?._id}
+                        allowRating
+                        onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
+                        liveAverage={fileAverages[file._id]}
+                      />
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <TopRatedPanel scope="bookmarks" token={token} />
+      </div>
+      {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
     </div>
   );
 }

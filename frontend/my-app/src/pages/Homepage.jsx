@@ -3,6 +3,8 @@ import { useEffect, useState, useMemo } from "react";
 import API from "../api";
 import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
+import TopRatedPanel from "../components/TopRatedPanel";
+import FilePreviewModal from "../components/FilePreviewModal";
 
 export default function Homepage() {
   console.debug("Homepage mount", { token: localStorage.getItem("accessToken") });
@@ -70,7 +72,9 @@ useEffect(() => {
 
       // 🔹 map subject objects into files (attach as `subject` so UI reads file.subject)
       const filesWithSubjects = filesData.map((file) => {
-        const subject = subjectsData.find((subj) => subj._id === file.subjectID);
+        // file.subjectID can be an id string or a populated subject object (from backend)
+        const subjectId = file.subjectID && file.subjectID._id ? file.subjectID._id : file.subjectID;
+        const subject = file.subject || subjectsData.find((subj) => subj._id === subjectId);
         return { ...file, subject: subject || { name: "No subject" } };
       });
 
@@ -112,7 +116,14 @@ useEffect(() => {
       const filesRes = await API.get("/files", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUploadedFiles(Array.isArray(filesRes.data.files) ? filesRes.data.files : []);
+      const filesData = Array.isArray(filesRes.data.files) ? filesRes.data.files : [];
+      // attach subject objects based on current subjects state
+      const filesWithSubjects = filesData.map((file) => {
+        const subjectId = file.subjectID && file.subjectID._id ? file.subjectID._id : file.subjectID;
+        const subject = file.subject || subjects.find((s) => s._id === subjectId) || { name: 'No subject' };
+        return { ...file, subject };
+      });
+      setUploadedFiles(filesWithSubjects);
       setSelectedFile(null);
       setSelectedSubject("");
       setDescription("");
@@ -251,12 +262,13 @@ const toggleBookmark = async (fileID) => {
     const sorted = filtered.slice().sort((a, b) => {
       if (sortOption === "newest") return new Date(b.uploadDate) - new Date(a.uploadDate);
       if (sortOption === "oldest") return new Date(a.uploadDate) - new Date(b.uploadDate);
-      if (sortOption === "ratingDesc") return (fileAverages[b._id] || 0) - (fileAverages[a._id] || 0);
-      if (sortOption === "ratingAsc") return (fileAverages[a._id] || 0) - (fileAverages[b._id] || 0);
+      // rating-based sorting removed; use TopRatedPanel for top-rated listing
       return 0;
     });
     return sorted;
   }, [uploadedFiles, filterSubject, sortOption, fileAverages, subjects]);
+
+  const [previewFile, setPreviewFile] = useState(null);
 
   return (
     <div className="w-auto h-auto flex flex-col items-center justify-center">
@@ -268,9 +280,12 @@ const toggleBookmark = async (fileID) => {
         <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
       </section>
 
-      {/* Buttons Section */}
-      <section>
-        <button onClick={handleLogout} style={{ marginTop: "20px" }}>
+      {/* Buttons Section (show avatar + logout) */}
+      <section style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        {profile && (
+          <img src={(API.defaults.baseURL.replace(/\/api$/, '') + (profile.profileImageURL || '')) || '/sharessource-logo.png'} alt="avatar" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
+        )}
+        <button onClick={handleLogout} style={{ marginTop: '20px' }}>
           <img src="public/logout-icon.png"/>
         </button>
       </section>
@@ -307,6 +322,12 @@ const toggleBookmark = async (fileID) => {
                 <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Collaboration</button>
               </section>
             </Link>
+            <Link to="/profile">
+              <section className="flex gap-3" style={{ marginTop: 8 }}>
+                <img src="public/sharessource-logo.png" style={{ width: 26 }}/> 
+                <button class="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Profile</button>
+              </section>
+            </Link>
           </section>
         </section>
         
@@ -325,13 +346,10 @@ const toggleBookmark = async (fileID) => {
               >
                 <p>
                   <strong>Filename:</strong>{" "}
-                  <a
-                    href={`http://localhost:5000/uploads/${file.filename}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {file.originalName}
-                  </a>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
+                        <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
+                      </div>
                   <button
                     style={{ marginLeft: "10px" }}
                     onClick={() => downloadFile(file.filename)}
@@ -414,8 +432,11 @@ const toggleBookmark = async (fileID) => {
 
           
         </section>
+        {/* Right-side Top Rated panel */}
+        <TopRatedPanel scope="all" token={token} />
 
       </div>
+  {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
 
       <h2>Homepage</h2>
       <p>Welcome, {email}!</p>
@@ -525,8 +546,6 @@ const toggleBookmark = async (fileID) => {
           <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
             <option value="newest">Newest - Oldest</option>
             <option value="oldest">Oldest - Newest</option>
-            <option value="ratingDesc">High - Low</option>
-            <option value="ratingAsc">Low - High</option>
           </select>
         </label>
 

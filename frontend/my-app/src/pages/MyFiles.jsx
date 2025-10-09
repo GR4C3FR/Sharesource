@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
+import TopRatedPanel from "../components/TopRatedPanel";
+import FilePreviewModal from "../components/FilePreviewModal";
 import API from "../api";
 
 export default function MyFiles() {
@@ -44,6 +46,8 @@ export default function MyFiles() {
     alert("Failed to download file.");
   }
 };
+
+  const [previewFile, setPreviewFile] = useState(null);
 
 
   const handleAverageUpdate = (fileId, newAverage) => {
@@ -199,8 +203,7 @@ const handleFileUpload = async (e) => {
     const sorted = filtered.slice().sort((a, b) => {
       if (sortOption === "newest") return new Date(b.uploadDate) - new Date(a.uploadDate);
       if (sortOption === "oldest") return new Date(a.uploadDate) - new Date(b.uploadDate);
-      if (sortOption === "ratingDesc") return (fileAverages[b._id] || 0) - (fileAverages[a._id] || 0);
-      if (sortOption === "ratingAsc") return (fileAverages[a._id] || 0) - (fileAverages[b._id] || 0);
+      // rating-based sort options removed (handled via TopRatedPanel)
       return 0;
     });
     return sorted;
@@ -233,6 +236,8 @@ const handleFileUpload = async (e) => {
 
   return (
     <div className="my-files-container" style={{ padding: "20px" }}>
+      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+        <div style={{ flex: 1 }}>
       <h2>My Uploaded Files</h2>
       {/* Filter & Sort */}
       <div style={{ marginBottom: "15px", border: "1px solid #ccc", padding: "10px", borderRadius: "5px" }}>
@@ -248,12 +253,10 @@ const handleFileUpload = async (e) => {
         </label>
 
         <label style={{ marginLeft: "15px" }}>
-          Sort by:{" "}
+          Sort by: {" "}
           <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
             <option value="newest">Newest - Oldest</option>
             <option value="oldest">Oldest - Newest</option>
-            <option value="ratingDesc">High - Low</option>
-            <option value="ratingAsc">Low - High</option>
           </select>
         </label>
 
@@ -351,13 +354,10 @@ const handleFileUpload = async (e) => {
                 paddingBottom: "10px",
               }}
             >
-              <a
-                href={`http://localhost:5000/uploads/${file.filename}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {file.originalName}
-              </a>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
+                <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
+              </div>
               <button
                 style={{ marginLeft: "10px" }}
                 onClick={() => downloadFile(file.filename)}
@@ -444,6 +444,10 @@ const handleFileUpload = async (e) => {
           ))}
         </ul>
       )}
+        </div>
+        <TopRatedPanel scope="my" token={token} />
+      </div>
+      {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
     </div>
   );
 }

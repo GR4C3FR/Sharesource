@@ -4,6 +4,9 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
 const router = express.Router();
+const uploadImage = require('../middleware/uploadImage');
+const fs = require('fs');
+const path = require('path');
 
 // JWT Helper Functions
 function generateAccessToken(user) {
@@ -158,6 +161,56 @@ router.get('/profile', authMiddleware, async (req, res) => {
     }
     res.json({ message: "✅ Profile fetched", user });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update profile fields
+router.put('/profile', authMiddleware, async (req, res) => {
+  try {
+    const updates = {};
+    const allowed = ['firstName', 'lastName', 'bio', 'username'];
+    allowed.forEach(k => { if (req.body[k] !== undefined) updates[k] = req.body[k]; });
+
+    const user = await User.findByIdAndUpdate(req.user.userId, updates, { new: true }).select('-passwordHash');
+    res.json({ message: 'Profile updated', user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Upload profile picture
+router.post('/profile/picture', authMiddleware, uploadImage.single('profileImage'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
+    const filename = req.file.filename;
+    const user = await User.findByIdAndUpdate(req.user.userId, { profileImageURL: `/uploads/${filename}` }, { new: true }).select('-passwordHash');
+    res.json({ message: 'Profile picture updated', user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete profile picture
+router.delete('/profile/picture', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    if (!user.profileImageURL) return res.status(400).json({ error: 'No profile picture to delete' });
+
+    // profileImageURL is like /uploads/filename.ext
+    const filename = path.basename(user.profileImageURL);
+    const filePath = path.join(__dirname, '..', 'uploads', filename);
+
+    try { fs.unlinkSync(filePath); } catch (e) { console.warn('Failed to unlink profile image', e); }
+
+    user.profileImageURL = undefined;
+    await user.save();
+
+    res.json({ message: 'Profile picture removed', user: { ...user.toObject(), passwordHash: undefined } });
+  } catch (err) {
+    console.error('Delete profile picture error', err);
     res.status(500).json({ error: err.message });
   }
 });

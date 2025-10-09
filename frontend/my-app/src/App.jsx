@@ -11,6 +11,7 @@ import GoogleDocView from "./pages/GoogleDocView";
 import FileManager from './pages/FileManager';
 import Viewer from './pages/Viewer';
 import Bookmarks from './pages/Bookmarks';
+import Profile from './pages/Profile';
 
 
 function App() {
@@ -123,6 +124,8 @@ function App() {
       <Route path="/my-notes" element={<MyNotes />} />
 
       <Route path="/my-files" element={isLoggedIn ? <MyFiles /> : <Navigate to="/login" />} />
+
+  <Route path="/profile" element={isLoggedIn ? <Profile /> : <Navigate to="/login" />} />
 
       <Route path="/spaces/:spaceId/docs/:docId" element={<GoogleDocView />} />
 
