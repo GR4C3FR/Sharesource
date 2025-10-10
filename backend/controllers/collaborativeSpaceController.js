@@ -11,7 +11,10 @@ exports.createSpace = async (req, res) => {
       return res.status(400).json({ message: "spaceName is required" });
     }
 
-    const newSpace = await CollaborativeSpace.create({
+  // Admins cannot create spaces
+  if (req.user.role === 'Admin') return res.status(403).json({ message: 'Admins are not allowed to create spaces' });
+
+  const newSpace = await CollaborativeSpace.create({
       spaceName: spaceName.trim(),
       description: description || "",
       ownerUserId: req.user.userId,
@@ -129,6 +132,9 @@ exports.joinSpace = async (req, res) => {
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
 
+    // Admins are not allowed to join spaces
+    if (req.user.role === 'Admin') return res.status(403).json({ message: 'Admins are not allowed to join spaces' });
+
     if (space.members.some(m => String(m.userId) === String(userId))) {
       return res.status(400).json({ message: "You are already a member" });
     }
@@ -159,6 +165,9 @@ exports.shareFile = async (req, res) => {
 
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
+
+    // Admins are not allowed to share files
+    if (req.user.role === 'Admin') return res.status(403).json({ message: 'Admins are not allowed to share files' });
 
     // prevent duplicates
     if (space.sharedFilesIds.some(f => f.fileId === fileId)) {

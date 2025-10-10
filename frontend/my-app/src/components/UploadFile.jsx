@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import API from '../api';
 
+// Hide upload UI for Admin users. Fetch profile to check role.
+
 export default function UploadFile({ onUploadSuccess }) {
     const [file, setFile] = useState(null);
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [profile, setProfile] = useState(null);
+    const token = localStorage.getItem('accessToken');
 
     useEffect(() => {
         fetchFiles();
+        const fetchProfile = async () => {
+            try {
+                const res = await API.get('/users/profile', { headers: { Authorization: `Bearer ${token}` } });
+                setProfile(res.data.user);
+            } catch (err) {
+                // ignore
+            }
+        };
+        fetchProfile();
     }, []);
 
     async function fetchFiles() {
@@ -58,13 +71,19 @@ export default function UploadFile({ onUploadSuccess }) {
 
     return (
         <div>
-            <h3>Upload File</h3>
-            <form onSubmit={handleUpload} encType="multipart/form-data">
-            <input type="file" onChange={(e) => setFile(e.target.files[0])} accept=".pdf,.doc.,docx,.txt" required />
-            <input placeholder="Title (optional)" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <input placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} />
-            <button type="submit">Upload</button>
-            </form>
+            {profile?.role === 'Admin' ? (
+                <p>Admins cannot upload files through the UI.</p>
+            ) : (
+                <>
+                    <h3>Upload File</h3>
+                    <form onSubmit={handleUpload} encType="multipart/form-data">
+                        <input type="file" onChange={(e) => setFile(e.target.files[0])} accept=".pdf,.doc,.docx,.txt" required />
+                        <input placeholder="Title (optional)" value={title} onChange={(e) => setTitle(e.target.value)} />
+                        <input placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} />
+                        <button type="submit">Upload</button>
+                    </form>
+                </>
+            )}
 
             <h4>Your Files</h4>
             <ul>
@@ -73,7 +92,6 @@ export default function UploadFile({ onUploadSuccess }) {
                         <a href={`/api/files/${f._id}/download`} target="_blank" rel="noreferrer">{f.title || f.originalName}</a>
                         &nbsp;({(f.size/1024).toFixed(1)} KB)
                         <button onClick={() => handleDelete(f._id)}>Delete</button>
-                        <CommentsRatings itemId={file._id} userId={profile._id} />
                     </li>
                 ))}
             </ul>

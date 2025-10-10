@@ -293,8 +293,10 @@ export default function MyFiles() {
         Back to Homepage
       </button>
 
-      <h3>Upload a File</h3>
-      <form onSubmit={handleFileUpload}>
+      {profile?.role !== 'Admin' && (
+        <>
+          <h3>Upload a File</h3>
+          <form onSubmit={handleFileUpload}>
         <input
           type="file"
           onChange={(e) => setSelectedFile(e.target.files[0])}
@@ -341,10 +343,12 @@ export default function MyFiles() {
           />
         </div>
 
-        <button type="submit" style={{ marginTop: "10px" }}>
-          Upload
-        </button>
-      </form>
+            <button type="submit" style={{ marginTop: "10px" }}>
+              Upload
+            </button>
+          </form>
+        </>
+      )}
 
 
       {displayedFiles.length === 0 ? (
@@ -403,18 +407,20 @@ export default function MyFiles() {
                   </button>
                 )}
 
-                <button
-                  onClick={() => toggleBookmark(file._id)}
-                  style={{
-                    backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7",
-                    border: "none",
-                    padding: "5px 10px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
-                >
-                  {bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}
-                </button>
+                {profile?.role !== 'Admin' && (
+                  <button
+                    onClick={() => toggleBookmark(file._id)}
+                    style={{
+                      backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7",
+                      border: "none",
+                      padding: "5px 10px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}
+                  </button>
+                )}
               </div>
 
               {/* ⭐ Show Average Rating (auto-updates) - placed under buttons */}

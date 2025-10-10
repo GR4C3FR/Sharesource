@@ -19,7 +19,9 @@ const router = express.Router();
 // upload a single file; field name: 'file'
 router.post('/upload', authMiddleware, upload.single('file'), async (req, res) => {
     try {
-        if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    // Admins are not allowed to upload files
+    if (req.user.role === 'Admin') return res.status(403).json({ message: 'Admins are not allowed to upload files' });
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
         const fileDoc = new File({
             user: req.user.userId,
@@ -82,12 +84,13 @@ router.get('/:id/download', authMiddleware, async (req, res) => {
         const file = await File.findById(req.params.id);
         if (!file) return res.status(404).json({ message: 'File not found' });
 
-        const isOwner = file.user.toString() === req.user.userId;
-        if (!isOwner) {
-            return res.status(403).json({ message: 'Forbidden' });
-        }
+    const isOwner = file.user.toString() === req.user.userId;
+    // allow owner or Admin role to download
+    if (!isOwner && req.user.role !== 'Admin') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
 
-        res.download(path.resolve(file.path), file.originalName);
+    res.download(path.resolve(file.path), file.originalName);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -101,7 +104,8 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 
     const fileOwnerId = file.user._id ? file.user._id.toString() : file.user.toString();
     const isOwner = fileOwnerId === (req.user._id?.toString() || req.user.userId?.toString());
-    if (!isOwner) return res.status(403).json({ message: 'Forbidden' });
+    // allow owner or Admin to delete files
+    if (!isOwner && req.user.role !== 'Admin') return res.status(403).json({ message: 'Forbidden' });
 
     try {
       fs.unlinkSync(path.resolve(file.path));

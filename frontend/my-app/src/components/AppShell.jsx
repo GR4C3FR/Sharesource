@@ -59,18 +59,22 @@ export default function AppShell({ children }) {
                 <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Dashboard</button>
               </section>
             </Link>
-            <Link to="/bookmarks">
-              <section className="flex gap-3">
-                <img src="/bookmarks-logo.png"/>
-                <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Bookmarks</button>
-              </section>
-            </Link>
-            <Link to="/my-files">
-              <section className="flex gap-3">
-                <img src="/yourfiles-logo.png"/>
-                <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Your Files</button>
-              </section>
-            </Link>
+            {profile?.role !== 'Admin' && (
+              <>
+                <Link to="/bookmarks">
+                  <section className="flex gap-3">
+                    <img src="/bookmarks-logo.png"/>
+                    <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Bookmarks</button>
+                  </section>
+                </Link>
+                <Link to="/my-files">
+                  <section className="flex gap-3">
+                    <img src="/yourfiles-logo.png"/>
+                    <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Your Files</button>
+                  </section>
+                </Link>
+              </>
+            )}
             <Link to="/spaces">
               <section className="flex gap-3">
                 <img src="/collaborate-logo.png"/>

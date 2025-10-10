@@ -21,6 +21,8 @@ export default function CollaborativeSpaces() {
   const [editDesc, setEditDesc] = useState("");
   const [expandedMembers, setExpandedMembers] = useState({});
   const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+  const token = localStorage.getItem("accessToken");
   const [searchMySpaces, setSearchMySpaces] = useState("");
   const [searchAvailableSpaces, setSearchAvailableSpaces] = useState("");
 
@@ -52,6 +54,16 @@ export default function CollaborativeSpaces() {
   useEffect(() => {
     fetchSpaces();
     fetchMySpaces();
+    // fetch current user profile for role checks
+    const fetchProfile = async () => {
+      try {
+        const res = await API.get('/users/profile', { headers: { Authorization: `Bearer ${token}` } });
+        setProfile(res.data.user);
+      } catch (err) {
+        console.debug('CollaborativeSpaces: failed to load profile', err?.message || err);
+      }
+    };
+    fetchProfile();
   }, []);
 
   const displayedAvailableSpaces = useMemo(() => {
@@ -152,112 +164,123 @@ export default function CollaborativeSpaces() {
   return (
     <AppShell>
       <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
-        <div style={{ marginBottom: 12 }}>
-            <input
-              type="text"
-              placeholder="Search My Spaces by title, owner or members..."
-              value={searchMySpaces}
-              onChange={(e) => setSearchMySpaces(e.target.value)}
-              className="w-full p-2 rounded-md border border-gray-300"
-            />
-          </div>
+        {/* Only show the 'Search My Spaces' bar to non-admin users (render after profile loads to avoid flicker) */}
+        {profile ? (
+          profile.role !== 'Admin' && (
+            <div style={{ marginBottom: 12 }}>
+              <input
+                type="text"
+                placeholder="Search My Spaces by title, owner or members..."
+                value={searchMySpaces}
+                onChange={(e) => setSearchMySpaces(e.target.value)}
+                className="w-full p-2 rounded-md border border-gray-300"
+              />
+            </div>
+          )
+        ) : null}
         <button onClick={() => navigate("/homepage")}>🏠 Home</button>
 
-        <h2>Create a Collaborative Space</h2>
-      <form onSubmit={handleCreate} style={{ marginBottom: "20px" }}>
-        <input
-          type="text"
-          placeholder="Space name"
-          value={spaceName}
-          onChange={(e) => setSpaceName(e.target.value)}
-          required
-          style={{ marginRight: "10px" }}
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          style={{ marginRight: "10px" }}
-        />
-        <button type="submit">Create</button>
-      </form>
+        {/** Admins cannot create spaces */}
+        {/** Only show create form to non-admins (create form only) */}
+        {profile?.role !== 'Admin' && (
+          <>
+            <h2>Create a Collaborative Space</h2>
+            <form onSubmit={handleCreate} style={{ marginBottom: "20px" }}>
+              <input
+                type="text"
+                placeholder="Space name"
+                value={spaceName}
+                onChange={(e) => setSpaceName(e.target.value)}
+                required
+                style={{ marginRight: "10px" }}
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{ marginRight: "10px" }}
+              />
+              <button type="submit">Create</button>
+            </form>
+          </>
+        )}
 
-      <h2>My Spaces</h2>
-      {mySpaces.length === 0 ? (
-        <p>You are not a member of any spaces yet.</p>
-      ) : (
-        displayedMySpaces.map((space) => (
-          <div key={space._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
-            <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ marginLeft: "10px" }}>
-              View Space
-            </button>
-            <h3>
-              Title: {space.spaceName}{" "}
-              <button onClick={() => startEdit(space)}>Edit</button>
-              <button onClick={() => handleLeave(space._id)} style={{ marginLeft: "10px", color: "red" }}>
-                Leave
+        <h2>My Spaces</h2>
+        {mySpaces.length === 0 ? (
+          <p>You are not a member of any spaces yet.</p>
+        ) : (
+          displayedMySpaces.map((space) => (
+            <div key={space._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
+              <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ marginLeft: "10px" }}>
+                View Space
               </button>
-            </h3>
-            <p>Description: {space.description}</p>
-            <p>
-              <strong>Owner:</strong>{" "}
-              {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"} <br />
-              <strong>Members:</strong> {(space.members || []).length}
-              <button onClick={() => toggleMembers(space._id)} style={{ marginLeft: "10px" }}>
-                {expandedMembers[space._id] ? "Hide Members" : "Show Members"}
-              </button>
-            </p>
+              <h3>
+                Title: {space.spaceName}{" "}
+                <button onClick={() => startEdit(space)}>Edit</button>
+                <button onClick={() => handleLeave(space._id)} style={{ marginLeft: "10px", color: "red" }}>
+                  Leave
+                </button>
+              </h3>
+              <p>Description: {space.description}</p>
+              <p>
+                <strong>Owner:</strong>{" "}
+                {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"} <br />
+                <strong>Members:</strong> {(space.members || []).length}
+                <button onClick={() => toggleMembers(space._id)} style={{ marginLeft: "10px" }}>
+                  {expandedMembers[space._id] ? "Hide Members" : "Show Members"}
+                </button>
+              </p>
 
-            {expandedMembers[space._id] && (
-              <ul>
-                {(space.members || []).map((m) => {
-                  const user = m.userId;
-                  const displayName =
-                    (user && (user.username || user.email)) ||
-                    (typeof user === "string" ? `UserId:${user}` : "Unknown User");
-                  return <li key={user?._id || user}>{displayName} ({m.role})</li>;
-                })}
-              </ul>
-            )}
+              {expandedMembers[space._id] && (
+                <ul>
+                  {(space.members || []).map((m) => {
+                    const user = m.userId;
+                    const displayName =
+                      (user && (user.username || user.email)) ||
+                      (typeof user === "string" ? `UserId:${user}` : "Unknown User");
+                    return <li key={user?._id || user}>{displayName} ({m.role})</li>;
+                  })}
+                </ul>
+              )}
 
-            <h4>Shared Notes:</h4>
-            {(space.sharedNotesIds || []).length === 0 ? (
-              <p>No notes shared in this space.</p>
-            ) : (
-              <ul>
-                {(space.sharedNotesIds || []).map((note) => (
-                  <li key={note._id}>
-                    <strong>{note.title}</strong> – {note.content}
-                    <br />
-                    <em>Subject: {note.subjectID}</em>
-                  </li>
-                ))}
-              </ul>
-            )}
+              <h4>Shared Notes:</h4>
+              {(space.sharedNotesIds || []).length === 0 ? (
+                <p>No notes shared in this space.</p>
+              ) : (
+                <ul>
+                  {(space.sharedNotesIds || []).map((note) => (
+                    <li key={note._id}>
+                      <strong>{note.title}</strong> – {note.content}
+                      <br />
+                      <em>Subject: {note.subjectID}</em>
+                    </li>
+                  ))}
+                </ul>
+              )}
 
-            {editingSpace?._id === space._id && (
-              <div style={{ marginTop: "10px", padding: "10px", border: "1px solid gray", background: "#f9f9f9" }}>
-                <h4>Edit Space</h4>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  style={{ display: "block", marginBottom: "10px", width: "100%" }}
-                />
-                <input
-                  type="text"
-                  value={editDesc}
-                  onChange={(e) => setEditDesc(e.target.value)}
-                  style={{ display: "block", marginBottom: "10px", width: "100%" }}
-                />
-                <button onClick={saveEdit} style={{ marginRight: "10px" }}>Save</button>
-                <button onClick={() => setEditingSpace(null)}>Cancel</button>
-              </div>
-            )}
-          </div>
-        ))
-      )}
+              {editingSpace?._id === space._id && (
+                <div style={{ marginTop: "10px", padding: "10px", border: "1px solid gray", background: "#f9f9f9" }}>
+                  <h4>Edit Space</h4>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    style={{ display: "block", marginBottom: "10px", width: "100%" }}
+                  />
+                  <input
+                    type="text"
+                    value={editDesc}
+                    onChange={(e) => setEditDesc(e.target.value)}
+                    style={{ display: "block", marginBottom: "10px", width: "100%" }}
+                  />
+                  <button onClick={saveEdit} style={{ marginRight: "10px" }}>Save</button>
+                  <button onClick={() => setEditingSpace(null)}>Cancel</button>
+                </div>
+              )}
+            </div>
+          ))
+        )}
 
       <div style={{ marginBottom: 12 }}>
         <input
@@ -289,11 +312,22 @@ export default function CollaborativeSpaces() {
                   <button onClick={() => toggleMembers(space._id)}>
                     {expandedMembers[space._id] ? "Hide Members" : "Show Members"}
                   </button>
-                  {joined ? (
-                    <span style={{ color: "green", fontWeight: "bold", alignSelf: "center" }}>Joined</span>
-                  ) : (
-                    <button onClick={() => handleJoin(space._id)}>Join</button>
-                  )}
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    {joined ? (
+                      <span style={{ color: "green", fontWeight: "bold", alignSelf: "center" }}>Joined</span>
+                    ) : (
+                      profile?.role !== 'Admin' ? (
+                        <button onClick={() => handleJoin(space._id)}>Join</button>
+                      ) : null
+                    )}
+
+                    {/* Admins can view spaces without joining */}
+                    {profile?.role === 'Admin' && (
+                      <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ background: 'transparent', border: '1px solid #ccc', padding: '4px 8px', borderRadius: 4 }}>
+                        View Space
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {expandedMembers[space._id] && (

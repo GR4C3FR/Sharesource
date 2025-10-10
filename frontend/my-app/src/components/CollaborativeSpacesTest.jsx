@@ -1,6 +1,7 @@
 // components/CollaborativeSpacesTest.jsx
 import { useEffect, useState } from "react";
 import { createSpace, getAllSpaces, joinSpace, getUserSpaces, leaveSpace, shareFile } from "../services/collaborativeSpaceService";
+import API from '../api';
 
 export default function CollaborativeSpacesTest() {
   const [spaceName, setSpaceName] = useState("");
@@ -12,6 +13,9 @@ export default function CollaborativeSpacesTest() {
   const [editName, setEditName] = useState("");
   const [editDesc, setEditDesc] = useState("");
   const [expandedMembers, setExpandedMembers] = useState({});
+  const [profile, setProfile] = useState(null);
+
+  const token = localStorage.getItem('accessToken');
 
   // Fetch all spaces
   const fetchSpaces = async () => {
@@ -41,6 +45,15 @@ export default function CollaborativeSpacesTest() {
   useEffect(() => {
     fetchSpaces();
     fetchMySpaces();
+    const fetchProfile = async () => {
+      try {
+        const res = await API.get('/users/profile', { headers: { Authorization: `Bearer ${token}` } });
+        setProfile(res.data.user);
+      } catch (err) {
+        // ignore
+      }
+    };
+    fetchProfile();
   }, []);
 
   // Create space
@@ -232,7 +245,11 @@ export default function CollaborativeSpacesTest() {
                   {joined ? (
                     <span style={{ color: "green", fontWeight: "bold", alignSelf: "center" }}>Joined</span>
                   ) : (
-                    <button onClick={() => handleJoin(space._id)}>Join</button>
+                    profile?.role !== 'Admin' ? (
+                      <button onClick={() => handleJoin(space._id)}>Join</button>
+                    ) : (
+                      <span style={{ color: '#777' }}>View only</span>
+                    )
                   )}
                 </div>
                 {expandedMembers[space._id] && (

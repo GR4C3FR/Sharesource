@@ -6,6 +6,7 @@ const Bookmark = require("../models/Bookmark");
 // Add bookmark
 router.post("/add", auth, async (req, res) => {
   try {
+    if (req.user.role === 'Admin') return res.status(403).json({ message: 'Admins are not allowed to bookmark' });
     // Accept both fileId and fileID for compatibility
     const fileID = req.body.fileID || req.body.fileId;
     if (!fileID) return res.status(400).json({ message: "fileID is required" });
@@ -50,6 +51,7 @@ router.get("/", auth, async (req, res) => {
 // Remove bookmark
 router.delete("/:id", auth, async (req, res) => {
   try {
+    if (req.user.role === 'Admin') return res.status(403).json({ message: 'Admins are not allowed to bookmark' });
     await Bookmark.findByIdAndDelete(req.params.id); // expects bookmark _id
     res.json({ message: "Bookmark removed" });
   } catch (err) {

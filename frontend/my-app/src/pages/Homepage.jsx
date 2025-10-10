@@ -338,7 +338,7 @@ const toggleBookmark = async (fileID) => {
             
           </div>
 
-         {uploadedFiles.length === 0 ? (
+          {uploadedFiles.length === 0 ? (
             <p>No files uploaded yet.</p>
           ) : (
             displayedFiles.map((file) => {
@@ -373,7 +373,9 @@ const toggleBookmark = async (fileID) => {
                         <button onClick={() => handleDeleteFile(file._id)} style={{ marginTop: "8px", backgroundColor: "#e74c3c", color: "white", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}>Delete File</button>
                       )}
 
-                      <button onClick={() => toggleBookmark(file._id)} style={{ marginLeft: "10px", backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}>{bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}</button>
+                      {profile?.role !== 'Admin' && (
+                        <button onClick={() => toggleBookmark(file._id)} style={{ marginLeft: "10px", backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}>{bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}</button>
+                      )}
 
                       {/* ⭐ Show Average Rating (auto-updates) */}
                       <RatingSection itemId={file._id} userId={profile?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
@@ -396,59 +398,63 @@ const toggleBookmark = async (fileID) => {
           {/* =====================
               Upload File Section
           ===================== */}
-          <h3>Upload a File</h3>
-          <form onSubmit={handleFileUpload}>
-            <input
-              type="file"
-              onChange={(e) => setSelectedFile(e.target.files[0])}
-              accept=".pdf,.doc,.docx,.txt"
-            />
+          {profile?.role === 'Admin' ? null : (
+            <>
+              <h3>Upload a File</h3>
+              <form onSubmit={handleFileUpload}>
+                <input
+                  type="file"
+                  onChange={(e) => setSelectedFile(e.target.files[0])}
+                  accept=".pdf,.doc,.docx,.txt"
+                />
 
-            <div style={{ marginTop: "10px" }}>
-              <label>
-                Select Subject:{" "}
-                <select
-                  value={selectedSubject}
-                  onChange={(e) => setSelectedSubject(e.target.value)}
-                  required
-                >
-                  <option value="">-- Select a Subject --</option>
-                  {subjects.map((subj) => (
-                    <option key={subj._id} value={subj._id}>
-                      {subj.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
+                <div style={{ marginTop: "10px" }}>
+                  <label>
+                    Select Subject:{" "}
+                    <select
+                      value={selectedSubject}
+                      onChange={(e) => setSelectedSubject(e.target.value)}
+                      required
+                    >
+                      <option value="">-- Select a Subject --</option>
+                      {subjects.map((subj) => (
+                        <option key={subj._id} value={subj._id}>
+                          {subj.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
 
-            <div style={{ marginTop: "10px" }}>
-              <input
-                type="text"
-                placeholder="Add new subject"
-                value={newSubjectName}
-                onChange={(e) => setNewSubjectName(e.target.value)}
-              />
-              <button type="button" onClick={handleAddSubject}>
-                Add Subject
-              </button>
-            </div>
+                <div style={{ marginTop: "10px" }}>
+                  <input
+                    type="text"
+                    placeholder="Add new subject"
+                    value={newSubjectName}
+                    onChange={(e) => setNewSubjectName(e.target.value)}
+                  />
+                  <button type="button" onClick={handleAddSubject}>
+                    Add Subject
+                  </button>
+                </div>
 
-            <div style={{ marginTop: "10px" }}>
-              <input
-                type="text"
-                placeholder="Add file description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-          </div>
+                <div style={{ marginTop: "10px" }}>
+                  <input
+                    type="text"
+                    placeholder="Add file description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                  />
+                </div>
 
 
-            <button type="submit" style={{ marginTop: "10px" }}>
-              Upload
-            </button>
-          </form>
+                <button type="submit" style={{ marginTop: "10px" }}>
+                  Upload
+                </button>
+              </form>
+            </>
+          )}
         </section>
 
           {/* Right-side Top Rated panel */}
