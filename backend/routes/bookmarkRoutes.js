@@ -27,7 +27,8 @@ router.get("/", auth, async (req, res) => {
     const bookmarks = await Bookmark.find({ userID: req.user.userId }).populate({
       path: "fileID",
       populate: [
-        { path: "user", select: "username firstName lastName" },
+        // include profileImageURL so frontend can display uploader pictures in bookmarks
+        { path: "user", select: "username firstName lastName profileImageURL" },
         { path: "subject", select: "name" },
       ],
     });
