@@ -197,7 +197,39 @@ export default function Bookmarks() {
               {displayedBookmarks.filter(file => file && file._id).map(file => (
                 <li key={file._id} style={{ marginBottom: "15px", display: 'flex', gap: 12 }}>
                   <div style={{ width: 72, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                    <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
+                    {(() => {
+                      const pi = file.user?.profileImageURL;
+                      const base = API.defaults.baseURL ? API.defaults.baseURL.replace(/\/api$/, '') : '';
+                      let avatarSrc = null;
+                      if (pi) {
+                        // if pi already looks like an absolute URL or data URI, use as-is
+                        if (/^https?:\/\//i.test(pi) || /^data:/i.test(pi)) avatarSrc = pi;
+                        else {
+                          // prefer API base if available, otherwise use current origin
+                          const origin = base || window.location.origin;
+                          avatarSrc = `${origin}${pi}`;
+                        }
+                      }
+
+                      // initials fallback: prefer first name initial, else username/email initial
+                      const rawName = file.user?.firstName || file.user?.username || file.user?.email || 'U';
+                      const initial = (rawName && rawName[0]) ? String(rawName[0]).toUpperCase() : 'U';
+
+                      // show initials by default, overlay the image if it exists and loads
+                      return (
+                        <div style={{ position: 'relative', width: 48, height: 48 }}>
+                          <div style={{ width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e2e8f0', color: '#0b66c3', borderRadius: 8, fontWeight: 600 }}>{initial}</div>
+                          {avatarSrc && (
+                            <img
+                              src={avatarSrc}
+                              alt={file.user?.username || 'uploader'}
+                              style={{ position: 'absolute', top: 0, left: 0, width: 48, height: 48, objectFit: 'cover', borderRadius: 8 }}
+                              onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+                            />
+                          )}
+                        </div>
+                      );
+                    })()}
                     {/* file icon below avatar */}
                     <div style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {(() => {

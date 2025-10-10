@@ -36,13 +36,31 @@ export default function TopRatedPanel({ scope = 'all', token }) {
         <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
           {topFiles.map(file => (
             <li key={file._id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* uploader avatar */}
+              {(() => {
+                const pi = file.user?.profileImageURL;
+                const base = API.defaults.baseURL ? API.defaults.baseURL.replace(/\/api$/, '') : '';
+                let avatarSrc = '/sharessource-logo.png';
+                if (pi) {
+                  if (/^https?:\/\//i.test(pi) || /^data:/i.test(pi)) avatarSrc = pi;
+                  else avatarSrc = `${base}${pi}`;
+                }
+                // only render avatar when uploader has an uploaded profileImageURL
+                if (!file.user?.profileImageURL) return <div style={{ width: 28, height: 28 }} />;
+                return (
+                  <img src={avatarSrc} alt={file.user?.username || 'uploader'} style={{ width: 28, height: 28, objectFit: 'cover', borderRadius: 6 }} onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }} />
+                );
+              })()}
+
+              {/* file icon */}
               {(() => {
                 const name = (file.originalName || file.filename || '').toLowerCase();
-                if (name.endsWith('.pdf')) return <img src="/icons/pdf.png" alt="pdf" style={{ width: 22, height: 22 }} />;
-                if (name.endsWith('.txt')) return <img src="/icons/txt.png" alt="txt" style={{ width: 22, height: 22 }} />;
-                if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.png" alt="doc" style={{ width: 22, height: 22 }} />;
-                return <img src="/icons/file.png" alt="file" style={{ width: 22, height: 22 }} />;
+                if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" style={{ width: 22, height: 22 }} />;
+                if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" style={{ width: 22, height: 22 }} />;
+                if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" style={{ width: 22, height: 22 }} />;
+                return <img src="/icons/file.svg" alt="file" style={{ width: 22, height: 22 }} />;
               })()}
+
               <button onClick={() => setActive(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
               <div style={{ fontSize: '0.85rem', color: '#555' }}>
                 <div>Uploader: {file.user?.username || 'Unknown'}</div>
