@@ -1,6 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import API from "../api";
+import Avatar from '../components/Avatar';
 import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
 import TopRatedPanel from "../components/TopRatedPanel";
@@ -345,7 +346,7 @@ const toggleBookmark = async (fileID) => {
                 <div key={file._id} className="py-7 px-5 bg-white mb-8 rounded-lg shadow-md">
                   <div style={{ display: 'flex', gap: 12 }}>
                     <div style={{ width: 72, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                      <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
+                      <Avatar user={file.user} size={48} />
                       <div style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {(() => {
                           const name = (file.originalName || file.filename || '').toLowerCase();

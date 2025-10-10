@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import API from '../api';
 import AppShell from '../components/AppShell';
+import Avatar from '../components/Avatar';
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
@@ -82,7 +83,7 @@ export default function Profile() {
       <h1>My Profile</h1>
       <div style={{ display: 'flex', gap: 20 }}>
         <div>
-          <img src={imgSrc} alt="avatar" style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: '8px' }} />
+          <Avatar user={profile} size={140} />
           <div style={{ marginTop: 10 }}>
             <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} />
             <button onClick={handleImageUpload} style={{ display: 'block', marginTop: 8 }}>Upload Picture</button>

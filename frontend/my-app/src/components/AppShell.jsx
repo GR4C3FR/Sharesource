@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api';
+import Avatar from './Avatar';
 
 export default function AppShell({ children }) {
   const navigate = useNavigate();
@@ -33,13 +34,9 @@ export default function AppShell({ children }) {
         {/* Buttons Section (show avatar + logout) - only render avatar after profile is loaded to avoid flash */}
         <section style={{ display: 'flex', alignItems: 'center', gap: 25 }}>
           {profile !== null && (
-            <img
-              src={profile.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${profile.profileImageURL}` : '/placeholder-profile.jpg'}
-              alt={profile?.firstName || 'profile'}
-              onClick={() => navigate('/profile')}
-              style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 8, cursor: 'pointer' }}
-              onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder-profile.jpg'; }}
-            />
+            <div onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
+              <Avatar user={profile} size={42} />
+            </div>
           )}
 
           <button onClick={() => { localStorage.removeItem('accessToken'); localStorage.removeItem('userEmail'); navigate('/'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
