@@ -125,14 +125,34 @@ export default function MyFiles() {
 
 
   useEffect(() => {
+    const fetchAverages = async () => {
+      try {
+        const map = {};
+        await Promise.all(files.map(async (f) => {
+          try {
+            const res = await API.get(`/ratings/${f._id}`, { headers: { Authorization: `Bearer ${token}` } });
+            map[f._id] = res.data.average || 0;
+          } catch (err) {
+            map[f._id] = 0;
+          }
+        }));
+        setFileAverages(map);
+      } catch (err) {
+        console.error('Failed to fetch averages', err);
+      }
+    };
+    if (files && files.length > 0) fetchAverages();
+  }, [files, token]);
+
+  // Fetch user's files on mount
+  useEffect(() => {
     const fetchMyFiles = async () => {
       try {
-        const res = await API.get("/files/my", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  setFiles(Array.isArray(res.data.files) ? res.data.files : []);
+        const res = await API.get('/files/my', { headers: { Authorization: `Bearer ${token}` } });
+        setFiles(Array.isArray(res.data.files) ? res.data.files : []);
       } catch (err) {
-        setError("Failed to load your files");
+        console.error('Failed to load your files', err);
+        setError('Failed to load your files');
       } finally {
         setLoading(false);
       }
@@ -140,10 +160,44 @@ export default function MyFiles() {
     fetchMyFiles();
   }, [token]);
 
+  // compute displayedFiles using filters, sort and search
+  const displayedFiles = useMemo(() => {
+    const q = (searchQuery || '').trim().toLowerCase();
+    const filtered = files.filter(f => {
+      if (filterSubject && f.subject?._id !== filterSubject) return false;
+      if (q) {
+        const name = (f.originalName || f.filename || '').toLowerCase();
+        const uploader = (f.user?.username || f.user?.email || '').toLowerCase();
+        if (!name.includes(q) && !uploader.includes(q)) return false;
+      }
+      return true;
+    });
+    const sorted = filtered.slice().sort((a, b) => {
+      if (sortOption === 'newest') return new Date(b.uploadDate) - new Date(a.uploadDate);
+      if (sortOption === 'oldest') return new Date(a.uploadDate) - new Date(b.uploadDate);
+      return 0;
+    });
+    return sorted;
+  }, [files, filterSubject, sortOption, searchQuery]);
+
+  // Add new subject helper (same behavior as Homepage)
+  const handleAddSubject = async () => {
+    if (!newSubjectName) return alert('Enter a subject name');
+    try {
+      await API.post('/subjects', { name: newSubjectName }, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } });
+      alert('Subject added!');
+      setNewSubjectName('');
+      const subjRes = await API.get('/subjects', { headers: { Authorization: `Bearer ${token}` } });
+      setSubjects(Array.isArray(subjRes.data.subjects) ? subjRes.data.subjects : []);
+    } catch (err) {
+      console.error('Failed to add subject', err);
+      alert('Failed to add subject');
+    }
+  };
 
   // Upload File
-const handleFileUpload = async (e) => {
-  e.preventDefault();
+  const handleFileUpload = async (e) => {
+    e.preventDefault();
   if (!selectedFile) return alert("Please select a file");
   if (!selectedSubject) return alert("Please select a subject before uploading");
 
@@ -169,77 +223,11 @@ const handleFileUpload = async (e) => {
     setFiles(Array.isArray(res.data.files) ? res.data.files : []);
     setSelectedFile(null);
     setSelectedSubject("");
-    setDescription("");
   } catch (err) {
-    console.error("Upload failed:", err.response?.data || err.message);
-    alert("Failed to upload file.");
+    console.error('Upload failed', err);
+    alert('Failed to upload file.');
   }
 };
-
-// Add new subject
-  const handleAddSubject = async () => {
-    if (!newSubjectName) return alert("Enter a subject name");
-    try {
-      await API.post(
-        "/subjects",
-        { name: newSubjectName },
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
-      );
-      alert("Subject added!");
-      setNewSubjectName("");
-
-      const subjectsRes = await API.get("/subjects", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add subject");
-    }
-  };
-
-
-  // Filter & sort files before rendering (useMemo for immediate responsiveness)
-  const displayedFiles = useMemo(() => {
-    const q = (searchQuery || "").trim().toLowerCase();
-    const filtered = files.filter(file => {
-      if (filterSubject && file.subject?._id !== filterSubject) return false;
-      if (q) {
-        const name = (file.originalName || file.filename || "").toLowerCase();
-        const uploader = (file.user?.username || file.user?.email || "").toLowerCase();
-        if (!name.includes(q) && !uploader.includes(q)) return false;
-      }
-      return true;
-    });
-    const sorted = filtered.slice().sort((a, b) => {
-      if (sortOption === "newest") return new Date(b.uploadDate) - new Date(a.uploadDate);
-      if (sortOption === "oldest") return new Date(a.uploadDate) - new Date(b.uploadDate);
-      return 0;
-    });
-    return sorted;
-  }, [files, filterSubject, sortOption, fileAverages, searchQuery]);
-
-  // Batch-fetch averages for files so sorting by rating works as expected
-  // Runs whenever the files list changes and must be inside component scope
-  useEffect(() => {
-    const fetchAverages = async () => {
-      try {
-        const map = {};
-        await Promise.all(files.map(async (f) => {
-          try {
-            const res = await API.get(`/ratings/${f._id}`, { headers: { Authorization: `Bearer ${token}` } });
-            map[f._id] = res.data.average || 0;
-          } catch (err) {
-            map[f._id] = 0;
-          }
-        }));
-        setFileAverages(map);
-      } catch (err) {
-        console.error('Failed to fetch averages', err);
-      }
-    };
-    if (files && files.length > 0) fetchAverages();
-  }, [files, token]);
 
   if (loading) return <p>Loading your files...</p>;
   if (error) return <p>{error}</p>;
@@ -375,6 +363,17 @@ const handleFileUpload = async (e) => {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
               </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    {/* file icon */}
+                    {(() => {
+                      const name = (file.originalName || file.filename || '').toLowerCase();
+                      if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" style={{ width: 28, height: 28 }} />;
+                      if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" style={{ width: 28, height: 28 }} />;
+                      if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" style={{ width: 28, height: 28 }} />;
+                      return <img src="/icons/file.svg" alt="file" style={{ width: 28, height: 28 }} />;
+                    })()}
+                    <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
+                  </div>
               <button
                 style={{ marginLeft: "10px" }}
                 onClick={() => downloadFile(file.filename)}
@@ -468,5 +467,3 @@ const handleFileUpload = async (e) => {
     </AppShell>
   );
 }
-
-// (Averages effect moved inside component above)

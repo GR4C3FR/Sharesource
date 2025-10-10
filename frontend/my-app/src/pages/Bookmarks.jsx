@@ -195,28 +195,30 @@ export default function Bookmarks() {
           ) : (
             <ul>
               {displayedBookmarks.filter(file => file && file._id).map(file => (
-                <li key={file._id} style={{ marginBottom: "15px" }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
-                        <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
-                      </div>
-                  <button onClick={() => downloadFile(file.filename)} style={{ marginLeft: "10px" }}>Download</button>
-                  <button
-                    onClick={() => toggleBookmark(file._id)}
-                    style={{
-                      marginLeft: "10px",
-                      backgroundColor: "#f1c40f",
-                      border: "none",
-                      padding: "5px 10px",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Remove Bookmark
-                  </button>
-                  <p>Subject: {file.subject?.name || "No subject"}</p>
-                  <p>Uploaded by: {file.uploaderName || file.user?.username || "Unknown"}</p>
-                  <p><strong>Description:</strong> {file.description || "No description"}</p>
+                <li key={file._id} style={{ marginBottom: "15px", display: 'flex', gap: 12 }}>
+                  <div style={{ width: 72, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                    <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
+                    {/* file icon below avatar */}
+                    <div style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {(() => {
+                        const name = (file.originalName || file.filename || '').toLowerCase();
+                        if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" style={{ width: 28, height: 28 }} />;
+                        if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" style={{ width: 28, height: 28 }} />;
+                        if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" style={{ width: 28, height: 28 }} />;
+                        return <img src="/icons/file.svg" alt="file" style={{ width: 28, height: 28 }} />;
+                      })()}
+                    </div>
+                  </div>
+
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer', fontSize: 16 }}>{file.originalName}</button>
+                      <button onClick={() => downloadFile(file.filename)} style={{ marginLeft: "10px" }}>Download</button>
+                      <button onClick={() => toggleBookmark(file._id)} style={{ marginLeft: "10px", backgroundColor: "#f1c40f", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}>Remove Bookmark</button>
+                    </div>
+                    <p>Subject: {file.subject?.name || "No subject"}</p>
+                    <p>Uploaded by: {file.user?.username || "Unknown"}</p>
+                    <p><strong>Description:</strong> {file.description || "No description"}</p>
 
                   {/* ⭐ Show Average Rating (auto-updates) - outside dropdown to match Homepage */}
                   <RatingSection itemId={file._id} userId={file.user?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
@@ -236,6 +238,7 @@ export default function Bookmarks() {
                       />
                     </div>
                   )}
+                  </div>
                 </li>
               ))}
             </ul>

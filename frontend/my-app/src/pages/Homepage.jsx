@@ -340,95 +340,56 @@ const toggleBookmark = async (fileID) => {
          {uploadedFiles.length === 0 ? (
             <p>No files uploaded yet.</p>
           ) : (
-            displayedFiles.map((file) => (
-              <div
-                key={file._id}
-                className="py-7 px-5 bg-white mb-8 rounded-lg shadow-md"
-              >
-                <div>
-                  <strong>Filename:</strong>{" "}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
-                        <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
+            displayedFiles.map((file) => {
+              return (
+                <div key={file._id} className="py-7 px-5 bg-white mb-8 rounded-lg shadow-md">
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <div style={{ width: 72, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                      <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
+                      <div style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {(() => {
+                          const name = (file.originalName || file.filename || '').toLowerCase();
+                          if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" style={{ width: 28, height: 28 }} />;
+                          if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" style={{ width: 28, height: 28 }} />;
+                          if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" style={{ width: 28, height: 28 }} />;
+                          return <img src="/icons/file.svg" alt="file" style={{ width: 28, height: 28 }} />;
+                        })()}
                       </div>
-                  <button
-                    style={{ marginLeft: "10px" }}
-                    onClick={() => downloadFile(file.filename)}
-                  >
-                    Download
-                  </button>
+                    </div>
 
-                </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
+                        <button style={{ marginLeft: "10px" }} onClick={() => downloadFile(file.filename)}>Download</button>
+                      </div>
 
-                <p>Uploaded by: {file.user?.username || "Unknown"}</p>
-                <p>Subject: {file.subject?.name || "No subject"}</p>
-                <p><strong>Description:</strong> {file.description || "No description"}</p>
+                      <p>Uploaded by: {file.user?.username || "Unknown"}</p>
+                      <p>Subject: {file.subject?.name || "No subject"}</p>
+                      <p><strong>Description:</strong> {file.description || "No description"}</p>
 
-          
-          {/* 🗑️ Delete button (visible only to owner) */}
-          {file.user?._id === profile?._id && (
-            <button
-              onClick={() => handleDeleteFile(file._id)}
-              style={{
-                marginTop: "8px",
-                backgroundColor: "#e74c3c",
-                color: "white",
-                border: "none",
-                padding: "5px 10px",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Delete File
-            </button>
-          )}
+                      {/* 🗑️ Delete button (visible only to owner) */}
+                      {file.user?._id === profile?._id && (
+                        <button onClick={() => handleDeleteFile(file._id)} style={{ marginTop: "8px", backgroundColor: "#e74c3c", color: "white", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}>Delete File</button>
+                      )}
 
-          <button
-            onClick={() => toggleBookmark(file._id)}
-            style={{
-              marginLeft: "10px",
-              backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7",
-              border: "none",
-              padding: "5px 10px",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            {bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}
-          </button>
+                      <button onClick={() => toggleBookmark(file._id)} style={{ marginLeft: "10px", backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}>{bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}</button>
 
-                {/* ⭐ Show Average Rating (auto-updates) */}
-                <RatingSection
-                  itemId={file._id}
-                  userId={profile?._id}
-                  showAverageOnly
-                  liveAverage={fileAverages[file._id]}
-                  onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
-                />
+                      {/* ⭐ Show Average Rating (auto-updates) */}
+                      <RatingSection itemId={file._id} userId={profile?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
 
-                <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>
-                  {openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}
-                </button>
+                      <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
 
-                {openComments[file._id] && (
-                  <div
-                    style={{
-                      marginTop: "10px",
-                      borderTop: "1px dashed gray",
-                      paddingTop: "10px",
-                    }}
-                  >
-                    <CommentsSection fileId={file._id} userId={profile?._id} />
-                    <RatingSection
-                      itemId={file._id}
-                      userId={profile?._id}
-                      allowRating
-                      onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)}
-                    />
+                      {openComments[file._id] && (
+                        <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
+                          <CommentsSection fileId={file._id} userId={profile?._id} />
+                          <RatingSection itemId={file._id} userId={profile?._id} allowRating onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
-            ))
+                </div>
+              );
+            })
           )}
 
           {/* =====================

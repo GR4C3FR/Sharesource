@@ -35,10 +35,17 @@ export default function TopRatedPanel({ scope = 'all', token }) {
       ) : (
         <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
           {topFiles.map(file => (
-            <li key={file._id} style={{ marginBottom: '10px' }}>
+            <li key={file._id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: 8 }}>
+              {(() => {
+                const name = (file.originalName || file.filename || '').toLowerCase();
+                if (name.endsWith('.pdf')) return <img src="/icons/pdf.png" alt="pdf" style={{ width: 22, height: 22 }} />;
+                if (name.endsWith('.txt')) return <img src="/icons/txt.png" alt="txt" style={{ width: 22, height: 22 }} />;
+                if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.png" alt="doc" style={{ width: 22, height: 22 }} />;
+                return <img src="/icons/file.png" alt="file" style={{ width: 22, height: 22 }} />;
+              })()}
               <button onClick={() => setActive(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
               <div style={{ fontSize: '0.85rem', color: '#555' }}>
-                <div>Uploader: {file.user?.username || file.uploaderName || 'Unknown'}</div>
+                <div>Uploader: {file.user?.username || 'Unknown'}</div>
                 <div>Subject: {file.subject?.name || 'No subject'}</div>
                 <div>Description: {file.description || 'No description'}</div>
                 <div>Avg: {Number(file.avgRating).toFixed(2)}</div>

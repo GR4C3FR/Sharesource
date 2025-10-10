@@ -33,7 +33,16 @@ export default function FilePreviewModal({ file, token, onClose }) {
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
       <div style={{ width: '90%', maxWidth: '1000px', background: 'white', borderRadius: 6, padding: 16, maxHeight: '90%', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0 }}>{file.originalName}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {(() => {
+              const name = (file.originalName || file.filename || '').toLowerCase();
+              if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" style={{ width: 28, height: 28 }} />;
+              if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" style={{ width: 28, height: 28 }} />;
+              if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" style={{ width: 28, height: 28 }} />;
+              return <img src="/icons/file.svg" alt="file" style={{ width: 28, height: 28 }} />;
+            })()}
+            <h3 style={{ margin: 0 }}>{file.originalName}</h3>
+          </div>
           <button onClick={onClose} style={{ background: 'transparent', border: 'none', fontSize: 18, cursor: 'pointer' }}>✕</button>
         </div>
 

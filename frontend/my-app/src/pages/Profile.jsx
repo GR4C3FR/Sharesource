@@ -29,15 +29,23 @@ export default function Profile() {
     fetchProfile();
   }, [token]);
 
+  if (!profile) return <div>Loading profile...</div>;
+
+  const backendBase = API.defaults.baseURL.replace(/\/api$/, '');
+
+  const imgSrc = profile.profileImageURL ? `${backendBase}${profile.profileImageURL}` : '/placeholder-profile.jpg';
+
+  // --- Handlers (restored) ---
   const handleSave = async () => {
     try {
-      const res = await API.put('/users/profile', form, { headers: { 'Content-Type': 'application/json' } });
+      const payload = { username: form.username };
+      const res = await API.put('/users/profile', payload, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } });
       setProfile(res.data.user);
       setEditing(false);
       alert('Profile updated');
     } catch (err) {
       console.error('Update failed', err);
-      alert('Failed to update profile');
+      alert(err?.response?.data?.message || 'Failed to update profile');
     }
   };
 
@@ -46,34 +54,27 @@ export default function Profile() {
     const fd = new FormData();
     fd.append('profileImage', imageFile);
     try {
-      const res = await API.post('/users/profile/picture', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await API.post('/users/profile/picture', fd, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } });
       setProfile(res.data.user);
       setImageFile(null);
       alert('Profile picture updated');
     } catch (err) {
-      console.error('Image upload failed', err.response || err);
+      console.error('Image upload failed', err?.response || err);
       alert('Failed to upload image');
     }
   };
 
   const handleRemoveImage = async () => {
     try {
-      await API.delete('/users/profile/picture');
-      // refetch profile
-      const res = await API.get('/users/profile');
+      await API.delete('/users/profile/picture', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await API.get('/users/profile', { headers: { Authorization: `Bearer ${token}` } });
       setProfile(res.data.user);
       alert('Profile picture removed');
     } catch (err) {
-      console.error('Remove failed', err.response || err);
+      console.error('Remove failed', err?.response || err);
       alert('Failed to remove profile picture');
     }
   };
-
-  if (!profile) return <div>Loading profile...</div>;
-
-  const backendBase = API.defaults.baseURL.replace(/\/api$/, '');
-
-  const imgSrc = profile.profileImageURL ? `${backendBase}${profile.profileImageURL}` : '/placeholder-profile.jpg';
 
   return (
     <AppShell>
@@ -94,23 +95,41 @@ export default function Profile() {
         <div style={{ flex: 1 }}>
           {!editing ? (
             <div>
-              <p><strong>Username:</strong> {profile.username}</p>
               <p><strong>Name:</strong> {profile.firstName} {profile.lastName}</p>
               <p><strong>Email:</strong> {profile.email}</p>
-              <button onClick={() => setEditing(true)} style={{ marginTop: 10 }}>Edit Profile</button>
+              <p><strong>Username:</strong> {profile.username}</p>
+              <div style={{ marginTop: 8 }}>
+                <button onClick={() => setEditing(true)}>Edit Profile</button>
+              </div>
+
+              {/* Move change password under email as requested */}
+              <div style={{ marginTop: 16 }}>
+                <h4>Change Password</h4>
+                <label>Current Password<br />
+                  <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm(s => ({ ...s, currentPassword: e.target.value }))} />
+                </label>
+                <br />
+                <label>New Password<br />
+                  <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm(s => ({ ...s, newPassword: e.target.value }))} />
+                </label>
+                <br />
+                <button onClick={async () => {
+                  if (!passwordForm.currentPassword || !passwordForm.newPassword) return alert('Enter both passwords');
+                  try {
+                    const res = await API.post('/users/profile/password', passwordForm);
+                    alert(res.data.message || 'Password changed');
+                    setPasswordForm({ currentPassword: '', newPassword: '' });
+                  } catch (err) {
+                    console.error('Password change failed', err);
+                    alert(err?.response?.data?.message || 'Failed to change password');
+                  }
+                }} style={{ marginTop: 8 }}>Change Password</button>
+              </div>
             </div>
           ) : (
             <div>
               <label>Username<br />
                 <input value={form.username} onChange={(e) => setForm((s) => ({ ...s, username: e.target.value }))} />
-              </label>
-              <br />
-              <label>First Name<br />
-                <input value={form.firstName} onChange={(e) => setForm((s) => ({ ...s, firstName: e.target.value }))} />
-              </label>
-              <br />
-              <label>Last Name<br />
-                <input value={form.lastName} onChange={(e) => setForm((s) => ({ ...s, lastName: e.target.value }))} />
               </label>
               <br />
               <br />
@@ -121,27 +140,6 @@ export default function Profile() {
         </div>
       </div>
       <div style={{ marginTop: 20, borderTop: '1px solid #eee', paddingTop: 20 }}>
-        <h3>Change Password</h3>
-        <label>Current Password<br />
-          <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm(s => ({ ...s, currentPassword: e.target.value }))} />
-        </label>
-        <br />
-        <label>New Password<br />
-          <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm(s => ({ ...s, newPassword: e.target.value }))} />
-        </label>
-        <br />
-        <button onClick={async () => {
-          if (!passwordForm.currentPassword || !passwordForm.newPassword) return alert('Enter both passwords');
-          try {
-            const res = await API.post('/users/profile/password', passwordForm);
-            alert(res.data.message || 'Password changed');
-            setPasswordForm({ currentPassword: '', newPassword: '' });
-          } catch (err) {
-            console.error('Password change failed', err);
-            alert(err?.response?.data?.message || 'Failed to change password');
-          }
-        }} style={{ marginTop: 8 }}>Change Password</button>
-
         <h3 style={{ marginTop: 20 }}>Danger Zone</h3>
         <button onClick={async () => {
           if (!confirm('Delete your profile? This will permanently remove your account and all related data.')) return;
