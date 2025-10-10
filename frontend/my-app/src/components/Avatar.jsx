@@ -11,7 +11,8 @@ export default function Avatar({ user, size = 48, style = {}, className = '' }) 
     else avatarSrc = `${base}${pi}`;
   }
 
-  const rawName = user?.firstName || user?.username || user?.email || 'U';
+  // prefer username for the initial, then firstName, then email
+  const rawName = user?.username || user?.firstName || user?.email || 'U';
   const initial = (rawName && rawName[0]) ? String(rawName[0]).toUpperCase() : 'U';
 
   const containerStyle = {
