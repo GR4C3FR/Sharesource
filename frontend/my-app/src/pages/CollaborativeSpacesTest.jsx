@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   createSpace,
@@ -8,6 +8,7 @@ import {
   leaveSpace,
 } from "../services/collaborativeSpaceService";
 import API from "../api";
+import AppShell from "../components/AppShell";
 
 export default function CollaborativeSpaces() {
   const [spaceName, setSpaceName] = useState("");
@@ -20,6 +21,8 @@ export default function CollaborativeSpaces() {
   const [editDesc, setEditDesc] = useState("");
   const [expandedMembers, setExpandedMembers] = useState({});
   const navigate = useNavigate();
+  const [searchMySpaces, setSearchMySpaces] = useState("");
+  const [searchAvailableSpaces, setSearchAvailableSpaces] = useState("");
 
   // Fetch all available spaces
   const fetchSpaces = async () => {
@@ -50,6 +53,30 @@ export default function CollaborativeSpaces() {
     fetchSpaces();
     fetchMySpaces();
   }, []);
+
+  const displayedAvailableSpaces = useMemo(() => {
+    const q = (searchAvailableSpaces || "").trim().toLowerCase();
+    if (!q) return spaces;
+    return spaces.filter((space) => {
+      const title = (space.spaceName || "").toLowerCase();
+      const owner = (space.ownerUserId?.username || space.ownerUserId?.email || "").toLowerCase();
+      const members = ((space.members || []).map(m => (m.userId?.username || m.userId?.email || "").toLowerCase()).join(" "));
+      if (title.includes(q) || owner.includes(q) || members.includes(q)) return true;
+      return false;
+    });
+  }, [spaces, searchAvailableSpaces]);
+
+  const displayedMySpaces = useMemo(() => {
+    const q = (searchMySpaces || "").trim().toLowerCase();
+    if (!q) return mySpaces;
+    return mySpaces.filter((space) => {
+      const title = (space.spaceName || "").toLowerCase();
+      const owner = (space.ownerUserId?.username || space.ownerUserId?.email || "").toLowerCase();
+      const members = ((space.members || []).map(m => (m.userId?.username || m.userId?.email || "").toLowerCase()).join(" "));
+      if (title.includes(q) || owner.includes(q) || members.includes(q)) return true;
+      return false;
+    });
+  }, [mySpaces, searchMySpaces]);
 
   // Create a new space
   const handleCreate = async (e) => {
@@ -123,10 +150,20 @@ export default function CollaborativeSpaces() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <button onClick={() => navigate("/homepage")}>🏠 Home</button>
+    <AppShell>
+      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
+        <div style={{ marginBottom: 12 }}>
+            <input
+              type="text"
+              placeholder="Search My Spaces by title, owner or members..."
+              value={searchMySpaces}
+              onChange={(e) => setSearchMySpaces(e.target.value)}
+              className="w-full p-2 rounded-md border border-gray-300"
+            />
+          </div>
+        <button onClick={() => navigate("/homepage")}>🏠 Home</button>
 
-      <h2>Create a Collaborative Space</h2>
+        <h2>Create a Collaborative Space</h2>
       <form onSubmit={handleCreate} style={{ marginBottom: "20px" }}>
         <input
           type="text"
@@ -150,7 +187,7 @@ export default function CollaborativeSpaces() {
       {mySpaces.length === 0 ? (
         <p>You are not a member of any spaces yet.</p>
       ) : (
-        mySpaces.map((space) => (
+        displayedMySpaces.map((space) => (
           <div key={space._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
             <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ marginLeft: "10px" }}>
               View Space
@@ -222,6 +259,15 @@ export default function CollaborativeSpaces() {
         ))
       )}
 
+      <div style={{ marginBottom: 12 }}>
+        <input
+          type="text"
+          placeholder="Search Available Spaces by title, owner or members..."
+          value={searchAvailableSpaces}
+          onChange={(e) => setSearchAvailableSpaces(e.target.value)}
+          className="w-full p-2 rounded-md border border-gray-300"
+        />
+      </div>
       <h2>Available Spaces</h2>
       {loading ? (
         <p>Loading spaces...</p>
@@ -229,7 +275,7 @@ export default function CollaborativeSpaces() {
         <p>No spaces available yet.</p>
       ) : (
         <ul>
-          {spaces.map((space) => {
+          {displayedAvailableSpaces.map((space) => {
             const joined = mySpaces.some((s) => s._id === space._id);
             return (
               <li key={space._id} style={{ marginBottom: "15px", padding: "10px", border: "1px solid #ccc", borderRadius: "6px" }}>
@@ -264,6 +310,7 @@ export default function CollaborativeSpaces() {
           })}
         </ul>
       )}
-    </div>
+      </div>
+    </AppShell>
   );
 }

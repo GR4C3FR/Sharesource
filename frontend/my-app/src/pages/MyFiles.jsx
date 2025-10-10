@@ -5,6 +5,7 @@ import RatingSection from "../components/RatingSection";
 import TopRatedPanel from "../components/TopRatedPanel";
 import FilePreviewModal from "../components/FilePreviewModal";
 import API from "../api";
+import AppShell from "../components/AppShell";
 
 export default function MyFiles() {
   console.debug("MyFiles mount", { token: localStorage.getItem("accessToken") });
@@ -48,6 +49,7 @@ export default function MyFiles() {
 };
 
   const [previewFile, setPreviewFile] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
 
   const handleAverageUpdate = (fileId, newAverage) => {
@@ -199,15 +201,23 @@ const handleFileUpload = async (e) => {
 
   // Filter & sort files before rendering (useMemo for immediate responsiveness)
   const displayedFiles = useMemo(() => {
-    const filtered = files.filter(file => !filterSubject || file.subject?._id === filterSubject);
+    const q = (searchQuery || "").trim().toLowerCase();
+    const filtered = files.filter(file => {
+      if (filterSubject && file.subject?._id !== filterSubject) return false;
+      if (q) {
+        const name = (file.originalName || file.filename || "").toLowerCase();
+        const uploader = (file.user?.username || file.user?.email || "").toLowerCase();
+        if (!name.includes(q) && !uploader.includes(q)) return false;
+      }
+      return true;
+    });
     const sorted = filtered.slice().sort((a, b) => {
       if (sortOption === "newest") return new Date(b.uploadDate) - new Date(a.uploadDate);
       if (sortOption === "oldest") return new Date(a.uploadDate) - new Date(b.uploadDate);
-      // rating-based sort options removed (handled via TopRatedPanel)
       return 0;
     });
     return sorted;
-  }, [files, filterSubject, sortOption, fileAverages]);
+  }, [files, filterSubject, sortOption, fileAverages, searchQuery]);
 
   // Batch-fetch averages for files so sorting by rating works as expected
   // Runs whenever the files list changes and must be inside component scope
@@ -235,12 +245,20 @@ const handleFileUpload = async (e) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="my-files-container" style={{ padding: "20px" }}>
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+    <AppShell>
+      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
+      <div className="flex gap-5 items-start w-full">
         <div style={{ flex: 1 }}>
       <h2>My Uploaded Files</h2>
-      {/* Filter & Sort */}
+      {/* Search, Filter & Sort */}
       <div style={{ marginBottom: "15px", border: "1px solid #ccc", padding: "10px", borderRadius: "5px" }}>
+        <input
+          type="text"
+          placeholder="Search files or uploader..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full p-2 rounded-md border border-gray-300 mb-2"
+        />
         <label>
           Filter by Subject:{" "}
           <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)}>
@@ -341,7 +359,7 @@ const handleFileUpload = async (e) => {
       </form>
 
 
-      {files.length === 0 ? (
+      {displayedFiles.length === 0 ? (
         <p>You haven’t uploaded any files yet.</p>
       ) : (
         <ul>
@@ -355,7 +373,6 @@ const handleFileUpload = async (e) => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
                 <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
               </div>
               <button
@@ -445,10 +462,10 @@ const handleFileUpload = async (e) => {
         </ul>
       )}
         </div>
-        <TopRatedPanel scope="my" token={token} />
       </div>
       {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
-    </div>
+      </div>
+    </AppShell>
   );
 }
 

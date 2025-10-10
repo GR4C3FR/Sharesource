@@ -6,6 +6,7 @@ import RatingSection from "../components/RatingSection";
 import { useMemo } from "react";
 import TopRatedPanel from "../components/TopRatedPanel";
 import FilePreviewModal from "../components/FilePreviewModal";
+import AppShell from "../components/AppShell";
 
 export default function Bookmarks() {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ export default function Bookmarks() {
     fetchSubjects();
   }, [token]);
   const [previewFile, setPreviewFile] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Batch fetch averages for bookmarked files to support immediate sorting
   useEffect(() => {
@@ -62,7 +64,16 @@ export default function Bookmarks() {
 
   // computed displayed bookmarks with filter & sort
   const displayedBookmarks = useMemo(() => {
-    const filtered = bookmarks.filter(f => !filterSubject || f.subject?._id === filterSubject);
+    const q = (searchQuery || "").trim().toLowerCase();
+    const filtered = bookmarks.filter(f => {
+      if (filterSubject && f.subject?._id !== filterSubject) return false;
+      if (q) {
+        const name = (f.originalName || f.filename || "").toLowerCase();
+        const uploader = (f.user?.username || f.user?.email || "").toLowerCase();
+        if (!name.includes(q) && !uploader.includes(q)) return false;
+      }
+      return true;
+    });
     const sorted = filtered.slice().sort((a, b) => {
       if (sortOption === 'newest') return new Date(b.uploadDate) - new Date(a.uploadDate);
       if (sortOption === 'oldest') return new Date(a.uploadDate) - new Date(b.uploadDate);
@@ -70,7 +81,7 @@ export default function Bookmarks() {
       return 0;
     });
     return sorted;
-  }, [bookmarks, filterSubject, sortOption, fileAverages]);
+  }, [bookmarks, filterSubject, sortOption, fileAverages, searchQuery]);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -144,11 +155,19 @@ export default function Bookmarks() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <AppShell>
+      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
       <h2>My Bookmarked Files</h2>
       <button onClick={() => navigate("/")} style={{ marginBottom: "20px" }}>Back to Homepage</button>
       {/* Filter & Sort for bookmarks */}
       <div style={{ marginBottom: "15px", border: "1px solid #ccc", padding: "10px", borderRadius: "5px" }}>
+        <input
+          type="text"
+          placeholder="Search files or uploader..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full p-2 rounded-md border border-gray-300 mb-2"
+        />
         <label>
           Filter by Subject: {" "}
           <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)}>
@@ -222,9 +241,9 @@ export default function Bookmarks() {
             </ul>
           )}
         </div>
-        <TopRatedPanel scope="bookmarks" token={token} />
       </div>
       {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
-    </div>
+      </div>
+    </AppShell>
   );
 }

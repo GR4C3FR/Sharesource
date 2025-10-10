@@ -28,7 +28,7 @@ export default function TopRatedPanel({ scope = 'all', token }) {
   if (loading) return <div style={{ padding: '10px' }}>Loading top rated...</div>;
 
   return (
-    <aside style={{ width: '300px', padding: '10px', borderLeft: '1px solid #ddd' }}>
+    <aside>
       <h4 style={{ marginTop: 0 }}>Top Rated (4 - 5)</h4>
       {topFiles.length === 0 ? (
         <p style={{ fontSize: '0.9rem' }}>No top rated files yet.</p>

@@ -5,6 +5,7 @@ import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
 import TopRatedPanel from "../components/TopRatedPanel";
 import FilePreviewModal from "../components/FilePreviewModal";
+import AppShell from "../components/AppShell";
 
 export default function Homepage() {
   console.debug("Homepage mount", { token: localStorage.getItem("accessToken") });
@@ -21,6 +22,7 @@ export default function Homepage() {
   const [filterSubject, setFilterSubject] = useState(""); // "" = all subjects
   const [sortOption, setSortOption] = useState("newest"); // default newest → oldest
   const [bookmarkedFiles, setBookmarkedFiles] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
 
   const email = localStorage.getItem("userEmail");
@@ -245,9 +247,6 @@ const toggleBookmark = async (fileID) => {
   }
 };
 
-
-
-
   // 🔹 Logout
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -258,7 +257,23 @@ const toggleBookmark = async (fileID) => {
 
   // Filter & sort files before rendering (useMemo for responsiveness)
   const displayedFiles = useMemo(() => {
-    const filtered = uploadedFiles.filter(file => !filterSubject || file.subject?.name === subjects.find(s => s._id === filterSubject)?.name);
+    const q = (searchQuery || "").trim().toLowerCase();
+    const filtered = uploadedFiles.filter(file => {
+      // subject filter
+      if (filterSubject) {
+        const subjName = subjects.find(s => s._id === filterSubject)?.name;
+        if (!subjName || file.subject?.name !== subjName) return false;
+      }
+
+      // search filter (filename or uploader)
+      if (q) {
+        const name = (file.originalName || file.filename || "").toLowerCase();
+        const uploader = (file.user?.username || file.user?.email || "").toLowerCase();
+        if (!name.includes(q) && !uploader.includes(q)) return false;
+      }
+
+      return true;
+    });
     const sorted = filtered.slice().sort((a, b) => {
       if (sortOption === "newest") return new Date(b.uploadDate) - new Date(a.uploadDate);
       if (sortOption === "oldest") return new Date(a.uploadDate) - new Date(b.uploadDate);
@@ -266,75 +281,61 @@ const toggleBookmark = async (fileID) => {
       return 0;
     });
     return sorted;
-  }, [uploadedFiles, filterSubject, sortOption, fileAverages, subjects]);
+  }, [uploadedFiles, filterSubject, sortOption, fileAverages, subjects, searchQuery]);
 
   const [previewFile, setPreviewFile] = useState(null);
 
   return (
-    <div className="w-auto h-auto flex flex-col items-center justify-center">
-      {/* Header */}
-      <div className="w-[1500px] flex justify-between items-center space-y-8 py-8 mb-7">
-      {/* Logo Section */}
-      <section className="flex items-center justify-center gap-4">
-        <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
-        <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
-      </section>
-
-      {/* Buttons Section (show avatar + logout) */}
-      <section style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        {profile && (
-          <img src={(API.defaults.baseURL.replace(/\/api$/, '') + (profile.profileImageURL || '')) || '/sharessource-logo.png'} alt="avatar" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
-        )}
-        <button onClick={handleLogout} style={{ marginTop: '20px' }}>
-          <img src="public/logout-icon.png"/>
-        </button>
-      </section>
-      </div>
-
-      <div className="flex w-[1500px] gap-35">
-        <section>
-          <section className="w-max h-auto flex flex-col justify-center mb-35">
-            <h1 class="text-[45px] font-inter font-normal leading-[16px] tracking-[0%] text-[#1D2F58]">Dashboard</h1>
-          </section>
-
-          <section className="flex flex-col gap-10">
-            <Link to="/homepage">
-              <section className="flex gap-3">
-                <img src="public/dashboard-logo.png"/>
-                <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Dashboard</button>
-              </section>
-            </Link>
-            <Link to="/bookmarks">
-              <section className="flex gap-3">
-                <img src="public/bookmarks-logo.png"/>
-                <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Bookmarks</button>
-              </section>
-            </Link>
-            <Link to="/my-files">
-              <section className="flex gap-3">
-                <img src="public/yourfiles-logo.png"/>
-                <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Your Files</button>
-              </section>
-            </Link>
-            <Link to="/spaces">
-              <section className="flex gap-3">
-                <img src="public/collaborate-logo.png"/>
-                <button class="text-[25px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Collaboration</button>
-              </section>
-            </Link>
-            <Link to="/profile">
-              <section className="flex gap-3" style={{ marginTop: 8 }}>
-                <img src="public/sharessource-logo.png" style={{ width: 26 }}/> 
-                <button class="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58]">Profile</button>
-              </section>
-            </Link>
-          </section>
-        </section>
-        
-        <section className="mt-17 w-[700px]">
+    <AppShell>
+      {/* Center and constrain homepage content width to match other pages (Tailwind/shadcn) */}
+      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
+        <div className="flex gap-5 items-start w-full">
+          {/* Center column: keep all existing page content here (unchanged) */}
+          <section className="mb-5 w-[700px]">
           {profile && (
-            <h1 className="text-[32px] font-inter font-normal leading-[16px] tracking-[0%] mb-10">Welcome Back, {profile.firstName}! </h1>
+            <h1 className="text-[32px] font-inter font-normal leading-[16px] tracking-[0%] mb-10">Welcome, {profile.firstName}! </h1>
           )}
+
+          {/* Realtime search: filter uploaded files by filename or uploader */}
+          <div className="mb-4 flex gap-3">
+            <input
+              type="text"
+              placeholder="Search files or uploader..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full p-2 rounded-md border border-gray-300"
+            />
+             {/* Filter & Sort */}
+            <div className="flex flex-col">
+              <label>
+                Filter by Subject:{" "}
+                <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)}>
+                  <option value="">All Subjects</option>
+                  {subjects.map((subj) => (
+                    <option key={subj._1d} value={subj._id}>{subj.name}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Sort by:{" "}
+                <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+                  <option value="newest">Newest - Oldest</option>
+                  <option value="oldest">Oldest - Newest</option>
+                </select>
+              </label>
+
+              <button
+                onClick={() => {
+                  setFilterSubject("");
+                  setSortOption("newest");
+                }}
+              >
+                Clear Filters
+              </button>
+            </div>
+            
+          </div>
 
          {uploadedFiles.length === 0 ? (
             <p>No files uploaded yet.</p>
@@ -344,7 +345,7 @@ const toggleBookmark = async (fileID) => {
                 key={file._id}
                 className="py-7 px-5 bg-white mb-8 rounded-lg shadow-md"
               >
-                <p>
+                <div>
                   <strong>Filename:</strong>{" "}
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <img src={file.user?.profileImageURL ? `${API.defaults.baseURL.replace(/\/api$/, '')}${file.user.profileImageURL}` : '/sharessource-logo.png'} alt={file.user?.username || 'uploader'} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={(e)=>{e.target.onerror=null; e.target.src='/sharessource-logo.png'}} />
@@ -357,7 +358,7 @@ const toggleBookmark = async (fileID) => {
                     Download
                   </button>
 
-                </p>
+                </div>
 
                 <p>Uploaded by: {file.user?.username || "Unknown"}</p>
                 <p>Subject: {file.subject?.name || "No subject"}</p>
@@ -430,136 +431,70 @@ const toggleBookmark = async (fileID) => {
             ))
           )}
 
-          
+          {/* =====================
+              Upload File Section
+          ===================== */}
+          <h3>Upload a File</h3>
+          <form onSubmit={handleFileUpload}>
+            <input
+              type="file"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+              accept=".pdf,.doc,.docx,.txt"
+            />
+
+            <div style={{ marginTop: "10px" }}>
+              <label>
+                Select Subject:{" "}
+                <select
+                  value={selectedSubject}
+                  onChange={(e) => setSelectedSubject(e.target.value)}
+                  required
+                >
+                  <option value="">-- Select a Subject --</option>
+                  {subjects.map((subj) => (
+                    <option key={subj._id} value={subj._id}>
+                      {subj.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div style={{ marginTop: "10px" }}>
+              <input
+                type="text"
+                placeholder="Add new subject"
+                value={newSubjectName}
+                onChange={(e) => setNewSubjectName(e.target.value)}
+              />
+              <button type="button" onClick={handleAddSubject}>
+                Add Subject
+              </button>
+            </div>
+
+            <div style={{ marginTop: "10px" }}>
+              <input
+                type="text"
+                placeholder="Add file description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+          </div>
+
+
+            <button type="submit" style={{ marginTop: "10px" }}>
+              Upload
+            </button>
+          </form>
         </section>
-        {/* Right-side Top Rated panel */}
-        <TopRatedPanel scope="all" token={token} />
 
-      </div>
-  {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
-
-      <h2>Homepage</h2>
-      <p>Welcome, {email}!</p>
-
-      {profile && (
-        <div>
-          <p>First Name: {profile.firstName}</p>
-          <p>Last Name: {profile.lastName}</p>
-          <p>Email: {profile.email}</p>
-          <p>Role: {profile.role}</p>
-        </div>
-      )}
-
-      {/* 🧭 Navigation Buttons */}
-
-      <div style={{ margin: "20px 0" }}>
-        <Link to="/my-files">
-          <button style={{ marginBottom: "10px", padding: "5px 10px", backgroundColor: "#3498db", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}>View Your Files</button>
-        </Link>
-        <br />
-        <Link to="/bookmarks">
-          <button style={{ marginBottom: "10px", padding: "5px 10px", backgroundColor: "#f1c40f", color: "black", border: "none", borderRadius: "4px", cursor: "pointer" }}>Bookmarks</button>
-        </Link>
-      </div>
-
-      <div>
-        <Link to="/spaces">
-          <button>Go to Collaborative Spaces</button>
-        </Link>
-      </div>
-
-      {/* =====================
-          Upload File Section
-      ===================== */}
-      <h3>Upload a File</h3>
-      <form onSubmit={handleFileUpload}>
-        <input
-          type="file"
-          onChange={(e) => setSelectedFile(e.target.files[0])}
-          accept=".pdf,.doc,.docx,.txt"
-        />
-
-        <div style={{ marginTop: "10px" }}>
-          <label>
-            Select Subject:{" "}
-            <select
-              value={selectedSubject}
-              onChange={(e) => setSelectedSubject(e.target.value)}
-              required
-            >
-              <option value="">-- Select a Subject --</option>
-              {subjects.map((subj) => (
-                <option key={subj._id} value={subj._id}>
-                  {subj.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          {/* Right-side Top Rated panel */}
+          <TopRatedPanel scope="all" token={token} />
         </div>
 
-        <div style={{ marginTop: "10px" }}>
-          <input
-            type="text"
-            placeholder="Add new subject"
-            value={newSubjectName}
-            onChange={(e) => setNewSubjectName(e.target.value)}
-          />
-          <button type="button" onClick={handleAddSubject}>
-            Add Subject
-          </button>
-        </div>
-
-        <div style={{ marginTop: "10px" }}>
-          <input
-            type="text"
-            placeholder="Add file description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
+        {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
       </div>
-
-
-        <button type="submit" style={{ marginTop: "10px" }}>
-          Upload
-        </button>
-      </form>
-
-      {/* =====================
-          Uploaded Files
-      ===================== */}
-      <h3>Uploaded Files</h3>
-      {/* Filter & Sort */}
-      <div style={{ marginBottom: "15px", border: "1px solid #ccc", padding: "10px", borderRadius: "5px" }}>
-        <label>
-          Filter by Subject:{" "}
-          <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)}>
-            <option value="">All Subjects</option>
-            {subjects.map((subj) => (
-              <option key={subj._id} value={subj._id}>{subj.name}</option>
-            ))}
-          </select>
-        </label>
-
-        <label style={{ marginLeft: "15px" }}>
-          Sort by:{" "}
-          <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-            <option value="newest">Newest - Oldest</option>
-            <option value="oldest">Oldest - Newest</option>
-          </select>
-        </label>
-
-        <button
-          style={{ marginLeft: "15px" }}
-          onClick={() => {
-            setFilterSubject("");
-            setSortOption("newest");
-          }}
-        >
-          Clear Filters
-        </button>
-      </div>
-
-    </div>
+    </AppShell>
   );
 }

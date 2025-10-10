@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import API from '../api';
+import AppShell from '../components/AppShell';
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
@@ -72,10 +73,11 @@ export default function Profile() {
 
   const backendBase = API.defaults.baseURL.replace(/\/api$/, '');
 
-  const imgSrc = profile.profileImageURL ? `${backendBase}${profile.profileImageURL}` : '/sharessource-logo.png';
+  const imgSrc = profile.profileImageURL ? `${backendBase}${profile.profileImageURL}` : '/placeholder-profile.jpg';
 
   return (
-    <div style={{ maxWidth: 900, margin: '20px auto' }}>
+    <AppShell>
+      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
       <h1>My Profile</h1>
       <div style={{ display: 'flex', gap: 20 }}>
         <div>
@@ -122,6 +124,7 @@ export default function Profile() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </AppShell>
   );
 }
