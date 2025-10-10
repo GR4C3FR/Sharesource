@@ -82,18 +82,26 @@ exports.addMember = async (req, res) => {
   const { userId, role } = req.body;
 
   try {
-    if (!userId || !role) {
-      return res.status(400).json({ message: "userId and role are required" });
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
     }
 
     const space = await CollaborativeSpace.findById(spaceId);
     if (!space) return res.status(404).json({ message: "Space not found" });
 
+    // only the owner can add members
+    if (String(space.ownerUserId) !== String(req.user.userId)) {
+      return res.status(403).json({ message: "Only the space owner can add members" });
+    }
+
     if (space.members.some((m) => String(m.userId) === String(userId))) {
       return res.status(400).json({ message: "User is already a member" });
     }
 
-    space.members.push({ userId, role });
+    // default role to 'member' if not provided
+    const memberRole = role || 'member';
+
+    space.members.push({ userId, role: memberRole });
     await space.save();
 
     const populated = await CollaborativeSpace.findById(space._id)

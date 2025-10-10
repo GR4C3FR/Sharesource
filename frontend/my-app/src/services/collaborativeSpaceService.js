@@ -36,3 +36,20 @@ export const leaveSpace = async (spaceId) => {
     headers: { Authorization: `Bearer ${token}` },
   }).then(res => res.data);
 };
+
+// Search a user by email
+export const searchUserByEmail = async (email) => {
+  return API.get(`/users/search`, {
+    params: { email },
+    headers: { Authorization: `Bearer ${token}` },
+  }).then(res => res.data.user);
+};
+
+// Invite (add) a member to a space (owner only endpoint)
+export const inviteMember = async (spaceId, userId, role = 'member') => {
+  return API.post(
+    `/collaborative-spaces/${spaceId}/members`,
+    { userId, role },
+    { headers: { Authorization: `Bearer ${token}` } }
+  ).then(res => res.data);
+};

@@ -165,6 +165,21 @@ router.get('/profile', authMiddleware, async (req, res) => {
   }
 });
 
+// Search user by email (for invites) - returns minimal profile info
+router.get('/search', authMiddleware, async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ message: 'email query is required' });
+
+    const user = await User.findOne({ email }).select('_id email username firstName lastName');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Update profile fields
 router.put('/profile', authMiddleware, async (req, res) => {
   try {

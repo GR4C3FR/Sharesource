@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api";
+import { searchUserByEmail, inviteMember } from "../services/collaborativeSpaceService";
 
 export default function SpaceDetails() {
   const { spaceId } = useParams();
@@ -19,6 +20,13 @@ export default function SpaceDetails() {
   const [docs, setDocs] = useState([]); // google docs linked to this space
   const [loadingDocs, setLoadingDocs] = useState(false);
   const [addingDoc, setAddingDoc] = useState(false);
+
+  // Add Member UI state
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [searchEmail, setSearchEmail] = useState("");
+  const [searchingUser, setSearchingUser] = useState(false);
+  const [foundUser, setFoundUser] = useState(null);
+  const [inviteLoading, setInviteLoading] = useState(false);
 
   // Fetch space by ID
   const fetchSpace = async () => {
@@ -146,6 +154,82 @@ export default function SpaceDetails() {
             ))
           : <li>No members yet</li>}
       </ul>
+
+      {/* Add Member (owner only) */}
+      {String(space.ownerUserId?._id || space.ownerUserId) === String(localStorage.getItem('userId')) && (
+        <div style={{ marginTop: 12 }}>
+          <button onClick={() => setShowAddMember(s => !s)}>➕ Add Member</button>
+
+          {showAddMember && (
+            <div style={{ marginTop: 12, border: '1px solid #ddd', padding: 12, borderRadius: 6, maxWidth: 720 }}>
+              <h4>Add member by email</h4>
+              <input
+                placeholder="user@example.com"
+                value={searchEmail}
+                onChange={(e) => setSearchEmail(e.target.value)}
+                style={{ display: 'block', width: '100%', marginBottom: 8 }}
+              />
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button
+                  onClick={async () => {
+                    if (!searchEmail) return alert('Please enter an email');
+                    try {
+                      setSearchingUser(true);
+                      setFoundUser(null);
+                      const user = await searchUserByEmail(searchEmail);
+                      setFoundUser(user);
+                    } catch (err) {
+                      console.error('User search failed', err);
+                      alert(err?.response?.data?.message || 'User not found');
+                    } finally {
+                      setSearchingUser(false);
+                    }
+                  }}
+                >
+                  {searchingUser ? 'Searching...' : 'Search'}
+                </button>
+                <button onClick={() => { setShowAddMember(false); setSearchEmail(''); setFoundUser(null); }}>Cancel</button>
+              </div>
+
+              {foundUser && (
+                <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div><strong>{foundUser.username || `${foundUser.firstName} ${foundUser.lastName}`}</strong></div>
+                    <div style={{ color: '#555' }}>{foundUser.email}</div>
+                  </div>
+                  <div>
+                    {space.members?.some(m => String(m.userId?._id || m.userId) === String(foundUser._id)) ? (
+                      <span style={{ color: '#555' }}>Already a member</span>
+                    ) : (
+                      <button
+                        onClick={async () => {
+                          try {
+                            setInviteLoading(true);
+                            await inviteMember(spaceId, foundUser._id);
+                            alert('User added to the space');
+                            setSearchEmail('');
+                            setFoundUser(null);
+                            setShowAddMember(false);
+                            fetchSpace();
+                          } catch (err) {
+                            console.error('Invite failed', err);
+                            alert(err?.response?.data?.message || 'Failed to add member');
+                          } finally {
+                            setInviteLoading(false);
+                          }
+                        }}
+                        disabled={inviteLoading}
+                      >
+                        {inviteLoading ? 'Inviting...' : 'Invite'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Add Collaborative File */}
       <div style={{ marginTop: 20 }}>
