@@ -5,8 +5,9 @@ import AppShell from '../components/AppShell';
 export default function Profile() {
   const [profile, setProfile] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ firstName: '', lastName: '', bio: '', username: '' });
+  const [form, setForm] = useState({ firstName: '', lastName: '', username: '' });
   const [imageFile, setImageFile] = useState(null);
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
 
   const token = localStorage.getItem('accessToken');
 
@@ -18,7 +19,6 @@ export default function Profile() {
         setForm({
           firstName: res.data.user.firstName || '',
           lastName: res.data.user.lastName || '',
-          bio: res.data.user.bio || '',
           username: res.data.user.username || '',
         });
       } catch (err) {
@@ -97,7 +97,6 @@ export default function Profile() {
               <p><strong>Username:</strong> {profile.username}</p>
               <p><strong>Name:</strong> {profile.firstName} {profile.lastName}</p>
               <p><strong>Email:</strong> {profile.email}</p>
-              <p><strong>Bio:</strong> {profile.bio || '—'}</p>
               <button onClick={() => setEditing(true)} style={{ marginTop: 10 }}>Edit Profile</button>
             </div>
           ) : (
@@ -114,15 +113,50 @@ export default function Profile() {
                 <input value={form.lastName} onChange={(e) => setForm((s) => ({ ...s, lastName: e.target.value }))} />
               </label>
               <br />
-              <label>Bio<br />
-                <textarea value={form.bio} onChange={(e) => setForm((s) => ({ ...s, bio: e.target.value }))} />
-              </label>
               <br />
               <button onClick={handleSave}>Save</button>
               <button onClick={() => setEditing(false)} style={{ marginLeft: 8 }}>Cancel</button>
             </div>
           )}
         </div>
+      </div>
+      <div style={{ marginTop: 20, borderTop: '1px solid #eee', paddingTop: 20 }}>
+        <h3>Change Password</h3>
+        <label>Current Password<br />
+          <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm(s => ({ ...s, currentPassword: e.target.value }))} />
+        </label>
+        <br />
+        <label>New Password<br />
+          <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm(s => ({ ...s, newPassword: e.target.value }))} />
+        </label>
+        <br />
+        <button onClick={async () => {
+          if (!passwordForm.currentPassword || !passwordForm.newPassword) return alert('Enter both passwords');
+          try {
+            const res = await API.post('/users/profile/password', passwordForm);
+            alert(res.data.message || 'Password changed');
+            setPasswordForm({ currentPassword: '', newPassword: '' });
+          } catch (err) {
+            console.error('Password change failed', err);
+            alert(err?.response?.data?.message || 'Failed to change password');
+          }
+        }} style={{ marginTop: 8 }}>Change Password</button>
+
+        <h3 style={{ marginTop: 20 }}>Danger Zone</h3>
+        <button onClick={async () => {
+          if (!confirm('Delete your profile? This will permanently remove your account and all related data.')) return;
+          try {
+            const res = await API.delete('/users/profile');
+            alert(res.data.message || 'Account deleted');
+            // log out locally
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('userId');
+            window.location.href = '/';
+          } catch (err) {
+            console.error('Delete profile failed', err);
+            alert(err?.response?.data?.message || 'Failed to delete profile');
+          }
+        }} style={{ background: '#e74c3c', color: 'white', marginTop: 8 }}>Delete Profile</button>
       </div>
       </div>
     </AppShell>

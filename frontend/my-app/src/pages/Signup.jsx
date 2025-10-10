@@ -26,7 +26,7 @@ export default function Signup() {
       alert("Signup successful! Please login.");
       navigate("/login");
     } catch (err) {
-      alert(err.response?.data?.error || "Signup failed");
+      alert(err.response?.data?.message || err.response?.data?.error || "Signup failed");
     }
   };
 

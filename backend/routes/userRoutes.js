@@ -7,6 +7,13 @@ const router = express.Router();
 const uploadImage = require('../middleware/uploadImage');
 const fs = require('fs');
 const path = require('path');
+// models needed for cascading deletes
+const File = require('../models/File');
+const Comment = require('../models/Comment');
+const Bookmark = require('../models/Bookmark');
+const Rating = require('../models/Rating');
+const CollaborativeSpace = require('../models/CollaborativeSpace');
+const GoogleDoc = require('../models/GoogleDoc');
 
 // JWT Helper Functions
 function generateAccessToken(user) {
@@ -60,8 +67,12 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: "Password is required" });
     }
 
-    const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: "User already exists" });
+    // Ensure unique email and unique username
+    const existing = await User.findOne({ $or: [{ email }, { username }] });
+    if (existing) {
+      if (existing.email === email) return res.status(400).json({ message: "User with this email already exists" });
+      return res.status(400).json({ message: "Username already taken" });
+    }
 
     const user = new User({ email, username, firstName, lastName, role });
     await user.setPassword(rawPassword); // ✅ hash whichever one is available
@@ -184,13 +195,93 @@ router.get('/search', authMiddleware, async (req, res) => {
 router.put('/profile', authMiddleware, async (req, res) => {
   try {
     const updates = {};
-    const allowed = ['firstName', 'lastName', 'bio', 'username'];
+    const allowed = ['firstName', 'lastName', 'username'];
     allowed.forEach(k => { if (req.body[k] !== undefined) updates[k] = req.body[k]; });
+
+    // If username is being changed, ensure uniqueness
+    if (updates.username) {
+      const exists = await User.findOne({ username: updates.username, _id: { $ne: req.user.userId } });
+      if (exists) return res.status(400).json({ message: 'Username already taken' });
+    }
 
     const user = await User.findByIdAndUpdate(req.user.userId, updates, { new: true }).select('-passwordHash');
     res.json({ message: 'Profile updated', user });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Change password
+router.post('/profile/password', authMiddleware, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) return res.status(400).json({ message: 'currentPassword and newPassword required' });
+
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const match = await user.matchPassword(currentPassword);
+    if (!match) return res.status(401).json({ message: 'Current password is incorrect' });
+
+    await user.setPassword(newPassword);
+    await user.save();
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Delete profile and cascade delete related data
+router.delete('/profile', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    // 1) Delete spaces owned by user (this will trigger CollaborativeSpace pre hook to cleanup linked GoogleDocs)
+    const ownedSpaces = await CollaborativeSpace.find({ ownerUserId: userId });
+    for (const s of ownedSpaces) {
+      await s.deleteOne();
+    }
+
+    // 2) Remove user from any other spaces' members
+    await CollaborativeSpace.updateMany(
+      { 'members.userId': userId },
+      { $pull: { members: { userId } } }
+    );
+
+    // 3) Delete bookmarks
+    await Bookmark.deleteMany({ userID: userId });
+
+    // 4) Delete ratings
+    await Rating.deleteMany({ userId });
+
+    // 5) Delete comments
+    await Comment.deleteMany({ userId });
+
+    // 6) Delete files owned by user and remove physical files when possible
+    const userFiles = await File.find({ user: userId });
+    for (const f of userFiles) {
+      try {
+        if (f.path) {
+          const filePath = path.isAbsolute(f.path) ? f.path : path.join(__dirname, '..', f.path);
+          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        }
+      } catch (e) {
+        console.warn('Failed to delete file on disk', e);
+      }
+    }
+    await File.deleteMany({ user: userId });
+
+    // 7) Delete google docs created/uploaded by user
+    await GoogleDoc.deleteMany({ $or: [{ uploadedBy: userId }, { createdBy: userId }] });
+
+    // 8) Finally delete the user record
+    await User.findByIdAndDelete(userId);
+
+    res.json({ message: 'Profile and related data deleted' });
+  } catch (err) {
+    console.error('Failed to delete profile', err);
+    res.status(500).json({ message: 'Failed to delete profile', error: err.message });
   }
 });
 
