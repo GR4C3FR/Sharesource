@@ -141,19 +141,29 @@ useEffect(() => {
   // 🔹 Add new subject
   const handleAddSubject = async () => {
     if (!newSubjectName) return alert("Enter a subject name");
+    const nameToAdd = newSubjectName.trim();
+    if (!nameToAdd) return alert("Enter a subject name");
     try {
+      // create subject
       await API.post(
         "/subjects",
-        { name: newSubjectName },
+        { name: nameToAdd },
         { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
       );
-      alert("Subject added!");
-      setNewSubjectName("");
 
+      // refresh subjects list
       const subjectsRes = await API.get("/subjects", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSubjects(Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : []);
+      const list = Array.isArray(subjectsRes.data.subjects) ? subjectsRes.data.subjects : [];
+      setSubjects(list);
+
+      // select the newly created subject if present
+      const created = list.find((s) => (s.name || "").toLowerCase() === nameToAdd.toLowerCase());
+      if (created) setSelectedSubject(created._id);
+
+      setNewSubjectName("");
+      alert("Subject added!");
     } catch (err) {
       console.error(err);
       alert("Failed to add subject");
@@ -337,16 +347,27 @@ const toggleBookmark = async (fileID) => {
           )}
 
           {/* Realtime search: filter uploaded files by filename or uploader */}
-      <div className="mb-4 flex gap-3">
+        {/* Search + filter toggle (CSS-only) */}
+        <div className="mb-4 relative">
+          <div className="flex items-center gap-2">
             <input
               type="text"
-              placeholder="Search files or uploader..."
+              placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-2 rounded-md border border-gray-300"
+              className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white"
             />
-             {/* Filter & Sort */}
-            <div className="flex flex-col">
+            <label htmlFor="filters-toggle" className="inline-flex items-center px-3 py-2 rounded-md bg-[#1D2F58] text-white text-sm cursor-pointer select-none hover:bg-[#16325a]">
+              Filters
+            </label>
+          </div>
+
+          {/* Hidden checkbox placed just before the panel so peer selector works */}
+          <input id="filters-toggle" type="checkbox" className="hidden peer" />
+
+          {/* Filter & Sort: absolute overlay hidden by default, shown when #filters-toggle is checked */}
+          <div className="filter-panel absolute left-0 mt-2 w-full z-50 transform origin-top scale-y-0 peer-checked:scale-y-100 peer-checked:block hidden bg-white rounded-md shadow-lg p-3">
+            <div className="flex flex-col gap-2">
               <label>
                 Filter by Subject:{" "}
                 <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)}>
@@ -370,6 +391,7 @@ const toggleBookmark = async (fileID) => {
                   setFilterSubject("");
                   setSortOption("newest");
                 }}
+                className="inline-flex items-center px-2 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200"
               >
                 Clear Filters
               </button>
@@ -384,13 +406,17 @@ const toggleBookmark = async (fileID) => {
             )}
             
           </div>
+        </div>
 
           {uploadedFiles.length === 0 ? (
             <p>No files uploaded yet.</p>
           ) : (
-            displayedFiles.map((file) => {
-              return (
-                <div key={file._id} className="py-7 px-5 bg-white mb-8 rounded-lg shadow-md">
+            // Scrollable area: fixed height to show ~2 cards, inner scroll for additional items
+            <div className="overflow-hidden bg-transparent">
+              <div className="overflow-y-auto h-[400px] pr-2">
+                {displayedFiles.map((file) => {
+                  return (
+                    <div key={file._id} className="py-7 px-5 bg-white mb-8 rounded-lg shadow-md">
                   <div style={{ display: 'flex', gap: 12 }}>
                     <div style={{ width: 72, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
                       <Avatar user={file.user} size={48} />
@@ -438,8 +464,10 @@ const toggleBookmark = async (fileID) => {
                     </div>
                   </div>
                 </div>
-              );
-            })
+                  );
+                })}
+              </div>
+            </div>
           )}
 
           {/* =====================

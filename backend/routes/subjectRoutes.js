@@ -17,9 +17,8 @@ router.get('/', authMiddleware, async (req, res) => {
 // Create a subject
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    // Only Admins can create subjects
-    if (req.user.role !== "Admin")
-      return res.status(403).json({ error: "Forbidden: Only Admins can create subjects" });
+    // Previously only Admins could create subjects. Allow any authenticated user to create subjects.
+    // If you later want to restrict this, reintroduce a role check here.
 
     const name = req.body.name?.trim() || req.body.subjectName?.trim();
     if (!name) return res.status(400).json({ error: "Missing subject name" });
