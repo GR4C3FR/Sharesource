@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api';
 import Avatar from './Avatar';
 
@@ -7,6 +7,25 @@ export default function AppShell({ children }) {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const token = localStorage.getItem('accessToken');
+  const location = useLocation();
+
+  const getTitleFromPath = (pathname) => {
+    if (!pathname || pathname === '/' || pathname === '/homepage') return 'Dashboard';
+    if (pathname.startsWith('/bookmarks')) return 'Bookmarks';
+    if (pathname.startsWith('/my-files')) return 'Your Files';
+    if (pathname.startsWith('/spaces')) return 'Collaboration';
+    if (pathname.startsWith('/profile')) return 'Profile & Settings';
+    if (pathname.startsWith('/notes')) return 'Notes';
+    if (pathname.startsWith('/viewer')) return 'Viewer';
+    // Fallback: turn path segments into a readable title
+    const seg = pathname.split('/').filter(Boolean)[0] || 'Dashboard';
+    return seg
+      .split('-')
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join(' ');
+  };
+
+  const pageTitle = getTitleFromPath(location.pathname);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -49,7 +68,8 @@ export default function AppShell({ children }) {
         {/* Left navigation column */}
         <section>
           <section className="w-max h-auto flex flex-col justify-center mb-35">
-            <h1 className="text-[45px] font-inter font-normal leading-[16px] tracking-[0%] text-[#1D2F58]">Dashboard</h1>
+            {/* Dynamic page title based on current route */}
+            <h1 className="text-[45px] font-inter font-normal leading-[16px] tracking-[0%] text-[#1D2F58]">{pageTitle}</h1>
           </section>
 
           <section className="flex flex-col gap-10">
