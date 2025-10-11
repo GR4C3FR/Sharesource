@@ -269,3 +269,26 @@ exports.getSpaceById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch space", error: error.message });
   }
 };
+
+/**
+ * Delete a space (admins only)
+ */
+exports.deleteSpace = async (req, res) => {
+  const { spaceId } = req.params;
+  try {
+    // only admins allowed to delete spaces
+    if (req.user.role !== 'Admin') {
+      return res.status(403).json({ message: 'Only admins can delete spaces' });
+    }
+
+    const space = await CollaborativeSpace.findById(spaceId);
+    if (!space) return res.status(404).json({ message: 'Space not found' });
+
+    // trigger pre 'deleteOne' hooks to cleanup linked google docs
+    await space.deleteOne();
+
+    res.json({ message: 'Space deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete space', error: error.message });
+  }
+};

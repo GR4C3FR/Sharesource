@@ -6,6 +6,7 @@ import {
   joinSpace,
   getUserSpaces,
   leaveSpace,
+  deleteSpace,
 } from "../services/collaborativeSpaceService";
 import API from "../api";
 import AppShell from "../components/AppShell";
@@ -206,15 +207,18 @@ export default function CollaborativeSpaces() {
           </>
         )}
 
-        <h2>My Spaces</h2>
-        {mySpaces.length === 0 ? (
-          <p>You are not a member of any spaces yet.</p>
-        ) : (
-          displayedMySpaces.map((space) => (
+  {/* Only show My Spaces section to non-admin users (render after profile loads to avoid flicker) */}
+  {profile && profile.role !== 'Admin' && (
+          <>
+            <h2>My Spaces</h2>
+            {mySpaces.length === 0 ? (
+              <p>You are not a member of any spaces yet.</p>
+            ) : (
+              displayedMySpaces.map((space) => (
             <div key={space._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
-              <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ marginLeft: "10px" }}>
-                View Space
-              </button>
+                <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ marginLeft: "10px" }}>
+                  View Space
+                </button>
               <h3>
                 Title: {space.spaceName}{" "}
                 <button onClick={() => startEdit(space)}>Edit</button>
@@ -279,7 +283,9 @@ export default function CollaborativeSpaces() {
                 </div>
               )}
             </div>
-          ))
+              ))
+            )}
+          </>
         )}
 
       <div style={{ marginBottom: 12 }}>
@@ -323,9 +329,30 @@ export default function CollaborativeSpaces() {
 
                     {/* Admins can view spaces without joining */}
                     {profile?.role === 'Admin' && (
-                      <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ background: 'transparent', border: '1px solid #ccc', padding: '4px 8px', borderRadius: 4 }}>
-                        View Space
-                      </button>
+                      <>
+                        <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ background: 'transparent', border: '1px solid #ccc', padding: '4px 8px', borderRadius: 4 }}>
+                          View Space
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (!confirm('Delete this space? This will remove the space and any linked docs.')) return;
+                            try {
+                              setLoading(true);
+                              await deleteSpace(space._id);
+                              await fetchSpaces();
+                              await fetchMySpaces();
+                            } catch (err) {
+                              console.error('Failed to delete space', err);
+                              alert(err?.response?.data?.message || 'Failed to delete space');
+                            } finally {
+                              setLoading(false);
+                            }
+                          }}
+                          style={{ marginLeft: 8, background: '#e53e3e', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: 6 }}
+                        >
+                          Delete
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>

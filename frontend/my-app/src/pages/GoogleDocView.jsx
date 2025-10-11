@@ -7,6 +7,7 @@ export default function GoogleDocView() {
   const { spaceId, docId } = useParams();
   const navigate = useNavigate();
   const [doc, setDoc] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const load = async () => {
@@ -15,12 +16,21 @@ export default function GoogleDocView() {
           headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
         });
         setDoc(res.data);
-      } catch (err) {
-        console.error("Failed to load google doc:", err);
-        alert("Failed to load document");
-      }
+      } catch {
+          console.error("Failed to load google doc");
+          alert("Failed to load document");
+        }
     };
     load();
+    // fetch profile to determine role
+    (async () => {
+      try {
+        const r = await API.get('/users/profile', { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } });
+        setProfile(r.data.user);
+      } catch {
+        // ignore
+      }
+    })();
   }, [docId]);
 
   if (!doc) return <p>Loading document...</p>;
@@ -29,8 +39,10 @@ export default function GoogleDocView() {
   const idMatch = doc.link.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
   const docIdFromLink = idMatch ? idMatch[1] : doc._id;
 
-  // Use Google Docs edit URL (attempt to load the full editor). NOTE: Google often blocks full editor in cross-origin iframes.
-  const embeddedUrl = `https://docs.google.com/document/d/${docIdFromLink}/edit`;
+  // Use Google Docs edit URL (attempt to load the full editor). For admins, load the preview (read-only) variant.
+  const embeddedUrl = profile?.role === 'Admin'
+    ? `https://docs.google.com/document/d/${docIdFromLink}/preview`
+    : `https://docs.google.com/document/d/${docIdFromLink}/edit`;
 
   return (
     <div style={{ padding: 20 }}>

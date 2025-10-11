@@ -17,6 +17,8 @@ export default function Homepage() {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
   const [newSubjectName, setNewSubjectName] = useState("");
+  const [showManageSubjects, setShowManageSubjects] = useState(false);
+  const [manageSubjectName, setManageSubjectName] = useState("");
   const [openComments, setOpenComments] = useState({});
   const [fileAverages, setFileAverages] = useState({}); // ⭐ Live average sync per file
   const [description, setDescription] = useState("");
@@ -78,7 +80,7 @@ useEffect(() => {
         // file.subjectID can be an id string or a populated subject object (from backend)
         const subjectId = file.subjectID && file.subjectID._id ? file.subjectID._id : file.subjectID;
         const subject = file.subject || subjectsData.find((subj) => subj._id === subjectId);
-        return { ...file, subject: subject || { name: "No subject" } };
+  return { ...file, subject: subject || { name: "n/a" } };
       });
 
       setUploadedFiles(filesWithSubjects);
@@ -123,7 +125,7 @@ useEffect(() => {
       // attach subject objects based on current subjects state
       const filesWithSubjects = filesData.map((file) => {
         const subjectId = file.subjectID && file.subjectID._id ? file.subjectID._id : file.subjectID;
-        const subject = file.subject || subjects.find((s) => s._id === subjectId) || { name: 'No subject' };
+  const subject = file.subject || subjects.find((s) => s._id === subjectId) || { name: 'n/a' };
         return { ...file, subject };
       });
       setUploadedFiles(filesWithSubjects);
@@ -155,6 +157,43 @@ useEffect(() => {
     } catch (err) {
       console.error(err);
       alert("Failed to add subject");
+    }
+  };
+
+  // Manage Subjects (admin) handlers
+  const openManageSubjects = async () => {
+    try {
+      const res = await API.get('/subjects', { headers: { Authorization: `Bearer ${token}` } });
+      setSubjects(Array.isArray(res.data.subjects) ? res.data.subjects : []);
+      setShowManageSubjects(true);
+    } catch (err) {
+      console.error('Failed to load subjects', err);
+      alert('Failed to load subjects');
+    }
+  };
+
+  const handleManageAdd = async () => {
+    if (!manageSubjectName) return alert('Enter a subject name');
+    try {
+      await API.post('/subjects', { name: manageSubjectName }, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } });
+      const res = await API.get('/subjects', { headers: { Authorization: `Bearer ${token}` } });
+      setSubjects(Array.isArray(res.data.subjects) ? res.data.subjects : []);
+      setManageSubjectName('');
+    } catch (err) {
+      console.error('Failed to add subject', err);
+      alert(err?.response?.data?.error || 'Failed to add subject');
+    }
+  };
+
+  const handleManageDelete = async (id) => {
+    if (!confirm('Delete this subject? Files using this subject will show n/a.')) return;
+    try {
+      await API.delete(`/subjects/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await API.get('/subjects', { headers: { Authorization: `Bearer ${token}` } });
+      setSubjects(Array.isArray(res.data.subjects) ? res.data.subjects : []);
+    } catch (err) {
+      console.error('Failed to delete subject', err);
+      alert(err?.response?.data?.error || 'Failed to delete subject');
     }
   };
 
@@ -298,7 +337,7 @@ const toggleBookmark = async (fileID) => {
           )}
 
           {/* Realtime search: filter uploaded files by filename or uploader */}
-          <div className="mb-4 flex gap-3">
+      <div className="mb-4 flex gap-3">
             <input
               type="text"
               placeholder="Search files or uploader..."
@@ -335,6 +374,14 @@ const toggleBookmark = async (fileID) => {
                 Clear Filters
               </button>
             </div>
+            {/* Admin: Manage Subjects button */}
+            {profile?.role === 'Admin' && (
+              <div style={{ marginLeft: 12 }}>
+                <button onClick={openManageSubjects} style={{ padding: '6px 10px', background: '#2b6cb0', color: '#fff', border: 'none', borderRadius: 6 }}>
+                  Manage Subjects
+                </button>
+              </div>
+            )}
             
           </div>
 
@@ -462,6 +509,27 @@ const toggleBookmark = async (fileID) => {
         </div>
 
         {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
+        {/* Admin Manage Subjects Modal */}
+        {showManageSubjects && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: '#fff', padding: 20, borderRadius: 8, width: 600, maxHeight: '80vh', overflow: 'auto' }}>
+              <h3>Manage Subjects</h3>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                <input placeholder="New subject" value={manageSubjectName} onChange={(e) => setManageSubjectName(e.target.value)} style={{ flex: 1 }} />
+                <button onClick={handleManageAdd} style={{ background: '#2b6cb0', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: 6 }}>Add</button>
+                <button onClick={() => setShowManageSubjects(false)} style={{ marginLeft: 8 }}>Close</button>
+              </div>
+              <ul>
+                {subjects.map(s => (
+                  <li key={s._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #eee' }}>
+                    <span>{s.name}</span>
+                    <button onClick={() => handleManageDelete(s._id)} style={{ background: '#e53e3e', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: 6 }}>Delete</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </AppShell>
   );

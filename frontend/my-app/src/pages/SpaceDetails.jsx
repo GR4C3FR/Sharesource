@@ -2,12 +2,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api";
-import { searchUserByEmail, inviteMember } from "../services/collaborativeSpaceService";
+import { searchUserByEmail, inviteMember, deleteSpace } from "../services/collaborativeSpaceService";
 
 export default function SpaceDetails() {
   const { spaceId } = useParams();
   const navigate = useNavigate();
   const [space, setSpace] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -42,8 +43,8 @@ export default function SpaceDetails() {
       setSpace(data);
       setTitle(data.spaceName || "");
       setDesc(data.description || "");
-    } catch (err) {
-      console.error("❌ Failed to fetch space:", err);
+    } catch {
+      console.error("❌ Failed to fetch space");
       alert("Failed to load space details");
     }
   };
@@ -55,8 +56,8 @@ export default function SpaceDetails() {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       setDocs(res.data || []);
-    } catch (err) {
-      console.error("Failed to fetch google docs:", err);
+    } catch {
+      console.error("Failed to fetch google docs");
     } finally {
       setLoadingDocs(false);
     }
@@ -65,6 +66,16 @@ export default function SpaceDetails() {
   useEffect(() => {
     fetchSpace();
     fetchDocs();
+    // fetch current user profile
+    const fetchProfile = async () => {
+      try {
+        const r = await API.get('/users/profile', { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } });
+        setProfile(r.data.user);
+      } catch {
+        // ignore
+      }
+    };
+    fetchProfile();
     // eslint-disable-next-line
   }, [spaceId]);
 
@@ -92,7 +103,7 @@ export default function SpaceDetails() {
       }
       setAddingDoc(true);
       const payload = { title: docTitle, description: docDesc, link: docLink };
-      const res = await API.post(`/google-docs/spaces/${spaceId}`, payload, {
+      await API.post(`/google-docs/spaces/${spaceId}`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
       });
       alert("Google Doc added successfully.");
@@ -139,7 +150,9 @@ export default function SpaceDetails() {
         <div style={{ marginTop: "20px" }}>
           <h2>{space.spaceName}</h2>
           <p>{space.description}</p>
-          <button onClick={() => setEditMode(true)}>Edit</button>
+          {profile?.role !== 'Admin' && (
+            <button onClick={() => setEditMode(true)}>Edit</button>
+          )}
         </div>
       )}
 
@@ -231,39 +244,63 @@ export default function SpaceDetails() {
         </div>
       )}
 
-      {/* Add Collaborative File */}
-      <div style={{ marginTop: 20 }}>
-        <button onClick={() => setShowAddDoc((s) => !s)}>➕ Add Collaborative File</button>
-        {showAddDoc && (
-          <div style={{ marginTop: 12, border: "1px solid #ddd", padding: 12, borderRadius: 6, maxWidth: 720 }}>
-            <h4>Add Google Doc</h4>
-            <input
-              placeholder="Document title"
-              value={docTitle}
-              onChange={(e) => setDocTitle(e.target.value)}
-              style={{ display: "block", width: "100%", marginBottom: 8 }}
-            />
-            <input
-              placeholder="Short description (optional)"
-              value={docDesc}
-              onChange={(e) => setDocDesc(e.target.value)}
-              style={{ display: "block", width: "100%", marginBottom: 8 }}
-            />
-            <input
-              placeholder="Google Docs link (must be shareable: Anyone with the link)"
-              value={docLink}
-              onChange={(e) => setDocLink(e.target.value)}
-              style={{ display: "block", width: "100%", marginBottom: 8 }}
-            />
-            <div>
-              <button onClick={addGoogleDoc} disabled={addingDoc} style={{ marginRight: 8 }}>
-                {addingDoc ? "Adding..." : "Add Document"}
-              </button>
-              <button onClick={() => setShowAddDoc(false)}>Cancel</button>
+      {/* Add Collaborative File - hidden for Admins */}
+      {profile?.role !== 'Admin' && (
+        <div style={{ marginTop: 20 }}>
+          <button onClick={() => setShowAddDoc((s) => !s)}>➕ Add Collaborative File</button>
+          {showAddDoc && (
+            <div style={{ marginTop: 12, border: "1px solid #ddd", padding: 12, borderRadius: 6, maxWidth: 720 }}>
+              <h4>Add Google Doc</h4>
+              <input
+                placeholder="Document title"
+                value={docTitle}
+                onChange={(e) => setDocTitle(e.target.value)}
+                style={{ display: "block", width: "100%", marginBottom: 8 }}
+              />
+              <input
+                placeholder="Short description (optional)"
+                value={docDesc}
+                onChange={(e) => setDocDesc(e.target.value)}
+                style={{ display: "block", width: "100%", marginBottom: 8 }}
+              />
+              <input
+                placeholder="Google Docs link (must be shareable: Anyone with the link)"
+                value={docLink}
+                onChange={(e) => setDocLink(e.target.value)}
+                style={{ display: "block", width: "100%", marginBottom: 8 }}
+              />
+              <div>
+                <button onClick={addGoogleDoc} disabled={addingDoc} style={{ marginRight: 8 }}>
+                  {addingDoc ? "Adding..." : "Add Document"}
+                </button>
+                <button onClick={() => setShowAddDoc(false)}>Cancel</button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+
+      {/* Admin: allow deleting the entire space */}
+      {profile?.role === 'Admin' && (
+        <div style={{ marginTop: 12 }}>
+          <button
+            onClick={async () => {
+              if (!confirm('Delete this space? This will remove the space and any linked docs.')) return;
+              try {
+                await deleteSpace(spaceId);
+                alert('Space deleted');
+                navigate('/spaces');
+              } catch (err) {
+                console.error('Failed to delete space', err);
+                alert(err?.response?.data?.message || 'Failed to delete space');
+              }
+            }}
+            style={{ background: '#e53e3e', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: 6 }}
+          >
+            Delete Space
+          </button>
+        </div>
+      )}
 
       {/* Google Doc Cards */}
       <h3 style={{ marginTop: 20 }}>Shared Files (Google Docs)</h3>

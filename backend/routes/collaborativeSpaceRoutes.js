@@ -8,6 +8,7 @@ const {
   shareFile,
   getAllSpaces,
   updateSpace,
+  deleteSpace,
   leaveSpace,
   getSpaceById
 } = require("../controllers/collaborativeSpaceController");
@@ -36,6 +37,9 @@ router.put("/:spaceId", authMiddleware, updateSpace);
 
 // Leave a space
 router.delete("/:spaceId/leave", authMiddleware, leaveSpace);
+
+// Delete a space (admin)
+router.delete("/:spaceId", authMiddleware, deleteSpace);
 
 // Get a single space by ID (with members + files)
 router.get("/:spaceId", authMiddleware, getSpaceById);

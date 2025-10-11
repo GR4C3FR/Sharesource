@@ -132,14 +132,14 @@ export default function MyFiles() {
           try {
             const res = await API.get(`/ratings/${f._id}`, { headers: { Authorization: `Bearer ${token}` } });
             map[f._id] = res.data.average || 0;
-          } catch (err) {
-            map[f._id] = 0;
-          }
+          } catch {
+              map[f._id] = 0;
+            }
         }));
         setFileAverages(map);
-      } catch (err) {
-        console.error('Failed to fetch averages', err);
-      }
+      } catch {
+          console.error('Failed to fetch averages');
+        }
     };
     if (files && files.length > 0) fetchAverages();
   }, [files, token]);
@@ -385,7 +385,7 @@ export default function MyFiles() {
                 Download
               </button>
 
-              <p>Subject: {file.subject?.name || "No subject"}</p>
+              <p>Subject: {file.subject?.name || "n/a"}</p>
               <p>Uploaded on: {new Date(file.uploadDate).toLocaleString()}</p>
               <p><strong>Description:</strong> {file.description || "No description"}</p>
 

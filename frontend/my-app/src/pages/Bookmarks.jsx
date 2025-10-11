@@ -51,13 +51,13 @@ export default function Bookmarks() {
           try {
             const res = await API.get(`/ratings/${f._id}`, { headers: { Authorization: `Bearer ${token}` } });
             map[f._id] = res.data.average || 0;
-          } catch (err) {
+          } catch {
             map[f._id] = 0;
           }
         }));
         setFileAverages(map);
-      } catch (err) {
-        console.error('Failed to fetch bookmark averages', err);
+      } catch {
+        console.error('Failed to fetch bookmark averages');
       }
     };
     if (bookmarks && bookmarks.length) fetchAverages();
@@ -97,7 +97,7 @@ export default function Bookmarks() {
         const files = validBookmarks.map(b => {
           const file = b.fileId;
           const user = file.user || { username: "Unknown", firstName: "", lastName: "" };
-          const subject = file.subject || { name: "No subject" };
+          const subject = file.subject || { name: "n/a" };
           const uploaderName = user.firstName || user.lastName
             ? `${(user.firstName || "").trim()} ${(user.lastName || "").trim()}`.trim()
             : (user.username || "Unknown");

@@ -53,3 +53,7 @@ export const inviteMember = async (spaceId, userId, role = 'member') => {
     { headers: { Authorization: `Bearer ${token}` } }
   ).then(res => res.data);
 };
+
+export const deleteSpace = async (spaceId) => {
+  return API.delete(`/collaborative-spaces/${spaceId}`, { headers: { Authorization: `Bearer ${token}` } }).then(res => res.data);
+};

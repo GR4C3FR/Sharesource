@@ -64,7 +64,7 @@ export default function TopRatedPanel({ scope = 'all', token }) {
               <button onClick={() => setActive(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
               <div style={{ fontSize: '0.85rem', color: '#555' }}>
                 <div>Uploader: {file.user?.username || 'Unknown'}</div>
-                <div>Subject: {file.subject?.name || 'No subject'}</div>
+                <div>Subject: {file.subject?.name || 'n/a'}</div>
                 <div>Description: {file.description || 'No description'}</div>
                 <div>Avg: {Number(file.avgRating).toFixed(2)}</div>
               </div>

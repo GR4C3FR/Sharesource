@@ -48,7 +48,7 @@ export default function FilePreviewModal({ file, token, onClose }) {
 
         <div style={{ marginTop: 8, color: '#555' }}>
           <div><strong>Uploader:</strong> {file.user?.username || file.uploaderName || 'Unknown'}</div>
-          <div><strong>Subject:</strong> {file.subject?.name || 'No subject'}</div>
+          <div><strong>Subject:</strong> {file.subject?.name || 'n/a'}</div>
           <div><strong>Description:</strong> {file.description || 'No description'}</div>
           <div><strong>Average Rating:</strong> {loadingAvg ? 'Loading...' : (avg !== null ? Number(avg).toFixed(2) : '—')}</div>
         </div>

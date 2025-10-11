@@ -196,7 +196,7 @@ export default function MyNotes() {
           <Link to={`/notes/${note._id}`}>View Note</Link>
           <h4>{note.title}</h4>
           <p>{note.content}</p>
-          <p>Subject: {note.subjectID?.name || "No subject"}</p>
+          <p>Subject: {note.subjectID?.name || "n/a"}</p>
           <p>Owner: {note.ownerUserID?.username || "Unknown"}</p>
 
           {canEditOrDelete(note) && (
