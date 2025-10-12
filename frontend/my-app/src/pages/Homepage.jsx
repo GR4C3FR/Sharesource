@@ -342,7 +342,7 @@ const toggleBookmark = async (fileID) => {
       <div className="mx-auto w-full max-w-[1100px] px-4">
         <div className="flex justify-between gap-10 items-start w-full">
           {/* Center column: keep all existing page content here (unchanged) */}
-          <section className="w-[800px] mr-7">
+          <section className="w-[800px] mr-7 flex-shrink-0">
           {profile && (
             <h1 className="text-[32px] font-inter font-normal leading-[14px] tracking-[0%] mb-7">Welcome, {profile.firstName}! </h1>
           )}
@@ -421,7 +421,7 @@ const toggleBookmark = async (fileID) => {
 
           {/* Keep a fixed-height scroll area so the right TopRatedPanel doesn't resize when search yields no results */}
           <div className="overflow-hidden bg-transparent py-1">
-            <div className="overflow-y-auto h-[480px] pr-2">
+            <div className="overflow-y-auto h-[40em] pr-2">
               {displayedFiles.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-gray-500">No matching files.</div>
               ) : (
@@ -456,7 +456,7 @@ const toggleBookmark = async (fileID) => {
                       <Avatar user={file.user} size={50} />
                     </div>
 
-                    <div className="flex-1 w-[40em]">
+                    <div className="flex-1 max-w-[40em] min-w-0">
 
                       <section className="flex justify-between items-start">
                         <div className="flex flex-col mb-2 justify-between">
@@ -524,7 +524,11 @@ const toggleBookmark = async (fileID) => {
           </section>
 
           {/* Right-side Top Rated panel */}
-          <TopRatedPanel scope="all" token={token} />
+          <div className="w-[300px] flex-shrink-0">
+            <div className="sticky top-6">
+              <TopRatedPanel scope="all" token={token} />
+            </div>
+          </div>
         </div>
 
         {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}

@@ -248,7 +248,7 @@ export default function Bookmarks() {
             <p>No bookmarks yet.</p>
           ) : (
             <div className="overflow-hidden bg-transparent py-1">
-              <div className="overflow-y-auto h-[30em] pr-2">
+              <div className="overflow-y-auto h-[40em] pr-2">
                 {displayedBookmarks.filter(file => file && file._id).map((file) => {
                   return (
                     <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">

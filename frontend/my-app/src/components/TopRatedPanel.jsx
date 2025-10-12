@@ -28,12 +28,12 @@ export default function TopRatedPanel({ scope = 'all', token }) {
   if (loading) return <div className="p-3 text-sm text-gray-600">Loading top rated...</div>;
 
   return (
-    <aside className="w-full">
+    <aside className="w-full overflow-x-hidden">
       <h4 className="text-[24px] font-semibold text-[#103E93]">Top-Rated Notes</h4>
       {topFiles.length === 0 ? (
         <p className="text-sm text-gray-600">No top rated files yet.</p>
       ) : (
-        <div className="overflow-y-auto h-[550px] pr-2 py-9 h-[100px]">
+        <div className="overflow-y-auto overflow-x-hidden h-[40em] pr-2 py-4">
           <ul className="space-y-3 p-0 m-0 list-none">
             {topFiles.map(file => (
               <li key={file._id} className="flex items-start bg-white rounded-md p-4 py-7 shadow-sm min-h-[84px] w-full mb-3.5">
@@ -63,7 +63,7 @@ export default function TopRatedPanel({ scope = 'all', token }) {
               })()}
 
               <div className="flex-1 min-w-0 ml-4">
-                <button onClick={() => setActive(file)} title={file.originalName} className="text-sm text-[#103E93] underline block truncate font-medium text-left w-[15em] cursor-pointer">{file.originalName}</button>
+                <button onClick={() => setActive(file)} title={file.originalName} className="text-sm text-[#103E93] underline block truncate font-medium text-left cursor-pointer">{file.originalName}</button>
                 <div className="text-xs mt-2 space-y-1 text-gray-700">
                   <div>
                     <span className="text-[#D05A02]">Uploader:</span>
