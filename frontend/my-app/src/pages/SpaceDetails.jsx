@@ -1,5 +1,5 @@
 // frontend/src/pages/SpaceDetails.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api";
 import { searchUserByEmail, inviteMember, deleteSpace } from "../services/collaborativeSpaceService";
@@ -27,6 +27,7 @@ export default function SpaceDetails() {
   const [showAddMember, setShowAddMember] = useState(false);
   const [showMembersDropdown, setShowMembersDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState("newest");
   const [searchEmail, setSearchEmail] = useState("");
   const [searchingUser, setSearchingUser] = useState(false);
   const [foundUser, setFoundUser] = useState(null);
@@ -145,7 +146,7 @@ export default function SpaceDetails() {
       <div className="mx-auto w-full max-w-[1200px] px-4 py-6 h-screen overflow-hidden">
         <div className="flex items-start gap-6 h-full">
           <div className="flex-1 h-full flex flex-col min-h-0">
-            <div className="mb-4">
+            <div className="mb-2">
               <button onClick={() => navigate('/spaces')} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-3 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50">⬅ Back to Spaces</button>
             </div>
 
@@ -153,19 +154,57 @@ export default function SpaceDetails() {
             <section className="flex flex-col flex-1 min-h-0">
               <div className="flex items-center justify-between flex-none">
                 <h3 className="text-lg font-medium">Shared Files (Google Docs)</h3>
-                <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by document title" className="ml-4 p-2 border rounded-md text-sm" />
+
+                {/* Search + Filters (homepage-style, but scoped to document title) */}
+                <div className="ml-4 relative w-1/2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Search by document title"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white text-sm"
+                    />
+                    <label htmlFor="space-filters-toggle" className="inline-flex items-center px-3 py-2 rounded-md bg-[#1D2F58] text-white text-sm cursor-pointer select-none hover:bg-[#16325a]">Filters</label>
+                  </div>
+
+                  <input id="space-filters-toggle" type="checkbox" className="hidden peer" />
+
+                  <div className="filter-panel absolute right-0 mt-2 w-[260px] z-50 transform origin-top scale-y-0 peer-checked:scale-y-100 peer-checked:block hidden bg-white rounded-lg shadow-2xl p-3 border">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-semibold text-[#103E93]">Filters & Sorting</h4>
+                      </div>
+
+                      <div className="flex flex-col">
+                        <label className="text-xs text-gray-600 mb-1">Sort by</label>
+                        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                          <option value="newest">Newest - Oldest</option>
+                          <option value="oldest">Oldest - Newest</option>
+                        </select>
+                      </div>
+
+                      <div className="flex items-center justify-between mt-2">
+                        <button onClick={() => setSortOption('newest')} className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200">Clear Filters</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {loadingDocs ? (
                 <p className="mt-2 text-sm">Loading docs...</p>
               ) : (
-                <div className="mt-3">
+                <div className="mt-1">
                   <div className="overflow-y-auto h-[40em] pr-2">
-                    {docs.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {docs
-                          .filter(d => !searchQuery || d.title?.toLowerCase().includes(searchQuery.trim().toLowerCase()))
-                          .map((d) => (
+                    {(() => {
+                      const q = (searchQuery || "").trim().toLowerCase();
+                      let filtered = docs.filter(d => !q || d.title?.toLowerCase().includes(q));
+                      if (sortOption === 'newest') filtered = filtered.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                      if (sortOption === 'oldest') filtered = filtered.slice().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                      return filtered.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {filtered.map((d) => (
                             <div key={d._id} className="border p-3 rounded-md bg-white shadow-sm flex flex-col justify-between">
                               <div onClick={() => navigate(`/spaces/${spaceId}/docs/${d._id}`)} className="cursor-pointer">
                                 <h4 className="text-md font-semibold">{d.title}</h4>
@@ -195,7 +234,8 @@ export default function SpaceDetails() {
                       </div>
                     ) : (
                       <p className="mt-2 text-sm text-gray-600">No Google Docs shared yet.</p>
-                    )}
+                    );
+                  })()}
                   </div>
                 </div>
               )}
