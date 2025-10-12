@@ -1,9 +1,0 @@
-to fix
-
-- admin can delete spaces
-- admin can
-
-latest problems
-- cant fetch space
-- fix edit space
-- increase upload file size

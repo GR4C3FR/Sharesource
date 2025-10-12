@@ -191,22 +191,25 @@ export default function CollaborativeSpaces() {
         </div>
       )}
       <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
-        <div className="flex gap-6 items-start">
+        {/* Set a taller viewport for spaces and keep titles/search bars sticky */}
+        <div className="flex gap-6 items-start" style={{ alignItems: 'flex-start' }}>
           {/* My Spaces */}
-          <div className="w-1/2 pr-4 max-h-[25em] overflow-y-auto">
-            <h2 className="text-xl font-semibold mb-3">My Spaces</h2>
-
-            {profile && profile.role !== "Admin" && (
-              <div className="mb-3">
-                <input
-                  type="text"
-                  placeholder="Search My Spaces by title, owner or members..."
-                  value={searchMySpaces}
-                  onChange={(e) => setSearchMySpaces(e.target.value)}
-                  className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
-                />
-              </div>
-            )}
+          <div className="w-1/2 pr-4">
+            <div className="sticky top-6 bg-transparent z-10">
+              <h2 className="text-xl font-semibold mb-3">My Spaces</h2>
+              {profile && profile.role !== "Admin" && (
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    placeholder="Search My Spaces by title, owner or members..."
+                    value={searchMySpaces}
+                    onChange={(e) => setSearchMySpaces(e.target.value)}
+                    className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
+                  />
+                </div>
+              )}
+            </div>
+            <div className="mt-3 max-h-[40rem] overflow-y-auto pr-2">
 
             {profile?.role !== "Admin" && (
               <button
@@ -275,21 +278,24 @@ export default function CollaborativeSpaces() {
                 )}
               </>
             )}
+            </div>
           </div>
 
           {/* Available Spaces */}
-          <div className="w-1/2 pl-4 max-h-[25em] overflow-y-auto">
-            <h2 className="text-xl font-semibold mb-3">Available Spaces</h2>
-
-            <div className="mb-3">
-              <input
-                type="text"
-                placeholder="Search Available Spaces by title, owner or members..."
-                value={searchAvailableSpaces}
-                onChange={(e) => setSearchAvailableSpaces(e.target.value)}
-                className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
-              />
+          <div className="w-1/2 pl-4">
+            <div className="sticky top-6 bg-transparent z-10">
+              <h2 className="text-xl font-semibold mb-3">Available Spaces</h2>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  placeholder="Search Available Spaces by title, owner or members..."
+                  value={searchAvailableSpaces}
+                  onChange={(e) => setSearchAvailableSpaces(e.target.value)}
+                  className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
+                />
+              </div>
             </div>
+            <div className="mt-3 max-h-[40rem] overflow-y-auto pl-2">
 
             {showCreateModal && (
               <div className="fixed inset-0 z-60 flex items-center justify-center">
@@ -403,6 +409,7 @@ export default function CollaborativeSpaces() {
                 })}
               </ul>
             )}
+            </div>
           </div>
         </div>
       </div>

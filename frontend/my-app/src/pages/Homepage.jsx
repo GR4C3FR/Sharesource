@@ -419,15 +419,14 @@ const toggleBookmark = async (fileID) => {
           </div>
           </div>
 
-          {uploadedFiles.length === 0 ? (
-            <p>No files uploaded yet.</p>
-          ) : (
-            // Scrollable area: fixed height to show ~2 cards, inner scroll for additional items
-            <div className="overflow-hidden bg-transparent py-1">
-              <div className="overflow-y-auto h-[480px] pr-2">
-                {displayedFiles.map((file) => {
-                  return (  
-                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
+          {/* Keep a fixed-height scroll area so the right TopRatedPanel doesn't resize when search yields no results */}
+          <div className="overflow-hidden bg-transparent py-1">
+            <div className="overflow-y-auto h-[480px] pr-2">
+              {displayedFiles.length === 0 ? (
+                <div className="flex items-center justify-center h-full text-gray-500">No matching files.</div>
+              ) : (
+                displayedFiles.map((file) => (
+                  <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
                   {/* Bookmark icon button (top-right) */}
                   <button
                     type="button"
@@ -516,12 +515,11 @@ const toggleBookmark = async (fileID) => {
                       )}
                     </div>
                   </div>
-                </div>
-                  );
-                })}
-              </div>
+                  </div>
+                ))
+              )}
             </div>
-          )}
+          </div>
 
           </section>
 
@@ -564,7 +562,8 @@ const toggleBookmark = async (fileID) => {
                       value={selectedSubject}
                       onChange={(e) => setSelectedSubject(e.target.value)}
                       required
-                      className="w-full p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                      className="w-full p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none max-h-[10rem] overflow-auto"
+                      size={Math.min(subjects.length, 8)}
                     >
                       <option value="">Select a Subject</option>
                       {subjects.map((subj) => (
