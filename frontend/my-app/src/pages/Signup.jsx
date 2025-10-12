@@ -31,9 +31,9 @@ export default function Signup() {
   };
 
   return (
-    <div className="w-auto h-auto flex flex-col items-center justify-center pb-30">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center pb-12 px-4 mt-22 mb-10">
 
-      <div className="w-[1485px] flex justify-between items-center space-y-8 py-8 mb-8">
+      <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-4 mb-8">
         {/* Logo Section */}
         <section className="flex items-center justify-center gap-4">
           <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
@@ -57,13 +57,13 @@ export default function Signup() {
         </section>
       </div>
 
-      <div className="w-[795px] flex flex-col mb-7">
+  <div className="w-full max-w-xl flex flex-col mb-7">
         <section className="mb-9">
           <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Signup</h1>
           <p className="inter-text font-normal text-[16px] leading-[16px] tracking-[0%] pl-5 text-[#1D2F58]">Ready to collaborate? Let’s get you started.</p>
         </section>
 
-        <section className="flex bg-[#FFFCF7] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-6">
+  <section className="flex bg-[#FFFCF7] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-6 w-full">
           <form
             onSubmit={handleSubmit}
             className="flex flex-col justify-center w-full gap-5"

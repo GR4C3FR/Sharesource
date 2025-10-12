@@ -26,7 +26,7 @@ const FileManager = () => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="p-6 max-w-3xl mx-auto w-full">
       <h1 className="text-2xl font-bold mb-4">📄 Google Docs File Manager</h1>
 
       <form onSubmit={handleSubmit} className="mb-6 space-y-3">
@@ -47,7 +47,7 @@ const FileManager = () => {
         <button className="bg-blue-600 text-white px-4 py-2 rounded">Add Document</button>
       </form>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
         {files.map((file) => (
           <div key={file._id} className="border rounded p-3 shadow-sm hover:shadow-md transition">
             <h3 className="font-semibold">{file.title}</h3>

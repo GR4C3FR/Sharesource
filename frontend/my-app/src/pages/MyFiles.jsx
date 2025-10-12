@@ -236,7 +236,7 @@ export default function MyFiles() {
   return (
     <AppShell>
       <div className="mx-auto w-full max-w-[1100px] px-4">
-        <div className="flex gap-5 items-start w-full">
+        <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
           <div className="flex-1">
             {/* Search + Filters (CSS-only toggle like Bookmarks/Homepage) */}
             <div className="mb-4 relative">
@@ -300,7 +300,7 @@ export default function MyFiles() {
               <p>You haven’t uploaded any files yet.</p>
             ) : (
               <div className="overflow-hidden bg-transparent">
-                <div className="overflow-y-auto h-[40em] pr-2">
+                <div className="overflow-y-auto max-h-[65vh] pr-2">
                   {displayedFiles.map((file) => (
                     <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
                       <div className="flex gap-3">

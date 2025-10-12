@@ -21,7 +21,7 @@ export default function AverageRating({ itemId }) {
   }, [itemId]);
 
   return (
-    <div style={{ marginTop: "5px", color: "goldenrod" }}>
+    <div className="mt-1 text-yellow-500">
       ⭐ Average Rating: {average ? average.toFixed(1) : "N/A"}
     </div>
   );

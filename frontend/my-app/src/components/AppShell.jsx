@@ -41,9 +41,9 @@ export default function AppShell({ children }) {
   }, [token]);
 
   return (
-    <div className="w-auto h-auto flex flex-col items-center justify-center">
+    <div className="w-full flex flex-col items-center justify-center overflow-x-hidden">
       {/* Header */}
-      <div className="w-[1500px] flex justify-between items-center space-y-8 pt-8 pb-2">
+      <div className="w-full max-w-screen-xl flex justify-between items-center space-y-4 pt-6 pb-2 px-4 mb-15">
         {/* Logo Section */}
         <section className="flex items-center justify-center gap-4">
           <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
@@ -51,62 +51,62 @@ export default function AppShell({ children }) {
         </section>
 
         {/* Buttons Section (show avatar + logout) - only render avatar after profile is loaded to avoid flash */}
-        <section style={{ display: 'flex', alignItems: 'center', gap: 25 }}>
+        <section className="flex items-center gap-6">
           {profile !== null && (
-            <div onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
+            <div onClick={() => navigate('/profile')} className="cursor-pointer">
               <Avatar user={profile} size={42} />
             </div>
           )}
 
-          <button onClick={() => { localStorage.removeItem('accessToken'); localStorage.removeItem('userEmail'); navigate('/'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
-            <img src="/logout-icon.png" alt="logout" style={{ width: 28, height: 28 }} />
+          <button onClick={() => { localStorage.removeItem('accessToken'); localStorage.removeItem('userEmail'); navigate('/'); }} className="bg-transparent border-0 cursor-pointer">
+            <img src="/logout-icon.png" alt="logout" className="w-7 h-7" />
           </button>
         </section>
       </div>
 
-      <div className="flex w-[1500px] gap-10">
+    <div className="flex w-full max-w-screen-xl gap-10 px-4">
         {/* Left navigation column */}
         <section>
-          <section className="w-max h-auto flex flex-col justify-center mb-20">
+          <section className="w-max h-auto flex flex-col justify-center mb-8 min-w-0">
             {/* Dynamic page title based on current route */}
-            <h1 className="text-[38px] font-inter font-normal leading-[16px] tracking-[0%] text-[#1D2F58]">{pageTitle}</h1>
+            <h1 className="text-2xl md:text-3xl font-inter font-normal text-[#1D2F58]">{pageTitle}</h1>
           </section>
 
-          <section className="flex flex-col gap-10 h-[520px]">
+          <section className="flex flex-col gap-6 max-h-[60vh] md:max-h-[520px] overflow-auto">
             <Link to="/homepage">
-              <section className="flex gap-3">
-                <img src="/dashboard-logo.png"/>
-                <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Dashboard</button>
+              <section className="flex gap-3 items-center">
+                <img src="/dashboard-logo.png" className="w-6 h-6 object-contain" alt="dashboard" />
+                <button className="text-[17px] font-inter font-normal leading-[14px] text-[#1D2F58] cursor-pointer">Dashboard</button>
               </section>
             </Link>
             {profile?.role !== 'Admin' && (
               <>
                 <Link to="/bookmarks">
-                  <section className="flex gap-3">
-                    <img src="/bookmarks-logo.png"/>
-                    <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Bookmarks</button>
+                  <section className="flex gap-3 items-center">
+                    <img src="/bookmarks-logo.png" className="w-6 h-6 object-contain" alt="bookmarks" />
+                    <button className="text-[17px] font-inter font-normal leading-[14px] text-[#1D2F58] cursor-pointer">Bookmarks</button>
                   </section>
                 </Link>
                 <Link to="/my-files">
-                  <section className="flex gap-3">
-                    <img src="/yourfiles-logo.png"/>
-                    <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Your Files</button>
+                  <section className="flex gap-3 items-center">
+                    <img src="/yourfiles-logo.png" className="w-6 h-6 object-contain" alt="your files" />
+                    <button className="text-[17px] font-inter font-normal leading-[14px] text-[#1D2F58] cursor-pointer">Your Files</button>
                   </section>
                 </Link>
               </>
             )}
             <Link to="/spaces">
-              <section className="flex gap-3">
-                <img src="/collaborate-logo.png"/>
-                <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Collaboration</button>
-              </section>
+                <section className="flex gap-3 items-center">
+                  <img src="/collaborate-logo.png" className="w-6 h-6 object-contain" alt="collaboration" />
+                  <button className="text-[17px] font-inter font-normal leading-[14px] text-[#1D2F58] cursor-pointer">Collaboration</button>
+                </section>
             </Link>
 
             <div className="mt-20">
               <Link to="/profile">
                 <section className="flex gap-3 items-center">
-                  <img src="/profile-logo.png" className='w-[40px] h-[40px]'/>
-                  <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Profile</button>
+                  <img src="/profile-logo.png" className='w-6 h-6 object-contain'/>
+                  <button className="text-[17px] font-inter font-normal leading-[14px] text-[#1D2F58] cursor-pointer">Profile</button>
                 </section>
               </Link>
             </div>
@@ -115,7 +115,7 @@ export default function AppShell({ children }) {
         </section>
 
         {/* Main content area (provided by caller) */}
-        <main style={{ flex: 1 }}>
+        <main className='flex-1'>
           {children}
         </main>
       </div>

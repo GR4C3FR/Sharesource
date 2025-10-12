@@ -62,45 +62,37 @@ export default function CommentsSection({ fileId, userId }) {
   };
 
   return (
-    <div style={{ marginTop: "10px" }}>
-      <h4>💬 Comments</h4>
+    <div className="mt-3">
+      <h4 className="mb-2">💬 Comments</h4>
 
-      <form onSubmit={handleAddComment} style={{ marginBottom: "10px" }}>
+      <form onSubmit={handleAddComment} className="mb-3">
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Write a comment..."
           rows="2"
-          style={{ width: "100%", padding: 8, borderRadius: 4 }}
+          className="w-full p-2 rounded-md border"
           disabled={loading}
         />
-        <button type="submit" disabled={loading} style={{ marginTop: 6 }}>
-          {loading ? "Posting..." : "Post Comment"}
-        </button>
+        <button type="submit" disabled={loading} className="mt-2 px-3 py-1 rounded-md bg-[#1D2F58] text-white">{loading ? "Posting..." : "Post Comment"}</button>
       </form>
 
       {comments.length === 0 ? (
-        <p>No comments yet.</p>
+        <p className="text-sm text-gray-600">No comments yet.</p>
       ) : (
         comments.map((comment) => (
-          <div key={comment._id} style={{ border: "1px solid #ddd", padding: 8, marginBottom: 8 }}>
-            <div style={{ marginBottom: 6 }}>
-              <strong>{comment.userId?.username || comment.userId?.email || "Unknown"}</strong>
-              <small style={{ marginLeft: 8, color: "gray" }}>
-                {new Date(comment.createdAt).toLocaleString()}
-              </small>
+          <div key={comment._id} className="border p-2 mb-2 rounded-md">
+            <div className="mb-1 flex items-center justify-between">
+              <div>
+                <strong>{comment.userId?.username || comment.userId?.email || "Unknown"}</strong>
+                <small className="ml-2 text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</small>
+              </div>
+              {comment.userId?._id === userId && (
+                <button onClick={() => handleDeleteComment(comment._id)} className="px-2 py-0.5 rounded-md bg-red-600 text-white text-xs">Delete</button>
+              )}
             </div>
 
-            <div style={{ marginBottom: 6 }}>{comment.text}</div>
-
-            {comment.userId?._id === userId && (
-              <button
-                onClick={() => handleDeleteComment(comment._id)}
-                style={{ background: "red", color: "white", border: "none", padding: "4px 8px", borderRadius: 4 }}
-              >
-                Delete
-              </button>
-            )}
+            <div className="mb-1">{comment.text}</div>
           </div>
         ))
       )}

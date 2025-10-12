@@ -192,10 +192,10 @@ export default function CollaborativeSpaces() {
       )}
       <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
         {/* Set a taller viewport for spaces and keep titles/search bars sticky */}
-        <div className="flex gap-6 items-start" style={{ alignItems: 'flex-start' }}>
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
           {/* My Spaces (hidden for Admins) */}
           {profile?.role !== 'Admin' && (
-            <div className="w-1/2 pr-4">
+            <div className="w-full lg:w-1/2 pr-0 lg:pr-4">
               <div className="sticky top-6 bg-transparent z-10">
                 <h2 className="text-xl font-semibold mb-3">My Spaces</h2>
                 {profile && profile.role !== "Admin" && (
@@ -211,7 +211,7 @@ export default function CollaborativeSpaces() {
                 )}
               </div>
 
-              <div className="mt-3 max-h-[40rem] overflow-y-auto pr-2">
+              <div className="mt-3 max-h-[65vh] overflow-y-auto pr-2">
 
                 {profile?.role !== "Admin" && (
                   <button
@@ -285,7 +285,7 @@ export default function CollaborativeSpaces() {
           )}
 
           {/* Available Spaces */}
-          <div className="w-1/2 pl-4">
+          <div className="w-full lg:w-1/2 pl-0 lg:pl-4">
             <div className="sticky top-6 bg-transparent z-10">
               <h2 className="text-xl font-semibold mb-3">Available Spaces</h2>
               <div className="mb-3">
@@ -298,7 +298,7 @@ export default function CollaborativeSpaces() {
                 />
               </div>
             </div>
-            <div className="mt-3 max-h-[40rem] overflow-y-auto pl-2">
+            <div className="mt-3 max-h-[65vh] overflow-y-auto pl-2">
 
             {showCreateModal && (
               <div className="fixed inset-0 z-60 flex items-center justify-center">

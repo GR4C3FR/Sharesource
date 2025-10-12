@@ -58,8 +58,8 @@ export default function GoogleDocView() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1200px] px-4 py-6 h-screen overflow-hidden">
-        <div className="flex items-start gap-6 h-full">
+      <div className="mx-auto w-full max-w-[1200px] px-4 py-6 min-h-screen overflow-hidden">
+        <div className="flex flex-col lg:flex-row items-start gap-6 h-full">
           {/* Main centered embed */}
           <main className="flex-1 h-full min-h-0 flex flex-col">
             <div className="mb-5">
@@ -79,13 +79,13 @@ export default function GoogleDocView() {
             <div className="flex-1 min-h-0 flex flex-col">
               {/* Increase iframe wrapper height slightly to ensure full document visibility and move it higher */}
                         <button onClick={() => window.open(doc.link, '_blank')} className="w-full px-3 py-4 bg-white text-[#1D2F58] underline rounded-md cursor-pointer">Open in Google Docs</button> 
-              <div className="rounded-md overflow-hidden border">
+              <div className="rounded-md overflow-hidden border w-full">
                 <iframe
                   src={embeddedUrl}
                   title={doc.title}
                   width="100%"
-                  height="30%"
-                  className="block w-full h-[90em]"
+                  height="800"
+                  className="block w-full h-[60vh] md:h-[80vh]"
                   style={{ border: 'none' }}
                   allow="clipboard-read; clipboard-write; microphone; camera"
                 />

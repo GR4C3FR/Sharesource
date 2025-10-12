@@ -28,19 +28,15 @@ export default function NoteView() {
   if (!note) return <p>Loading...</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Link to="/homepage" style={{ display: "inline-block", marginBottom: "20px" }}>
+    <div className="p-5 w-full max-w-3xl mx-auto">
+      <Link to="/homepage" className="inline-block mb-4 text-sm text-[#103E93]">
         ⬅ Back to Homepage
       </Link>
 
-      <h2>{note.title}</h2>
-      <p>{note.content}</p>
-      <p>
-        <strong>Subject:</strong> {note.subjectID?.name || "N/A"}
-      </p>
-      <p>
-        <strong>Owner:</strong> {note.ownerUserID?.username || "Unknown"}
-      </p>
+      <h2 className="text-2xl font-semibold">{note.title}</h2>
+      <p className="mt-3">{note.content}</p>
+      <p className="mt-3"><strong>Subject:</strong> {note.subjectID?.name || "N/A"}</p>
+      <p><strong>Owner:</strong> {note.ownerUserID?.username || "Unknown"}</p>
     </div>
   );
 }

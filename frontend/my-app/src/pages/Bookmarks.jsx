@@ -176,7 +176,7 @@ export default function Bookmarks() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
+  <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
       {/* Filter & Sort for bookmarks (CSS-only toggle like Homepage) */}
       <div className="mb-4 relative">
         <div className="flex items-center gap-2">
@@ -238,8 +238,8 @@ export default function Bookmarks() {
           {displayedBookmarks.filter(file => file && file._id).length === 0 ? (
             <p>No bookmarks yet.</p>
           ) : (
-            <div className="overflow-hidden bg-transparent py-1">
-              <div className="overflow-y-auto h-[40em] pr-2">
+            <div className="overflow-hidden bg-transparent py-1 min-h-0">
+              <div className="overflow-y-auto max-h-[65vh] pr-2 min-h-0">
                 {displayedBookmarks.filter(file => file && file._id).map((file) => {
                   return (
                     <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
@@ -270,21 +270,21 @@ export default function Bookmarks() {
                       )}
 
                       <div className="flex gap-3">
-                        <div className="w-[72px] flex flex-col items-center gap-2 flex-shrink-0">
+                        <div className="w-18 sm:w-20 flex flex-col items-center gap-2 flex-shrink-0">
                           <Avatar user={file.user} size={50} />
                         </div>
 
-                        <div className="flex-1 w-[40em]">
+                        <div className="flex-1 min-w-0">
 
                           <section className="flex justify-between items-start">
                             <div className="flex flex-col mb-2 justify-between">
                               <section className="flex gap-4 mb-3 items-center min-w-0">
-                                <p className="font-inter font-medium text-[20px] leading-[16px] text-[#103E93] w-[10em]">{file.user?.username || "Unknown"}</p>
-                                <p className="font-inter font-normal text-[16px] leading-[16px] text-[#103E93] w-[60%]">Subject: {file.subject?.name || "No subject"}</p>
+                                <p className="font-inter font-medium text-lg leading-tight text-[#103E93] truncate">{file.user?.username || "Unknown"}</p>
+                                <p className="font-inter font-normal text-sm leading-tight text-[#103E93] truncate">Subject: {file.subject?.name || "No subject"}</p>
                               </section>
 
                               <div className="flex flex-col justify-between w-full">
-                                <div className="w-[calc(100%-11rem)]">
+                                <div className="flex-1 min-w-0">
                                   <div className="flex gap-3 items-start">
                                     <div className="w-[36px] h-[36px] flex items-center justify-center flex-shrink-0">
                                       {(() => {
@@ -301,7 +301,7 @@ export default function Bookmarks() {
                                   </div>
                                 </div>
 
-                                <div className="w-44 flex-shrink-0 mt-1.5 text-left">
+                                <div className="w-44 max-w-xs flex-shrink-0 mt-1.5 text-left">
                                   <h1 className="text-sm font-semibold mb-1">Description</h1>
                                   <p className="font-inter font-normal text-[15px] leading-[16px] text-[#D05A02] break-words">{file.description || "No description"}</p>
                                 </div>
@@ -317,10 +317,10 @@ export default function Bookmarks() {
                               <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                             </div>
 
-                            <div className="flex flex-col items-end gap-3">
-                              <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-[8em]">Download</button>
+                              <div className="flex flex-col items-end gap-3">
+                              <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-32">Download</button>
                               {(file.user?._id === profile?._id || profile?.role === 'Admin') && (
-                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-[8em]">Delete</button>
+                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-32">Delete</button>
                               )}
                             </div>
                           </div>

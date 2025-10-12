@@ -19,14 +19,14 @@ const Viewer = () => {
   const embedLink = file.link.replace('/edit', '/preview');
 
   return (
-    <div className="p-4">
+    <div className="p-4 w-full max-w-4xl mx-auto">
       <h1 className="text-xl font-bold mb-3">{file.title}</h1>
       <iframe
         src={embedLink}
         width="100%"
-        height="600px"
+        height="600"
         title={file.title}
-        className="border rounded"
+        className="border rounded w-full h-[60vh] md:h-[80vh]"
       />
     </div>
   );

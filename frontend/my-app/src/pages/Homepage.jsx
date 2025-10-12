@@ -338,11 +338,11 @@ const toggleBookmark = async (fileID) => {
 
   return (
     <AppShell>
-      {/* Center and constrain homepage content width to match other pages (Tailwind/shadcn) */}
-      <div className="mx-auto w-full max-w-[1100px] px-4">
-        <div className="flex justify-between gap-10 items-start w-full">
-          {/* Center column: keep all existing page content here (unchanged) */}
-          <section className="w-[800px] mr-7 flex-shrink-0">
+      {/* Center and constrain homepage content width to match AppShell and let center column flex */}
+      <div className="mx-auto w-full max-w-screen-xl px-4">
+        <div className="flex flex-col lg:flex-row justify-between gap-10 items-start w-full">
+          {/* Center column: use flexible width so right panel feels like part of the page */}
+          <section className="w-full lg:flex-1 min-w-0">
           {profile && (
             <h1 className="text-[32px] font-inter font-normal leading-[14px] tracking-[0%] mb-7">Welcome, {profile.firstName}! </h1>
           )}
@@ -420,8 +420,8 @@ const toggleBookmark = async (fileID) => {
           </div>
 
           {/* Keep a fixed-height scroll area so the right TopRatedPanel doesn't resize when search yields no results */}
-          <div className="overflow-hidden bg-transparent py-1 mb-10">
-            <div className="overflow-y-auto h-[44.5em] pr-2 mb-10">
+          <div className="overflow-hidden bg-transparent py-1 mb-10 min-h-0">
+            <div className="overflow-y-auto max-h-[65vh] pr-2 mb-10 min-h-0">
               {displayedFiles.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-gray-500">No matching files.</div>
               ) : (
@@ -526,7 +526,7 @@ const toggleBookmark = async (fileID) => {
           </section>
 
           {/* Right-side Top Rated panel */}
-          <div className="w-[300px] flex-shrink-0">
+          <div className="w-full lg:w-72 flex-shrink-0">
             <div className="sticky top-6">
               <TopRatedPanel scope="all" token={token} />
             </div>

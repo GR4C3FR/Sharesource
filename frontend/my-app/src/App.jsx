@@ -27,9 +27,9 @@ function App() {
           isLoggedIn ? (
             <Navigate to="/homepage" />
           ) : (
-          <div className="w-auto h-auto flex flex-col items-center justify-center">
+          <div className="w-full min-h-screen flex flex-col items-center justify-center px-4">
             {/* Header */}
-            <div className="w-[1500px] flex justify-between items-center space-y-8 py-8 mb-7">
+            <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6">
               {/* Logo Section */}
               <section className="flex items-center justify-center gap-4">
                 <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
@@ -54,35 +54,30 @@ function App() {
               </section>
             </div>
             
-            <div className="w-[1450px] h-[500px] flex justify-between items-center space-y-8 px-10 text-[#103E93]">
-              <section className="flex flex-col gap-30">
-                <h1 className="inter-text font-normal text-[40px] leading-[50px] tracking-[0%]">
-                  <span className="font-sans font-medium text-[45px] leading-[100%] tracking-[0%]">
-                    Welcome to our space — 
-                    </span><br />
-                    a place to learn, connect, <br />
-                    and make it your own.
+            <div className="w-full max-w-screen-xl min-h-[75vh] flex flex-col lg:flex-row justify-between items-center gap-6 px-4 text-[#103E93]">
+              <section className="flex flex-col gap-6 flex-1 max-w-2xl">
+                <h1 className="inter-text font-normal text-3xl md:text-4xl lg:text-5xl leading-tight">
+                  <span className="font-sans font-medium text-3xl md:text-4xl lg:text-5xl">
+                    Welcome to our space —
+                  </span>
+                  <br />
+                  a place to learn, connect, and make it your own.
                 </h1>
 
                 <div>
-                  <p className="font-geologica font-normal text-[25px] leading-[40px] mb-5">
-                    Join the Sharesource community <br />
-                    and make it yours.
-                  </p>
+                  <p className="font-geologica font-normal text-lg md:text-xl leading-relaxed mb-5">Join the Sharesource community and make it yours.</p>
 
-                <button
-                  className="px-10 py-3 font-geologica font-normal text-[20px] leading-[100%] tracking-[-6%] 
-                            text-[#D05A02] border-2 border-[#D05A02] rounded-[20px] hover:bg-[#D05A02] hover:text-white 
-                            transition-colors duration-200 cursor-pointer"
-                  onClick={() => (window.location.href = "/login")}
-                >
-                  Get Started
-                </button>
+                  <button
+                    className="px-8 py-3 font-geologica text-base text-[#D05A02] border-2 border-[#D05A02] rounded-lg hover:bg-[#D05A02] hover:text-white transition-colors duration-200 cursor-pointer"
+                    onClick={() => (window.location.href = "/login")}
+                  >
+                    Get Started
+                  </button>
                 </div>
               </section>
 
-              <section>
-                <img src="/hero-img-landing.png" className="w-[600px]"/>
+              <section className="flex-1 flex items-center justify-center">
+                <img src="/hero-img-landing.png" className="w-full max-w-md md:max-w-lg lg:max-w-xl object-contain" alt="hero"/>
               </section>
             </div>
 

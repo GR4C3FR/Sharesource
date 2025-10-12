@@ -136,103 +136,95 @@ export default function MyNotes() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Link to="/homepage" style={{ display: "inline-block", marginBottom: "20px" }}>
+    <div className="p-5 w-full max-w-4xl mx-auto">
+      <Link to="/homepage" className="inline-block mb-4 text-sm text-[#103E93]">
         ⬅ Back to Homepage
       </Link>
-      <h2>My Notes</h2>
+      <h2 className="text-2xl font-semibold mb-4">My Notes</h2>
 
       {/* Toggle Create Form */}
       {!showCreateForm ? (
-        <button onClick={() => setShowCreateForm(true)} style={{ marginBottom: "20px" }}>
-          ➕ Create New Note
-        </button>
+        <button onClick={() => setShowCreateForm(true)} className="mb-4 px-3 py-2 bg-[#1D2F58] text-white rounded-md">➕ Create New Note</button>
       ) : (
-        <div style={{ border: "1px solid #ccc", padding: "15px", marginBottom: "20px" }}>
-          <h3>Create New Note</h3>
+        <div className="border p-4 rounded-md mb-6">
+          <h3 className="text-lg font-medium mb-3">Create New Note</h3>
           <input
             name="title"
             placeholder="Title"
             value={newNote.title}
             onChange={handleNewNoteChange}
-            style={{ width: "100%", marginBottom: "10px" }}
+            className="w-full mb-3 p-2 border rounded-md"
           />
           <textarea
             name="content"
             placeholder="Content"
             value={newNote.content}
             onChange={handleNewNoteChange}
-            style={{ width: "100%", marginBottom: "10px" }}
+            className="w-full mb-3 p-2 border rounded-md"
           />
 
-          <div style={{ marginBottom: "10px" }}>
-            <p><strong>Select Subject:</strong></p>
-            {subjects.map((subj) => (
-              <label key={subj._id} style={{ marginRight: "10px" }}>
-                <input
-                  type="radio"
-                  name="subjectID"
-                  value={subj._id}
-                  checked={newNote.subjectID === subj._id}
-                  onChange={handleNewNoteChange}
-                />
-                {subj.name}
-              </label>
-            ))}
+          <div className="mb-3">
+            <p className="font-medium mb-2">Select Subject:</p>
+            <div className="flex flex-wrap gap-3">
+              {subjects.map((subj) => (
+                <label key={subj._id} className="inline-flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="subjectID"
+                    value={subj._id}
+                    checked={newNote.subjectID === subj._id}
+                    onChange={handleNewNoteChange}
+                    className="form-radio"
+                  />
+                  <span>{subj.name}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
-          <button onClick={createNote} style={{ marginRight: "10px" }}>Create Note</button>
-          <button onClick={() => setShowCreateForm(false)}>Cancel</button>
+          <div className="flex justify-end">
+            <button onClick={createNote} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md mr-2">Create Note</button>
+            <button onClick={() => setShowCreateForm(false)} className="px-3 py-2 border rounded-md">Cancel</button>
+          </div>
         </div>
       )}
 
       {/* Notes List */}
       {userNotes.length === 0 && <p>You have no notes yet.</p>}
       {userNotes.map((note) => (
-        <div
-          key={note._id}
-          style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}
-        >
-          <Link to={`/notes/${note._id}`}>View Note</Link>
-          <h4>{note.title}</h4>
-          <p>{note.content}</p>
-          <p>Subject: {note.subjectID?.name || "n/a"}</p>
-          <p>Owner: {note.ownerUserID?.username || "Unknown"}</p>
+        <div key={note._id} className="border p-3 rounded-md mb-3">
+          <Link to={`/notes/${note._id}`} className="text-sm text-blue-600 underline">View Note</Link>
+          <h4 className="text-lg font-semibold mt-2">{note.title}</h4>
+          <p className="mt-2">{note.content}</p>
+          <p className="text-sm text-gray-600 mt-2">Subject: {note.subjectID?.name || "n/a"}</p>
+          <p className="text-sm text-gray-600">Owner: {note.ownerUserID?.username || "Unknown"}</p>
 
           {canEditOrDelete(note) && (
-            <>
-              <button onClick={() => startEditing(note)}>Edit</button>
-              <button onClick={() => deleteNote(note._id)}>Delete</button>
-            </>
+            <div className="mt-3 flex gap-2">
+              <button onClick={() => startEditing(note)} className="px-3 py-1 border rounded-md">Edit</button>
+              <button onClick={() => deleteNote(note._id)} className="px-3 py-1 border rounded-md text-red-600">Delete</button>
+            </div>
           )}
 
           {editingNoteId === note._id && (
-            <div
-              style={{
-                marginTop: "10px",
-                padding: "10px",
-                borderTop: "1px dashed gray",
-              }}
-            >
+            <div className="mt-3 pt-3 border-t border-dashed">
               <input
                 name="title"
                 placeholder="Title"
                 value={editValues.title}
                 onChange={handleEditChange}
-                style={{ width: "100%", marginBottom: "10px" }}
+                className="w-full mb-3 p-2 border rounded-md"
               />
               <textarea
                 name="content"
                 placeholder="Content"
                 value={editValues.content}
                 onChange={handleEditChange}
-                style={{ width: "100%", marginBottom: "10px" }}
+                className="w-full mb-3 p-2 border rounded-md"
               />
-              <div style={{ textAlign: "right" }}>
-                <button onClick={saveEditedNote} style={{ marginRight: "10px" }}>
-                  Save
-                </button>
-                <button onClick={() => setEditingNoteId(null)}>Cancel</button>
+              <div className="flex justify-end">
+                <button onClick={saveEditedNote} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md mr-2">Save</button>
+                <button onClick={() => setEditingNoteId(null)} className="px-3 py-2 border rounded-md">Cancel</button>
               </div>
             </div>
           )}

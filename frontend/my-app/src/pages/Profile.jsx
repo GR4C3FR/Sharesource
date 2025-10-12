@@ -116,7 +116,7 @@ export default function Profile() {
       <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left: Avatar + controls */}
-          <div className="lg:w-1/3 flex flex-col items-center">
+          <div className="w-full lg:w-1/3 flex flex-col items-center">
             <div className="relative group">
               {previewUrl ? (
                 <img src={previewUrl} alt="preview" className="w-40 h-40 rounded-full object-cover" />
@@ -144,7 +144,7 @@ export default function Profile() {
           </div>
 
           {/* Right: Profile details */}
-          <div className="lg:w-2/3 relative">
+          <div className="w-full lg:w-2/3 relative">
             <div>
               <div>
                 <h2 className="text-4xl font-semibold text-[#103E93]">{profile.firstName} {profile.lastName}</h2>

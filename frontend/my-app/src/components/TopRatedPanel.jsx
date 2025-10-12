@@ -33,10 +33,10 @@ export default function TopRatedPanel({ scope = 'all', token }) {
       {topFiles.length === 0 ? (
         <p className="text-sm text-gray-600">No top rated files yet.</p>
       ) : (
-        <div className="overflow-y-auto overflow-x-hidden h-[48em] pr-2 py-4">
+    <div className="overflow-y-auto overflow-x-hidden max-h-[75vh] pr-2 py-4">
           <ul className="space-y-3 p-0 m-0 list-none">
             {topFiles.map(file => (
-              <li key={file._id} className="flex items-start bg-white rounded-md p-4 py-7 shadow-sm min-h-[84px] w-full mb-3.5">
+                <li key={file._id} className="flex items-start bg-white rounded-md p-4 py-5 shadow-sm min-h-[84px] w-full mb-5">
               {/* uploader avatar */}
               {(() => {
                 const pi = file.user?.profileImageURL;
@@ -63,7 +63,7 @@ export default function TopRatedPanel({ scope = 'all', token }) {
               })()}
 
               <div className="flex-1 min-w-0 ml-4">
-                <button onClick={() => setActive(file)} title={file.originalName} className="text-sm text-[#103E93] underline block truncate font-medium text-left cursor-pointer w-[10em]">{file.originalName}</button>
+                <button onClick={() => setActive(file)} title={file.originalName} className="text-sm text-[#103E93] underline block truncate font-medium text-left cursor-pointer max-w-[10rem]">{file.originalName}</button>
                 <div className="text-xs mt-2 space-y-1 text-gray-700">
                   <div>
                     <span className="text-[#D05A02]">Uploader:</span>

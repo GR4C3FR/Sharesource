@@ -144,7 +144,7 @@ export default function SpaceDetails() {
   return (
     <AppShell>
       <div className="mx-auto w-full max-w-[1200px] px-4 py-6 min-h-screen overflow-auto">
-        <div className="flex items-start gap-6">
+        <div className="flex flex-col lg:flex-row items-start gap-6">
           <div className="flex-1 flex flex-col min-h-0">
             <div className="mb-6">
               <button onClick={() => navigate('/spaces')} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50 cursor-pointer">
@@ -247,7 +247,7 @@ export default function SpaceDetails() {
           </div>
 
           {/* Right-side panel */}
-          <aside className="w-80 flex-shrink-0">
+          <aside className="w-full lg:w-80 flex-shrink-0">
             <div className="overflow-auto space-y-4">
               <div className="py-10 px-8 border rounded-md bg-white shadow-sm">
                 <section className="flex justify-between items-center mb-4">
