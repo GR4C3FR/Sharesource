@@ -113,7 +113,7 @@ export default function Profile() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
+      <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left: Avatar + controls */}
           <div className="w-full lg:w-1/3 flex flex-col items-center">

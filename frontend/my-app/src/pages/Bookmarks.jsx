@@ -176,7 +176,7 @@ export default function Bookmarks() {
 
   return (
     <AppShell>
-  <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
+  <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
       {/* Filter & Sort for bookmarks (CSS-only toggle like Homepage) */}
       <div className="mb-4 relative">
         <div className="flex items-center gap-2">

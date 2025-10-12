@@ -235,7 +235,7 @@ export default function MyFiles() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1100px] px-4">
+      <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
         <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
           <div className="flex-1">
             {/* Search + Filters (CSS-only toggle like Bookmarks/Homepage) */}

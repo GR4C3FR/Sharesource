@@ -44,7 +44,7 @@ export default function GoogleDocView() {
 
   if (!doc) return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1100px] px-4 py-6">Loading document...</div>
+      <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">Loading document...</div>
     </AppShell>
   );
 
@@ -59,7 +59,7 @@ export default function GoogleDocView() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1200px] px-4 py-6 min-h-screen overflow-auto">
+  <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen overflow-auto">
         <div className="flex flex-col lg:flex-row items-start gap-6 h-full min-h-0">
           {/* Main centered embed */}
           <main className="flex-1 h-full min-h-0 flex flex-col">

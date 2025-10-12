@@ -190,7 +190,7 @@ export default function CollaborativeSpaces() {
           </div>
         </div>
       )}
-      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
+  <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
         {/* Set a taller viewport for spaces and keep titles/search bars sticky */}
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           {/* My Spaces (hidden for Admins) */}

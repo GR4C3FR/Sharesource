@@ -136,7 +136,7 @@ export default function SpaceDetails() {
 
   if (!space) return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1100px] px-4 py-6">
+      <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
         <p>Loading space...</p>
       </div>
     </AppShell>
@@ -144,7 +144,7 @@ export default function SpaceDetails() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1200px] px-4 py-6 min-h-screen overflow-auto">
+      <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen overflow-auto">
         <div className="flex flex-col lg:flex-row items-start gap-6">
           <div className="flex-1 flex flex-col min-h-0">
             <div className="mb-6">

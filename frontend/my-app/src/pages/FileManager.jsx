@@ -26,7 +26,8 @@ const FileManager = () => {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto w-full">
+    <div className="mx-auto w-full max-w-screen-xl px-4 py-6">
+      <div className="p-6 max-w-3xl mx-auto w-full">
       <h1 className="text-2xl font-bold mb-4">📄 Google Docs File Manager</h1>
 
       <form onSubmit={handleSubmit} className="mb-6 space-y-3">
@@ -59,6 +60,7 @@ const FileManager = () => {
             </a>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

@@ -87,7 +87,7 @@ export default function CommentsSection({ fileId, userId }) {
                 <small className="ml-2 text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</small>
               </div>
               {comment.userId?._id === userId && (
-                <button onClick={() => handleDeleteComment(comment._id)} className="px-2 py-0.5 rounded-md text-red-500 underline text-xs hover:bg-red-700 cursoer-pointer">Delete Comment</button>
+                <button onClick={() => handleDeleteComment(comment._id)} className="px-2 py-0.5 rounded-md text-red-500 underline text-xs cursoer-pointer">Delete Comment</button>
               )}
             </div>
 

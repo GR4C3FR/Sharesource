@@ -27,7 +27,7 @@ export default function Login() {
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center py-8 px-4 mb-10">
 
-      <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-4 mb-8">
+      <div className="w-full max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-4 mb-8 px-4">
         {/* Logo Section */}
         <section className="flex items-center justify-center gap-4">
           <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
@@ -51,7 +51,7 @@ export default function Login() {
         </section>
       </div>
       
-      <div className="w-full max-w-screen-xl flex items-center justify-center">
+      <div className="w-full max-w-screen-xl mx-auto flex items-center justify-center px-4">
         <div className="w-full max-w-xl flex flex-col mb-7">
         <section className="mb-9">
           <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Login</h1>
