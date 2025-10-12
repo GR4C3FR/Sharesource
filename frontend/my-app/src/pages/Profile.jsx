@@ -132,9 +132,9 @@ export default function Profile() {
 
             <div className="w-full mt-4 text-center">
               <div className="flex items-center justify-center gap-3">
-                <button onClick={handleImageUpload} className="px-4 py-2 bg-[#1D2F58] text-white rounded-md">Upload</button>
+                <button onClick={handleImageUpload} className="px-4 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">Upload</button>
                 {profile.profileImageURL && (
-                  <button onClick={handleRemoveImage} className="px-4 py-2 bg-red-600 text-white rounded-md">Remove</button>
+                  <button onClick={handleRemoveImage} className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Remove</button>
                 )}
               </div>
               {previewUrl && (
@@ -157,13 +157,13 @@ export default function Profile() {
                 {!showUsernameInput ? (
                   <div className="flex items-center gap-3 mt-2">
                     <p className="text-lg text-[#103E93]">{profile.username}</p>
-                    <button onClick={() => setShowUsernameInput(true)} className="px-3 py-1 bg-gray-100 rounded-md">Change</button>
+                    <button onClick={() => setShowUsernameInput(true)} className="px-3 py-1 bg-gray-100 rounded-md cursor-pointer">Change</button>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 mt-2">
                     <input value={form.username} onChange={(e) => setForm(s => ({ ...s, username: e.target.value }))} className="p-3 border rounded-md text-lg" />
-                    <button onClick={handleUsernameChange} className="px-3 py-1 bg-[#1D2F58] text-white rounded-md">Save</button>
-                    <button onClick={() => { setShowUsernameInput(false); setForm({ username: profile.username }); }} className="px-3 py-1 bg-gray-100 rounded-md">Cancel</button>
+                    <button onClick={handleUsernameChange} className="px-3 py-1 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save</button>
+                    <button onClick={() => { setShowUsernameInput(false); setForm({ username: profile.username }); }} className="px-3 py-1 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
                   </div>
                 )}
               </div>
@@ -172,7 +172,7 @@ export default function Profile() {
             <div className="mt-8">
               <h3 className="text-lg font-medium mb-2">Password</h3>
               {!showPasswordForm ? (
-                <button onClick={() => setShowPasswordForm(true)} className="px-3 py-2 bg-gray-100 rounded-md">Change Password</button>
+                <button onClick={() => setShowPasswordForm(true)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Change Password</button>
               ) : (
                 <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
                   <div>
@@ -188,8 +188,8 @@ export default function Profile() {
                     <input type="password" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm(s => ({ ...s, confirmPassword: e.target.value }))} className="w-full p-2 border rounded-md" />
                   </div>
                   <div className="flex items-end">
-                    <button onClick={handlePasswordChange} className="px-4 py-2 bg-[#1D2F58] text-white rounded-md">Save Password</button>
-                    <button onClick={() => setShowPasswordForm(false)} className="ml-2 px-3 py-2 bg-gray-100 rounded-md">Cancel</button>
+                    <button onClick={handlePasswordChange} className="px-4 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save Password</button>
+                    <button onClick={() => setShowPasswordForm(false)} className="ml-2 px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
                   </div>
                 </div>
               )}
@@ -204,7 +204,7 @@ export default function Profile() {
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between p-4 rounded-md">
               <div className="flex items-start gap-4">
-                <img src="/trash-icon.png" alt="trash" className="w-10 h-10 text-red-600" />
+                <img src="/delete-icon.png" alt="trash" className="w-10 h-10 text-red-600" />
                 <div>
                   <p className="text-base font-semibold text-red-600">DELETE MY ACCOUNT</p>
                   <p className="text-sm text-red-500">Say goodbye to your account and exit all workspaces.</p>
@@ -212,7 +212,7 @@ export default function Profile() {
               </div>
 
               <div>
-                <button onClick={handleDeleteProfile} className="px-4 py-2 bg-red-600 text-white rounded-md">Delete</button>
+                <button onClick={handleDeleteProfile} className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
               </div>
             </div>
           </div>

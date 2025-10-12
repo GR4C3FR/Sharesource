@@ -33,7 +33,7 @@ export default function TopRatedPanel({ scope = 'all', token }) {
       {topFiles.length === 0 ? (
         <p className="text-sm text-gray-600">No top rated files yet.</p>
       ) : (
-        <div className="overflow-y-auto overflow-x-hidden h-[40em] pr-2 py-4">
+        <div className="overflow-y-auto overflow-x-hidden h-[48em] pr-2 py-4">
           <ul className="space-y-3 p-0 m-0 list-none">
             {topFiles.map(file => (
               <li key={file._id} className="flex items-start bg-white rounded-md p-4 py-7 shadow-sm min-h-[84px] w-full mb-3.5">

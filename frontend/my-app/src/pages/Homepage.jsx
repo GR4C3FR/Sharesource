@@ -420,8 +420,8 @@ const toggleBookmark = async (fileID) => {
           </div>
 
           {/* Keep a fixed-height scroll area so the right TopRatedPanel doesn't resize when search yields no results */}
-          <div className="overflow-hidden bg-transparent py-1">
-            <div className="overflow-y-auto h-[40em] pr-2">
+          <div className="overflow-hidden bg-transparent py-1 mb-10">
+            <div className="overflow-y-auto h-[44.5em] pr-2 mb-10">
               {displayedFiles.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-gray-500">No matching files.</div>
               ) : (

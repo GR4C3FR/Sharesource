@@ -30,36 +30,36 @@ export default function FilePreviewModal({ file, token, onClose }) {
   const fileUrl = `http://localhost:5000/uploads/${file.filename}`;
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-      <div style={{ width: '90%', maxWidth: '1000px', background: 'white', borderRadius: 6, padding: 16, maxHeight: '90%', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+      <div className="w-[95%] max-w-[1000px] bg-white rounded-lg p-4 max-h-[95%] overflow-y-auto shadow-lg py-10 px-10">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3 mb-5">
             {(() => {
               const name = (file.originalName || file.filename || '').toLowerCase();
-              if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" style={{ width: 28, height: 28 }} />;
-              if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" style={{ width: 28, height: 28 }} />;
-              if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" style={{ width: 28, height: 28 }} />;
-              return <img src="/icons/file.svg" alt="file" style={{ width: 28, height: 28 }} />;
+              if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" className="h-7 w-7" />;
+              if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" className="h-7 w-7" />;
+              if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" className="h-7 w-7" />;
+              return <img src="/icons/file.svg" alt="file" className="h-7 w-7" />;
             })()}
-            <h3 style={{ margin: 0 }}>{file.originalName}</h3>
+            <h3 className="text-lg font-semibold m-0">{file.originalName}</h3>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', fontSize: 18, cursor: 'pointer' }}>✕</button>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl cursor-pointer">Close</button>
         </div>
 
-        <div style={{ marginTop: 8, color: '#555' }}>
+        <div className="mt-2 text-sm text-gray-600 space-y-1">
           <div><strong>Uploader:</strong> {file.user?.username || file.uploaderName || 'Unknown'}</div>
           <div><strong>Subject:</strong> {file.subject?.name || 'n/a'}</div>
           <div><strong>Description:</strong> {file.description || 'No description'}</div>
           <div><strong>Average Rating:</strong> {loadingAvg ? 'Loading...' : (avg !== null ? Number(avg).toFixed(2) : '—')}</div>
         </div>
 
-        <div style={{ marginTop: 12 }}>
+        <div className="mt-4">
           {/* Use iframe for preview (works for PDFs/images/text in many setups). Fallback link provided. */}
-          <div style={{ width: '100%', height: '600px', border: '1px solid #ddd' }}>
-            <iframe title="file-preview" src={fileUrl} style={{ width: '100%', height: '100%', border: 0 }} />
+          <div className="w-full h-[40rem] md:h-[60vh] border border-gray-200 rounded-md overflow-hidden">
+            <iframe title="file-preview" src={fileUrl} className="w-full h-full border-0" />
           </div>
-          <div style={{ marginTop: 8 }}>
-            <a href={fileUrl} target="_blank" rel="noopener noreferrer">Open in new tab</a>
+          <div className="mt-3 text-sm">
+            <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-[#103E93] hover:underline">Open in new tab</a>
           </div>
         </div>
       </div>

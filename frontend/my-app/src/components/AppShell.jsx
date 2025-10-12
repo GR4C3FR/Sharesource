@@ -102,10 +102,10 @@ export default function AppShell({ children }) {
               </section>
             </Link>
 
-            <div className="mt-auto">
+            <div className="mt-20">
               <Link to="/profile">
                 <section className="flex gap-3 items-center">
-                  <img src="/profile-logo.png" alt="profile" className="w-5 h-5"/>
+                  <img src="/profile-logo.png" className='w-[40px] h-[40px]'/>
                   <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Profile</button>
                 </section>
               </Link>

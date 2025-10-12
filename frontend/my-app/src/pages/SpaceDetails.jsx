@@ -143,16 +143,19 @@ export default function SpaceDetails() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1200px] px-4 py-6 h-screen overflow-hidden">
-        <div className="flex items-start gap-6 h-full">
-          <div className="flex-1 h-full flex flex-col min-h-0">
-            <div className="mb-2">
-              <button onClick={() => navigate('/spaces')} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-3 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50">⬅ Back to Spaces</button>
+      <div className="mx-auto w-full max-w-[1200px] px-4 py-6 min-h-screen overflow-auto">
+        <div className="flex items-start gap-6">
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className="mb-6">
+              <button onClick={() => navigate('/spaces')} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50 cursor-pointer">
+                <img src="/back-logo.png" className="h-4 w-4"/>
+                Back to Spaces
+              </button>
             </div>
 
             {/* Shared files in center column */}
             <section className="flex flex-col flex-1 min-h-0">
-              <div className="flex items-center justify-between flex-none">
+              <div className="flex items-center justify-between flex-none mb-5">
                 <h3 className="text-lg font-medium">Shared Files (Google Docs)</h3>
 
                 {/* Search + Filters (homepage-style, but scoped to document title) */}
@@ -190,6 +193,7 @@ export default function SpaceDetails() {
                     </div>
                   </div>
                 </div>
+                
               </div>
 
               {loadingDocs ? (
@@ -243,19 +247,22 @@ export default function SpaceDetails() {
           </div>
 
           {/* Right-side panel */}
-          <aside className="w-80 flex-shrink-0 h-full">
-            <div className="h-full overflow-auto space-y-4">
-              <div className="p-4 border rounded-md bg-white shadow-sm">
+          <aside className="w-80 flex-shrink-0">
+            <div className="overflow-auto space-y-4">
+              <div className="py-10 px-8 border rounded-md bg-white shadow-sm">
+                <section className="flex justify-between items-center mb-4">
+                  <h1 className="text-[16px]">Space Details:</h1>
+                  {profile?.role !== 'Admin' && (
+                    <div className="mt-3">
+                      <button onClick={() => setEditMode(true)} className="px-9 py-1 bg-gray-100 rounded-md text-[14px] cursor-pointer">Edit</button>
+                    </div>
+                  )}
+                </section>
                 <h2 className="text-lg font-semibold">{space.spaceName}</h2>
                 <p className="text-sm text-gray-600 mt-2">{space.description}</p>
-                {profile?.role !== 'Admin' && (
-                  <div className="mt-3">
-                    <button onClick={() => setEditMode(true)} className="px-3 py-2 bg-gray-100 rounded-md">Edit</button>
-                  </div>
-                )}
               </div>
 
-              <div className="p-4 border rounded-md bg-white shadow-sm">
+              <div className="p-4 border rounded-md bg-white shadow-sm mb-7">
                 <div onClick={() => setShowMembersDropdown(s => !s)} className="flex items-center justify-between cursor-pointer">
                     <h3 className="font-medium">Members</h3>
                     <div className="text-sm text-gray-500">{space.members?.length || 0} ▾</div>
@@ -270,17 +277,23 @@ export default function SpaceDetails() {
                     )) : <div className="text-sm text-gray-600">No members yet</div>}
                   </div>
                 )}
-                {String(space.ownerUserId?._id || space.ownerUserId) === String(localStorage.getItem('userId')) && (
-                  <div className="mt-3">
-                    <button onClick={() => setShowAddMember(true)} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md">➕ Add Member</button>
-                  </div>
-                )}
               </div>
 
-              <div className="p-4 border rounded-md bg-white shadow-sm">
+              {String(space.ownerUserId?._id || space.ownerUserId) === String(localStorage.getItem('userId')) && (
+                  <div className="mt-3 mb-5">
+                    <button onClick={() => setShowAddMember(true)} className="px-3 py-3 bg-[#1D2F58] text-white rounded-md cursor-pointer w-full flex justify-center items-center gap-4">
+                       <img src="/add-member-logo.png" className="h-7 w-7"/>
+                       Add Member
+                    </button>
+                  </div>
+                )}
+
                 {profile?.role !== 'Admin' && (
                   <div>
-                    <button onClick={() => setShowAddDoc(true)} className="w-full px-3 py-2 bg-[#1D2F58] text-white rounded-md">➕ Add Collaborative File</button>
+                    <button onClick={() => setShowAddDoc(true)} className="w-full px-3 py-3 bg-[#1D2F58] text-white rounded-md cursor-pointer w-full flex justify-center items-center gap-4">
+                      <img src="/add-post.png" className="h-7 w-7"/>
+                       Add Collaborative File
+                    </button>
                   </div>
                 )}
                 {profile?.role === 'Admin' && (
@@ -295,10 +308,10 @@ export default function SpaceDetails() {
                         console.error('Failed to delete space', err);
                         alert(err?.response?.data?.message || 'Failed to delete space');
                       }
-                    }} className="w-full px-3 py-2 bg-red-600 text-white rounded-md">Delete Space</button>
+                    }} className="w-full px-3 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete Space</button>
                   </div>
                 )}
-              </div>
+
             </div>
           </aside>
         </div>
@@ -313,8 +326,8 @@ export default function SpaceDetails() {
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
               <input type="text" value={desc} onChange={(e) => setDesc(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
               <div className="mt-4 flex justify-end gap-2">
-                <button onClick={() => setEditMode(false)} className="px-3 py-2 bg-gray-100 rounded-md">Cancel</button>
-                <button onClick={saveEdit} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md">Save changes</button>
+                <button onClick={() => setEditMode(false)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
+                <button onClick={saveEdit} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save changes</button>
               </div>
             </div>
           </div>
@@ -324,14 +337,14 @@ export default function SpaceDetails() {
         {showAddDoc && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black opacity-30" onClick={() => setShowAddDoc(false)} />
-            <div className="relative z-10 w-full max-w-lg bg-white rounded-md shadow-lg p-6">
+            <div className="flex flex-col gap-4 relative z-10 w-full max-w-lg bg-white rounded-md shadow-lg p-6">
               <h4 className="font-medium">Add Google Doc</h4>
               <input placeholder="Document title" value={docTitle} onChange={(e) => setDocTitle(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
               <input placeholder="Short description (optional)" value={docDesc} onChange={(e) => setDocDesc(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
               <input placeholder="Google Docs link (must be shareable: Anyone with the link)" value={docLink} onChange={(e) => setDocLink(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
               <div className="mt-4 flex justify-end gap-2">
-                <button onClick={() => setShowAddDoc(false)} className="px-3 py-2 bg-gray-100 rounded-md">Cancel</button>
-                <button onClick={addGoogleDoc} disabled={addingDoc} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md">{addingDoc ? 'Adding...' : 'Add Document'}</button>
+                <button onClick={() => setShowAddDoc(false)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
+                <button onClick={addGoogleDoc} disabled={addingDoc} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">{addingDoc ? 'Adding...' : 'Add Document'}</button>
               </div>
             </div>
           </div>
@@ -342,13 +355,18 @@ export default function SpaceDetails() {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black opacity-30" onClick={() => setShowAddMember(false)} />
             <div className="relative z-10 w-full max-w-lg bg-white rounded-md shadow-lg p-6">
-              <h4 className="font-medium">Add Member</h4>
+              <section className="flex justify-between items-center mb-4">
+                <h4 className="font-medium">Add Member</h4>
+                <div className="mt-4 flex justify-end">
+                  <button onClick={() => setShowAddMember(false)} className="px-3 py-2 cursor-pointer">Close</button>
+                </div>
+              </section>
               <p className="text-sm text-gray-500 mt-1">Search by email and invite a user to this space.</p>
               <div className="mt-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-5">
                   <input value={searchEmail} onChange={(e) => setSearchEmail(e.target.value)} placeholder="Search by email" className="flex-1 px-3 py-2 border rounded" />
                   <button onClick={async () => {
-                    setSearchingUser(true);
+                    setSearchingUser(true); 
                     try {
                       const u = await searchUserByEmail(searchEmail);
                       setFoundUser(u || null);
@@ -359,7 +377,7 @@ export default function SpaceDetails() {
                     } finally {
                       setSearchingUser(false);
                     }
-                  }} className="px-3 py-2 bg-[#1D2F58] text-white rounded">Search</button>
+                  }} className="px-3 py-2 bg-[#1D2F58] text-white rounded cursor-pointer">Search</button>
                 </div>
                 {searchingUser && <div className="mt-2 text-sm">Searching...</div>}
                 {foundUser && (
@@ -388,9 +406,6 @@ export default function SpaceDetails() {
                     </div>
                   </div>
                 )}
-              </div>
-              <div className="mt-4 flex justify-end">
-                <button onClick={() => setShowAddMember(false)} className="px-3 py-2 bg-gray-100 rounded-md">Close</button>
               </div>
             </div>
           </div>

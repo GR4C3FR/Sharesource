@@ -62,49 +62,36 @@ export default function GoogleDocView() {
         <div className="flex items-start gap-6 h-full">
           {/* Main centered embed */}
           <main className="flex-1 h-full min-h-0 flex flex-col">
-            <div className="mb-2">
-              <button onClick={() => navigate(`/spaces/${spaceId}`)} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-3 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50">⬅ Back to Space</button>
+            <div className="mb-5">
+              <button onClick={() => navigate(`/spaces/${spaceId}`)} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm cursor-pointer hover:bg-gray-50">
+                <img src="/back-logo.png" className="h-4 w-4"/>
+                Back to Shared Files
+                </button>
             </div>
 
             {/* Compact doc header above the embed: title -> description -> uploader */}
-            <div className="mb-3">
-              <h2 className="text-lg font-semibold truncate">{doc.title}</h2>
-              {doc.description && <p className="text-sm text-gray-600 mt-1">{doc.description}</p>}
-              {doc.createdBy && <div className="text-xs text-gray-500 mt-1">Added by: {doc.createdBy.username || doc.createdBy.email}</div>}
+            <div className="mb-5">
+              <h2 className="text-lg font-semibold truncate text-[24px]">{doc.title}</h2>
+              {doc.description && <p className="text-sm text-gray-600 mt-1 text-[14px]">{doc.description}</p>}
+              {doc.createdBy && <div className="text-xs text-gray-500 mt-1 text-[14px]">Added by: {doc.createdBy.username || doc.createdBy.email}</div>}
             </div>
 
             <div className="flex-1 min-h-0 flex flex-col">
               {/* Increase iframe wrapper height slightly to ensure full document visibility and move it higher */}
-              <div className="rounded-md overflow-hidden border h-[calc(100vh-5.5rem)]">
+                        <button onClick={() => window.open(doc.link, '_blank')} className="w-full px-3 py-4 bg-white text-[#1D2F58] underline rounded-md cursor-pointer">Open in Google Docs</button> 
+              <div className="rounded-md overflow-hidden border">
                 <iframe
                   src={embeddedUrl}
                   title={doc.title}
                   width="100%"
-                  height="100%"
-                  className="block w-full h-full min-h-0"
+                  height="30%"
+                  className="block w-full h-[90em]"
                   style={{ border: 'none' }}
                   allow="clipboard-read; clipboard-write; microphone; camera"
                 />
               </div>
             </div>
           </main>
-
-          {/* Right-side details panel */}
-          <aside className="w-80 flex-shrink-0 h-full">
-            <div className="h-full overflow-auto space-y-4">
-              <div className="p-4 border rounded-md bg-white shadow-sm">
-                <h2 className="text-lg font-semibold">{doc.title}</h2>
-                <p className="text-sm text-gray-600 mt-2">{doc.description}</p>
-                {doc.createdBy && (
-                  <div className="mt-2 text-sm text-gray-500">Added by: {doc.createdBy.username || doc.createdBy.email}</div>
-                )}
-              </div>
-
-              <div className="p-4 border rounded-md bg-white shadow-sm">
-                <button onClick={() => window.open(doc.link, '_blank')} className="w-full px-3 py-2 bg-[#1D2F58] text-white rounded-md">Open in Google Docs</button>
-              </div>
-            </div>
-          </aside>
         </div>
       </div>
     </AppShell>
