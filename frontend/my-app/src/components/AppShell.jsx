@@ -14,7 +14,7 @@ export default function AppShell({ children }) {
     if (pathname.startsWith('/bookmarks')) return 'Bookmarks';
     if (pathname.startsWith('/my-files')) return 'Your Files';
     if (pathname.startsWith('/spaces')) return 'Collaboration';
-    if (pathname.startsWith('/profile')) return 'Profile & Settings';
+  if (pathname.startsWith('/profile')) return 'Profile';
     if (pathname.startsWith('/notes')) return 'Notes';
     if (pathname.startsWith('/viewer')) return 'Viewer';
     // Fallback: turn path segments into a readable title
@@ -72,7 +72,7 @@ export default function AppShell({ children }) {
             <h1 className="text-[38px] font-inter font-normal leading-[16px] tracking-[0%] text-[#1D2F58]">{pageTitle}</h1>
           </section>
 
-          <section className="flex flex-col gap-10">
+          <section className="flex flex-col gap-10 h-[520px]">
             <Link to="/homepage">
               <section className="flex gap-3">
                 <img src="/dashboard-logo.png"/>
@@ -102,14 +102,14 @@ export default function AppShell({ children }) {
               </section>
             </Link>
 
-            <section className='mt-20'>
+            <div className="mt-auto">
               <Link to="/profile">
-                <section className="flex gap-3">
-                  <img src="/settings_logo.png"/>
-                  <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Profile & Settings</button>
+                <section className="flex gap-3 items-center">
+                  <img src="/profile-logo.png" alt="profile" className="w-5 h-5"/>
+                  <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Profile</button>
                 </section>
               </Link>
-            </section>
+            </div>
 
           </section>
         </section>
