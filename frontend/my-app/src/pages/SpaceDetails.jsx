@@ -86,7 +86,8 @@ export default function SpaceDetails() {
   // UI-only: hide page-level scrollbar while viewing this page so only inner panels scroll
   useEffect(() => {
     const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    // allow the whole page to scroll while on this page
+    document.body.style.overflow = 'auto';
     return () => { document.body.style.overflow = prev; };
   }, []);
 
