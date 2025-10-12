@@ -62,37 +62,36 @@ export default function CommentsSection({ fileId, userId }) {
   };
 
   return (
-    <div className="mt-3">
-      <h4 className="mb-2">💬 Comments</h4>
-
+    <div className="mt-3 space-y-4 mb-4">
       <form onSubmit={handleAddComment} className="mb-3">
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Write a comment..."
           rows="2"
-          className="w-full p-2 rounded-md border"
+          className="w-full p-3 rounded-md border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#103E93] resize-none"
           disabled={loading}
         />
-        <button type="submit" disabled={loading} className="mt-2 px-3 py-1 rounded-md bg-[#1D2F58] text-white">{loading ? "Posting..." : "Post Comment"}</button>
+        <button type="submit" disabled={loading} className="px-3 py-1 -mt-1 rounded-md bg-[#1D2F58] text-[14px] text-white hover:bg-[#16325a] focus:outline-none focus:ring-2 focus:ring-[#103E93] cursor-pointer">{loading ? "Posting..." : "Post Comment"}</button>
       </form>
 
+      <h4 className="mb-2 mt-4 text-sm font-medium">Comments</h4>
       {comments.length === 0 ? (
         <p className="text-sm text-gray-600">No comments yet.</p>
       ) : (
         comments.map((comment) => (
-          <div key={comment._id} className="border p-2 mb-2 rounded-md">
+          <div key={comment._id} className="bg-white border rounded-md p-3 mb-2 shadow-sm">
             <div className="mb-1 flex items-center justify-between">
               <div>
-                <strong>{comment.userId?.username || comment.userId?.email || "Unknown"}</strong>
+                <strong className="text-sm text-[#103E93]">{comment.userId?.username || comment.userId?.email || "Unknown"}</strong>
                 <small className="ml-2 text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</small>
               </div>
               {comment.userId?._id === userId && (
-                <button onClick={() => handleDeleteComment(comment._id)} className="px-2 py-0.5 rounded-md bg-red-600 text-white text-xs">Delete</button>
+                <button onClick={() => handleDeleteComment(comment._id)} className="px-2 py-0.5 rounded-md text-red-500 underline text-xs hover:bg-red-700 cursoer-pointer">Delete Comment</button>
               )}
             </div>
 
-            <div className="mb-1">{comment.text}</div>
+            <div className="mb-1 text-sm text-gray-800">{comment.text}</div>
           </div>
         ))
       )}

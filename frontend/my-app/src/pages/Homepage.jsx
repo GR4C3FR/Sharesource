@@ -498,7 +498,7 @@ const toggleBookmark = async (fileID) => {
                       <div className="mt-2 flex items-start justify-between">
                         <div className="flex flex-col">
                           <RatingSection itemId={file._id} userId={profile?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
-                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
+                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700 cursor-pointer">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                         </div>
 
                         <div className="flex flex-col items-end gap-3">
@@ -511,8 +511,8 @@ const toggleBookmark = async (fileID) => {
 
                       {openComments[file._id] && (
                         <div className="mt-3 border-t border-dashed border-gray-300 pt-3">
-                          <CommentsSection fileId={file._id} userId={profile?._id} />
                           <RatingSection itemId={file._id} userId={profile?._id} allowRating onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
+                          <CommentsSection fileId={file._id} userId={profile?._id} />
                         </div>
                       )}
                     </div>
