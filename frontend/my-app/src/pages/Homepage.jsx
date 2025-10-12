@@ -462,9 +462,9 @@ const toggleBookmark = async (fileID) => {
 
                       <section className="flex justify-between items-start">
                         <div className="flex flex-col mb-2 justify-between">
-                          <section className="flex gap-4 mb-3 items-center min-w-0">
-                            <p className="font-inter font-medium text-[20px] leading-[16px] text-[#103E93] w-[10em]">{file.user?.username || "Unknown"}</p>
-                            <p className="font-inter font-normal text-[16px] leading-[16px] text-[#103E93] w-[60%]">Subject: {file.subject?.name || "No subject"}</p>
+                          <section className="flex flex-col sm:flex-row gap-4 mb-3 items-center sm:items-center min-w-0">
+                            <p className="font-inter font-medium text-[20px] leading-[16px] text-[#103E93] w-full sm:w-[10em]">{file.user?.username || "Unknown"}</p>
+                            <p className="font-inter font-normal text-[16px] leading-[16px] text-[#103E93] w-full sm:w-[60%]">Subject: {file.subject?.name || "No subject"}</p>
                           </section>
 
                         <div className="flex flex-col justify-between w-full">
@@ -480,7 +480,11 @@ const toggleBookmark = async (fileID) => {
                                 })()}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#0b66c3] underline text-left cursor-pointer truncate block">{file.originalName}</button>
+                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="    bg-transparent border-0 p-0 text-[#0b66c3] underline text-left cursor-pointer
+                                block truncate overflow-hidden text-ellipsis whitespace-nowrap
+                                w-[150px] sm:w-[180px] md:w-auto lg:w-auto ">
+                                {file.originalName}
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -495,17 +499,18 @@ const toggleBookmark = async (fileID) => {
                       </section>
 
                       {/* ⭐ Show Average Rating (auto-updates) and actions aligned */}
-                      <div className="mt-2 flex items-start justify-between">
+                      <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-start justify-between">
                         <div className="flex flex-col">
                           <RatingSection itemId={file._id} userId={profile?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
-                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700 cursor-pointer">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                         </div>
 
-                        <div className="flex flex-col items-end gap-3">
-                          <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-[8em]">Download</button>
+                        <div className="flex flex-col items-start sm:items-end gap-3 mt-3 sm:mt-0 w-full sm:w-auto">
+                          <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-full sm:w-[8em]">Download</button>
                               {(file.user?._id === profile?._id || profile?.role === 'Admin') && (
-                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-[8em]">Delete</button>
+                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-full sm:w-[8em]">Delete</button>
                               )}
+                          {/* Move comments toggle here so it appears below Delete on mobile */}
+                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700 cursor-pointer w-full sm:w-auto text-left sm:text-right">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                         </div>
                       </div>
 
