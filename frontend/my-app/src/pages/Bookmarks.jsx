@@ -10,24 +10,18 @@ import FilePreviewModal from "../components/FilePreviewModal";
 import AppShell from "../components/AppShell";
 
 export default function Bookmarks() {
-  const navigate = useNavigate();
+  const token = localStorage.getItem('accessToken');
   const [bookmarks, setBookmarks] = useState([]);
-  const token = localStorage.getItem("accessToken");
-  const [subjects, setSubjects] = useState([]);
-  const [filterSubject, setFilterSubject] = useState("");
-  const [sortOption, setSortOption] = useState("newest");
-  const [openComments, setOpenComments] = useState({});
   const [fileAverages, setFileAverages] = useState({});
+  const [openComments, setOpenComments] = useState({});
+  const [filterSubject, setFilterSubject] = useState("");
+  const [sortOption, setSortOption] = useState('newest');
+  const [subjects, setSubjects] = useState([]);
+  const [previewFile, setPreviewFile] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [bookmarkedFiles, setBookmarkedFiles] = useState([]);
 
-  const toggleComments = (fileId) => {
-    setOpenComments((prev) => ({ ...prev, [fileId]: !prev[fileId] }));
-  };
-
-  const handleAverageUpdate = (fileId, newAverage) => {
-    setFileAverages((prev) => ({ ...prev, [fileId]: newAverage }));
-  };
-
-  // fetch subjects for filter dropdown
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
@@ -39,9 +33,6 @@ export default function Bookmarks() {
     };
     fetchSubjects();
   }, [token]);
-  const [previewFile, setPreviewFile] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
 
   // Batch fetch averages for bookmarked files to support immediate sorting
   useEffect(() => {
@@ -253,28 +244,30 @@ export default function Bookmarks() {
                   return (
                     <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
                       {/* Bookmark icon button (top-right) */}
-                      <button
-                        type="button"
-                        onClick={() => toggleBookmark(file._id)}
-                        aria-pressed={bookmarks.some(b => b._id === file._id)}
-                        className={
-                          `absolute -top-1 right-3 p-0 transition-transform focus:outline-none z-20 cursor-pointer ` +
-                          'hover:scale-110'
-                        }
-                        title={bookmarks.some(b => b._id === file._id) ? 'Remove bookmark' : 'Add bookmark'}
-                      >
-                        <img
-                          src="/bookmark-logo.png"
-                          alt="bookmark"
+                      {profile?.role !== 'Admin' && (
+                        <button
+                          type="button"
+                          onClick={() => toggleBookmark(file._id)}
+                          aria-pressed={bookmarks.some(b => b._id === file._id)}
                           className={
-                            "w-10 h-10 transition-all duration-150 " +
-                            (bookmarks.some(b => b._id === file._id)
-                              ? 'filter-none saturate-150 drop-shadow-md'
-                              : 'filter grayscale hover:grayscale-0')
+                            `absolute -top-1 right-3 p-0 transition-transform focus:outline-none z-20 cursor-pointer ` +
+                            'hover:scale-110'
                           }
-                        />
-                        <span className="sr-only">{bookmarks.some(b => b._id === file._id) ? 'Bookmarked' : 'Bookmark'}</span>
-                      </button>
+                          title={bookmarks.some(b => b._id === file._id) ? 'Remove bookmark' : 'Add bookmark'}
+                        >
+                          <img
+                            src="/bookmark-logo.png"
+                            alt="bookmark"
+                            className={
+                              "w-10 h-10 transition-all duration-150 " +
+                              (bookmarks.some(b => b._id === file._id)
+                                ? 'filter-none saturate-150 drop-shadow-md'
+                                : 'filter grayscale hover:grayscale-0')
+                            }
+                          />
+                          <span className="sr-only">{bookmarks.some(b => b._id === file._id) ? 'Bookmarked' : 'Bookmark'}</span>
+                        </button>
+                      )}
 
                       <div className="flex gap-3">
                         <div className="w-[72px] flex flex-col items-center gap-2 flex-shrink-0">
@@ -326,7 +319,7 @@ export default function Bookmarks() {
 
                             <div className="flex flex-col items-end gap-3">
                               <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-[8em]">Download</button>
-                              {file.user?._id === profile?._id && (
+                              {(file.user?._id === profile?._id || profile?.role === 'Admin') && (
                                 <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-[8em]">Delete</button>
                               )}
                             </div>

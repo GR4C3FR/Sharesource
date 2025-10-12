@@ -193,93 +193,96 @@ export default function CollaborativeSpaces() {
       <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
         {/* Set a taller viewport for spaces and keep titles/search bars sticky */}
         <div className="flex gap-6 items-start" style={{ alignItems: 'flex-start' }}>
-          {/* My Spaces */}
-          <div className="w-1/2 pr-4">
-            <div className="sticky top-6 bg-transparent z-10">
-              <h2 className="text-xl font-semibold mb-3">My Spaces</h2>
-              {profile && profile.role !== "Admin" && (
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    placeholder="Search My Spaces by title, owner or members..."
-                    value={searchMySpaces}
-                    onChange={(e) => setSearchMySpaces(e.target.value)}
-                    className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="mt-3 max-h-[40rem] overflow-y-auto pr-2">
+          {/* My Spaces (hidden for Admins) */}
+          {profile?.role !== 'Admin' && (
+            <div className="w-1/2 pr-4">
+              <div className="sticky top-6 bg-transparent z-10">
+                <h2 className="text-xl font-semibold mb-3">My Spaces</h2>
+                {profile && profile.role !== "Admin" && (
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      placeholder="Search My Spaces by title, owner or members..."
+                      value={searchMySpaces}
+                      onChange={(e) => setSearchMySpaces(e.target.value)}
+                      className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
+                    />
+                  </div>
+                )}
+              </div>
 
-            {profile?.role !== "Admin" && (
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer"
-              >
-                <img src="/collaborative space-logo.png" className="h-5" alt="create" />
-                Create Space
-              </button>
-            )}
+              <div className="mt-3 max-h-[40rem] overflow-y-auto pr-2">
 
-            {profile && profile.role !== "Admin" && (
-              <>
-                {mySpaces.length === 0 ? (
-                  <p>You are not a member of any spaces yet.</p>
-                ) : (
-                  displayedMySpaces.map((space) => (
-                    <div key={space._id} className="relative py-6 px-5 bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em] flex">
-                      <div className="flex-1 min-w-0 pr-4">
-                        <h3 className="text-lg font-medium text-[#103E93] truncate">{space.spaceName}</h3>
-                        <p className="text-sm text-gray-600 mt-1 truncate">{space.description}</p>
+                {profile?.role !== "Admin" && (
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer"
+                  >
+                    <img src="/collaborative space-logo.png" className="h-5" alt="create" />
+                    Create Space
+                  </button>
+                )}
 
-                        <div className="flex items-center gap-3 mt-3">
-                          <p className="text-sm text-gray-500">
-                            <strong>Members:</strong> {(space.members || []).length}
-                          </p>
-                          <button onClick={() => toggleMembers(space._id, "my")} className="px-2 py-0.5 rounded-md bg-gray-100 text-sm cursor-pointer">
-                            {expandedMembers[`my:${space._id}`] ? "Hide" : "Show"}
-                          </button>
-                        </div>
+                {profile && profile.role !== "Admin" && (
+                  <>
+                    {mySpaces.length === 0 ? (
+                      <p>You are not a member of any spaces yet.</p>
+                    ) : (
+                      displayedMySpaces.map((space) => (
+                        <div key={space._id} className="relative py-6 px-5 bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em] flex">
+                          <div className="flex-1 min-w-0 pr-4">
+                            <h3 className="text-lg font-medium text-[#103E93] truncate">{space.spaceName}</h3>
+                            <p className="text-sm text-gray-600 mt-1 truncate">{space.description}</p>
 
-                        <p className="text-sm text-gray-500 mt-1">
-                          <strong>Owner:</strong> {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
-                        </p>
+                            <div className="flex items-center gap-3 mt-3">
+                              <p className="text-sm text-gray-500">
+                                <strong>Members:</strong> {(space.members || []).length}
+                              </p>
+                              <button onClick={() => toggleMembers(space._id, "my")} className="px-2 py-0.5 rounded-md bg-gray-100 text-sm cursor-pointer">
+                                {expandedMembers[`my:${space._id}`] ? "Hide" : "Show"}
+                              </button>
+                            </div>
 
-                        {expandedMembers[`my:${space._id}`] && (
-                          <ul className="mt-2 pl-4 list-disc text-sm text-gray-700">
-                            {(space.members || []).map((m) => {
-                              const user = m.userId;
-                              const displayName = (user && (user.username || user.email)) || (typeof user === "string" ? `UserId:${user}` : "Unknown User");
-                              return (
-                                <li key={user?._id || user}>
-                                  {displayName} ({m.role})
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        )}
-                      </div>
+                            <p className="text-sm text-gray-500 mt-1">
+                              <strong>Owner:</strong> {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
+                            </p>
 
-                      <div className="flex flex-col items-end justify-end gap-2">
-                        <div className="flex gap-2">
-                          <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 rounded-md bg-gray-100 cursor-pointer">
-                            View Space
-                          </button>
+                            {expandedMembers[`my:${space._id}`] && (
+                              <ul className="mt-2 pl-4 list-disc text-sm text-gray-700">
+                                {(space.members || []).map((m) => {
+                                  const user = m.userId;
+                                  const displayName = (user && (user.username || user.email)) || (typeof user === "string" ? `UserId:${user}` : "Unknown User");
+                                  return (
+                                    <li key={user?._id || user}>
+                                      {displayName} ({m.role})
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            )}
+                          </div>
+
+                          <div className="flex flex-col items-end justify-end gap-2">
+                            <div className="flex gap-2">
+                              <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 rounded-md bg-gray-100 cursor-pointer">
+                                View Space
+                              </button>
                               <button onClick={() => startEdit(space)} className="px-3 rounded-md bg-yellow-50 cursor-pointer">
                                 Edit
                               </button>
-                          <button onClick={() => handleLeave(space._id)} className="px-3 rounded-md bg-red-50 text-red-700 cursor-pointer">
-                            Leave
-                          </button>
+                              <button onClick={() => handleLeave(space._id)} className="px-3 rounded-md bg-red-50 text-red-700 cursor-pointer">
+                                Leave
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ))
+                      ))
+                    )}
+                  </>
                 )}
-              </>
-            )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Available Spaces */}
           <div className="w-1/2 pl-4">

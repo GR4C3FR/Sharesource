@@ -312,7 +312,7 @@ export default function MyFiles() {
                           <section className="flex justify-between items-start">
                             <div className="flex flex-col mb-2 justify-between min-w-0">
                               <section className="flex gap-4 mb-3 items-center min-w-0">
-                                <p className="font-inter font-normal text-[16px] leading-[16px] text-[#103E93] w-[60%] truncate">Subject: {file.subject?.name || "No subject"}</p>
+                                <p className="font-inter font-normal text-[16px] leading-[16px] text-[#103E93] w-[70%] truncate">Subject: {file.subject?.name || "No subject"}</p>
                               </section>
 
                               <div className="flex flex-col justify-between w-full">
@@ -348,7 +348,7 @@ export default function MyFiles() {
 
                             <div className="flex flex-col items-end gap-3">
                               <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-[8em]">Download</button>
-                              {file.user?._id === userId && (
+                              {(file.user?._id === userId || profile?.role === 'Admin') && (
                                 <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-[8em]">Delete</button>
                               )}
                             </div>

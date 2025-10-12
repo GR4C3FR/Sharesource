@@ -216,7 +216,7 @@ export default function SpaceDetails() {
                                 <small className="text-xs text-gray-500">Added: {new Date(d.createdAt).toLocaleString()}</small>
                               </div>
 
-                              {space.members?.some(m => String(m.userId?._id || m.userId) === String(localStorage.getItem('userId'))) && (
+                              {(space.members?.some(m => String(m.userId?._id || m.userId) === String(localStorage.getItem('userId'))) || profile?.role === 'Admin') && (
                                 <div className="mt-3 flex justify-end">
                                   <button onClick={async (e) => {
                                     e.stopPropagation();
