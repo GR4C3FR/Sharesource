@@ -25,17 +25,18 @@ export default function TopRatedPanel({ scope = 'all', token }) {
     fetchTop();
   }, [scope, token]);
 
-  if (loading) return <div style={{ padding: '10px' }}>Loading top rated...</div>;
+  if (loading) return <div className="p-3 text-sm text-gray-600">Loading top rated...</div>;
 
   return (
-    <aside>
-      <h4 style={{ marginTop: 0 }}>Top Rated (4 - 5)</h4>
+    <aside className="w-full">
+      <h4 className="text-[24px] font-semibold text-[#103E93]">Top-Rated Notes</h4>
       {topFiles.length === 0 ? (
-        <p style={{ fontSize: '0.9rem' }}>No top rated files yet.</p>
+        <p className="text-sm text-gray-600">No top rated files yet.</p>
       ) : (
-        <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
-          {topFiles.map(file => (
-            <li key={file._id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="overflow-y-auto h-[550px] pr-2 py-9 h-[100px]">
+          <ul className="space-y-3 p-0 m-0 list-none">
+            {topFiles.map(file => (
+              <li key={file._id} className="flex items-start bg-white rounded-md p-4 py-7 shadow-sm min-h-[84px] w-full mb-3.5">
               {/* uploader avatar */}
               {(() => {
                 const pi = file.user?.profileImageURL;
@@ -46,31 +47,46 @@ export default function TopRatedPanel({ scope = 'all', token }) {
                   else avatarSrc = `${base}${pi}`;
                 }
                 // only render avatar when uploader has an uploaded profileImageURL
-                if (!file.user?.profileImageURL) return <div style={{ width: 28, height: 28 }} />;
+                if (!file.user?.profileImageURL) return <div className="w-7 h-7" />;
                 return (
-                  <img src={avatarSrc} alt={file.user?.username || 'uploader'} style={{ width: 28, height: 28, objectFit: 'cover', borderRadius: 6 }} onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }} />
+                  <img src={avatarSrc} alt={file.user?.username || 'uploader'} className="w-7 h-7 object-cover rounded-md" onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }} />
                 );
               })()}
 
               {/* file icon */}
               {(() => {
                 const name = (file.originalName || file.filename || '').toLowerCase();
-                if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" style={{ width: 22, height: 22 }} />;
-                if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" style={{ width: 22, height: 22 }} />;
-                if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" style={{ width: 22, height: 22 }} />;
-                return <img src="/icons/file.svg" alt="file" style={{ width: 22, height: 22 }} />;
+                if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" className="w-5 h-5" />;
+                if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" className="w-5 h-5" />;
+                if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" className="w-5 h-5" />;
+                return <img src="/icons/file.svg" alt="file" className="w-10 h-10" />;
               })()}
 
-              <button onClick={() => setActive(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
-              <div style={{ fontSize: '0.85rem', color: '#555' }}>
-                <div>Uploader: {file.user?.username || 'Unknown'}</div>
-                <div>Subject: {file.subject?.name || 'n/a'}</div>
-                <div>Description: {file.description || 'No description'}</div>
-                <div>Avg: {Number(file.avgRating).toFixed(2)}</div>
+              <div className="flex-1 min-w-0 ml-4">
+                <button onClick={() => setActive(file)} title={file.originalName} className="text-sm text-[#103E93] underline block truncate font-medium text-left w-[15em] cursor-pointer">{file.originalName}</button>
+                <div className="text-xs mt-2 space-y-1 text-gray-700">
+                  <div>
+                    <span className="text-[#D05A02]">Uploader:</span>
+                    <span className="ml-2">{file.user?.username || 'Unknown'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#D05A02]">Subject:</span>
+                    <span className="ml-2">{file.subject?.name || 'n/a'}</span>
+                  </div>
+                  <div className="truncate">
+                    <span className="text-[#D05A02]">Description:</span>
+                    <span className="ml-2">{file.description || 'No description'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#D05A02]">Avg:</span>
+                    <span className="ml-2">{Number(file.avgRating).toFixed(2)}</span>
+                  </div>
+                </div>
               </div>
             </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
+        </div>
       )}
       {active && <FilePreviewModal file={active} token={token} onClose={() => setActive(null)} />}
     </aside>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   createSpace,
@@ -23,49 +23,42 @@ export default function CollaborativeSpaces() {
   const [expandedMembers, setExpandedMembers] = useState({});
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const token = localStorage.getItem("accessToken");
   const [searchMySpaces, setSearchMySpaces] = useState("");
   const [searchAvailableSpaces, setSearchAvailableSpaces] = useState("");
 
-  // Fetch all available spaces
+  useEffect(() => {
+    (async () => {
+      try {
+        const [all, mine] = await Promise.all([getAllSpaces(), getUserSpaces()]);
+        setSpaces(all || []);
+        setMySpaces(mine || []);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        const res = await API.get("/users/profile", { headers: { Authorization: `Bearer ${token}` } });
+        setProfile(res.data.user);
+      } catch {}
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const fetchSpaces = async () => {
     try {
       setLoading(true);
       const data = await getAllSpaces();
-      setSpaces(data);
-    } catch (err) {
-      console.error("❌ Failed to load spaces:", err);
-      alert(err.response?.data?.message || "Failed to fetch spaces");
+      setSpaces(data || []);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch spaces current user belongs to
   const fetchMySpaces = async () => {
-    try {
-      const data = await getUserSpaces();
-      setMySpaces(data);
-    } catch (err) {
-      console.error("❌ Failed to load my spaces:", err);
-      alert(err.response?.data?.message || "Failed to fetch my spaces");
-    }
+    const data = await getUserSpaces();
+    setMySpaces(data || []);
   };
-
-  useEffect(() => {
-    fetchSpaces();
-    fetchMySpaces();
-    // fetch current user profile for role checks
-    const fetchProfile = async () => {
-      try {
-        const res = await API.get('/users/profile', { headers: { Authorization: `Bearer ${token}` } });
-        setProfile(res.data.user);
-      } catch (err) {
-        console.debug('CollaborativeSpaces: failed to load profile', err?.message || err);
-      }
-    };
-    fetchProfile();
-  }, []);
 
   const displayedAvailableSpaces = useMemo(() => {
     const q = (searchAvailableSpaces || "").trim().toLowerCase();
@@ -73,9 +66,8 @@ export default function CollaborativeSpaces() {
     return spaces.filter((space) => {
       const title = (space.spaceName || "").toLowerCase();
       const owner = (space.ownerUserId?.username || space.ownerUserId?.email || "").toLowerCase();
-      const members = ((space.members || []).map(m => (m.userId?.username || m.userId?.email || "").toLowerCase()).join(" "));
-      if (title.includes(q) || owner.includes(q) || members.includes(q)) return true;
-      return false;
+      const members = ((space.members || []).map((m) => (m.userId?.username || m.userId?.email || "").toLowerCase()).join(" "));
+      return title.includes(q) || owner.includes(q) || members.includes(q);
     });
   }, [spaces, searchAvailableSpaces]);
 
@@ -85,13 +77,11 @@ export default function CollaborativeSpaces() {
     return mySpaces.filter((space) => {
       const title = (space.spaceName || "").toLowerCase();
       const owner = (space.ownerUserId?.username || space.ownerUserId?.email || "").toLowerCase();
-      const members = ((space.members || []).map(m => (m.userId?.username || m.userId?.email || "").toLowerCase()).join(" "));
-      if (title.includes(q) || owner.includes(q) || members.includes(q)) return true;
-      return false;
+      const members = ((space.members || []).map((m) => (m.userId?.username || m.userId?.email || "").toLowerCase()).join(" "));
+      return title.includes(q) || owner.includes(q) || members.includes(q);
     });
   }, [mySpaces, searchMySpaces]);
 
-  // Create a new space
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
@@ -101,24 +91,22 @@ export default function CollaborativeSpaces() {
       await fetchSpaces();
       await fetchMySpaces();
     } catch (err) {
-      console.error("❌ Failed to create space:", err);
-      alert(err.response?.data?.message || "Failed to create space");
+      console.error(err);
+      alert(err?.response?.data?.message || "Failed to create space");
     }
   };
 
-  // Join a space
   const handleJoin = async (spaceId) => {
     try {
       await joinSpace(spaceId);
       await fetchSpaces();
       await fetchMySpaces();
     } catch (err) {
-      console.error("❌ Failed to join space:", err);
-      alert(err.response?.data?.message || "Failed to join space");
+      console.error(err);
+      alert(err?.response?.data?.message || "Failed to join space");
     }
   };
 
-  // Leave a space
   const handleLeave = async (spaceId) => {
     if (!window.confirm("Are you sure you want to leave this space?")) return;
     try {
@@ -126,19 +114,17 @@ export default function CollaborativeSpaces() {
       await fetchSpaces();
       await fetchMySpaces();
     } catch (err) {
-      console.error("❌ Failed to leave space:", err);
-      alert(err.response?.data?.message || "Failed to leave space");
+      console.error(err);
+      alert(err?.response?.data?.message || "Failed to leave space");
     }
   };
 
-  // Open modal for editing
   const startEdit = (space) => {
     setEditingSpace(space);
     setEditName(space.spaceName);
     setEditDesc(space.description);
   };
 
-  // Save edited space
   const saveEdit = async () => {
     try {
       await API.put(
@@ -149,229 +135,278 @@ export default function CollaborativeSpaces() {
       setEditingSpace(null);
       await fetchMySpaces();
     } catch (err) {
-      console.error("❌ Failed to update space:", err);
-      alert(err.response?.data?.message || "Failed to update space");
+      console.error(err);
+      alert(err?.response?.data?.message || "Failed to update space");
     }
   };
 
-  // Toggle member dropdown
-  const toggleMembers = (spaceId) => {
-    setExpandedMembers((prev) => ({
-      ...prev,
-      [spaceId]: !prev[spaceId],
-    }));
+  const toggleMembers = (spaceId, section = "available") => {
+    const key = `${section}:${spaceId}`;
+    setExpandedMembers((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
-        {/* Only show the 'Search My Spaces' bar to non-admin users (render after profile loads to avoid flicker) */}
-        {profile ? (
-          profile.role !== 'Admin' && (
-            <div style={{ marginBottom: 12 }}>
-              <input
-                type="text"
-                placeholder="Search My Spaces by title, owner or members..."
-                value={searchMySpaces}
-                onChange={(e) => setSearchMySpaces(e.target.value)}
-                className="w-full p-2 rounded-md border border-gray-300"
-              />
+      {/* Edit Modal for members (presentation-only) */}
+      {editingSpace && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setEditingSpace(null)} />
+          <div className="relative z-70 w-full max-w-lg bg-white rounded-lg shadow-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium">Edit Space</h3>
+              <button onClick={() => setEditingSpace(null)} className="text-gray-500 hover:text-gray-700">Close</button>
             </div>
-          )
-        ) : null}
-        <button onClick={() => navigate("/homepage")}>🏠 Home</button>
 
-        {/** Admins cannot create spaces */}
-        {/** Only show create form to non-admins (create form only) */}
-        {profile?.role !== 'Admin' && (
-          <>
-            <h2>Create a Collaborative Space</h2>
-            <form onSubmit={handleCreate} style={{ marginBottom: "20px" }}>
+            <div className="flex flex-col gap-3">
+              <label className="text-sm text-gray-600">Title</label>
               <input
-                type="text"
-                placeholder="Space name"
-                value={spaceName}
-                onChange={(e) => setSpaceName(e.target.value)}
-                required
-                style={{ marginRight: "10px" }}
+                className="p-2 rounded-md border"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder={editingSpace?.spaceName || "Space title"}
               />
-              <input
-                type="text"
-                placeholder="Description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                style={{ marginRight: "10px" }}
+
+              <label className="text-sm text-gray-600">Description</label>
+              <textarea
+                className="p-2 rounded-md border min-h-[8rem]"
+                value={editDesc}
+                onChange={(e) => setEditDesc(e.target.value)}
+                placeholder={editingSpace?.description || "Description"}
               />
-              <button type="submit">Create</button>
-            </form>
-          </>
-        )}
 
-  {/* Only show My Spaces section to non-admin users (render after profile loads to avoid flicker) */}
-  {profile && profile.role !== 'Admin' && (
-          <>
-            <h2>My Spaces</h2>
-            {mySpaces.length === 0 ? (
-              <p>You are not a member of any spaces yet.</p>
-            ) : (
-              displayedMySpaces.map((space) => (
-            <div key={space._id} style={{ border: "1px solid gray", padding: "10px", margin: "10px 0" }}>
-                <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ marginLeft: "10px" }}>
-                  View Space
+              <div className="flex justify-end gap-2 mt-4">
+                <button onClick={() => setEditingSpace(null)} className="px-3 py-2 rounded-md border">Cancel</button>
+                <button
+                  onClick={async () => {
+                    await saveEdit();
+                    setEditingSpace(null);
+                  }}
+                  className="px-4 py-2 rounded-md bg-[#1D2F58] text-white"
+                >
+                  Save
                 </button>
-              <h3>
-                Title: {space.spaceName}{" "}
-                <button onClick={() => startEdit(space)}>Edit</button>
-                <button onClick={() => handleLeave(space._id)} style={{ marginLeft: "10px", color: "red" }}>
-                  Leave
-                </button>
-              </h3>
-              <p>Description: {space.description}</p>
-              <p>
-                <strong>Owner:</strong>{" "}
-                {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"} <br />
-                <strong>Members:</strong> {(space.members || []).length}
-                <button onClick={() => toggleMembers(space._id)} style={{ marginLeft: "10px" }}>
-                  {expandedMembers[space._id] ? "Hide Members" : "Show Members"}
-                </button>
-              </p>
-
-              {expandedMembers[space._id] && (
-                <ul>
-                  {(space.members || []).map((m) => {
-                    const user = m.userId;
-                    const displayName =
-                      (user && (user.username || user.email)) ||
-                      (typeof user === "string" ? `UserId:${user}` : "Unknown User");
-                    return <li key={user?._id || user}>{displayName} ({m.role})</li>;
-                  })}
-                </ul>
-              )}
-
-              <h4>Shared Notes:</h4>
-              {(space.sharedNotesIds || []).length === 0 ? (
-                <p>No notes shared in this space.</p>
-              ) : (
-                <ul>
-                  {(space.sharedNotesIds || []).map((note) => (
-                    <li key={note._id}>
-                      <strong>{note.title}</strong> – {note.content}
-                      <br />
-                      <em>Subject: {note.subjectID}</em>
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {editingSpace?._id === space._id && (
-                <div style={{ marginTop: "10px", padding: "10px", border: "1px solid gray", background: "#f9f9f9" }}>
-                  <h4>Edit Space</h4>
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    style={{ display: "block", marginBottom: "10px", width: "100%" }}
-                  />
-                  <input
-                    type="text"
-                    value={editDesc}
-                    onChange={(e) => setEditDesc(e.target.value)}
-                    style={{ display: "block", marginBottom: "10px", width: "100%" }}
-                  />
-                  <button onClick={saveEdit} style={{ marginRight: "10px" }}>Save</button>
-                  <button onClick={() => setEditingSpace(null)}>Cancel</button>
-                </div>
-              )}
+              </div>
             </div>
-              ))
-            )}
-          </>
-        )}
-
-      <div style={{ marginBottom: 12 }}>
-        <input
-          type="text"
-          placeholder="Search Available Spaces by title, owner or members..."
-          value={searchAvailableSpaces}
-          onChange={(e) => setSearchAvailableSpaces(e.target.value)}
-          className="w-full p-2 rounded-md border border-gray-300"
-        />
-      </div>
-      <h2>Available Spaces</h2>
-      {loading ? (
-        <p>Loading spaces...</p>
-      ) : spaces.length === 0 ? (
-        <p>No spaces available yet.</p>
-      ) : (
-        <ul>
-          {displayedAvailableSpaces.map((space) => {
-            const joined = mySpaces.some((s) => s._id === space._id);
-            return (
-              <li key={space._id} style={{ marginBottom: "15px", padding: "10px", border: "1px solid #ccc", borderRadius: "6px" }}>
-                <strong>{space.spaceName}</strong> – {space.description}
-                <br />
-                Members: {(space.members || []).length}
-                <br />
-                Owner: {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
-
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
-                  <button onClick={() => toggleMembers(space._id)}>
-                    {expandedMembers[space._id] ? "Hide Members" : "Show Members"}
-                  </button>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    {joined ? (
-                      <span style={{ color: "green", fontWeight: "bold", alignSelf: "center" }}>Joined</span>
-                    ) : (
-                      profile?.role !== 'Admin' ? (
-                        <button onClick={() => handleJoin(space._id)}>Join</button>
-                      ) : null
-                    )}
-
-                    {/* Admins can view spaces without joining */}
-                    {profile?.role === 'Admin' && (
-                      <>
-                        <button onClick={() => navigate(`/spaces/${space._id}`)} style={{ background: 'transparent', border: '1px solid #ccc', padding: '4px 8px', borderRadius: 4 }}>
-                          View Space
-                        </button>
-                        <button
-                          onClick={async () => {
-                            if (!confirm('Delete this space? This will remove the space and any linked docs.')) return;
-                            try {
-                              setLoading(true);
-                              await deleteSpace(space._id);
-                              await fetchSpaces();
-                              await fetchMySpaces();
-                            } catch (err) {
-                              console.error('Failed to delete space', err);
-                              alert(err?.response?.data?.message || 'Failed to delete space');
-                            } finally {
-                              setLoading(false);
-                            }
-                          }}
-                          style={{ marginLeft: 8, background: '#e53e3e', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: 6 }}
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {expandedMembers[space._id] && (
-                  <ul style={{ marginTop: "10px", paddingLeft: "20px" }}>
-                    {(space.members || []).map((m) => (
-                      <li key={m.userId?._id || m.userId}>
-                        {m.userId?.username || m.userId?.email || "Unknown User"} ({m.role})
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+          </div>
+        </div>
       )}
+      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
+        <div className="flex gap-6 items-start">
+          {/* My Spaces */}
+          <div className="w-1/2 pr-4 max-h-[25em] overflow-y-auto">
+            <h2 className="text-xl font-semibold mb-3">My Spaces</h2>
+
+            {profile && profile.role !== "Admin" && (
+              <div className="mb-3">
+                <input
+                  type="text"
+                  placeholder="Search My Spaces by title, owner or members..."
+                  value={searchMySpaces}
+                  onChange={(e) => setSearchMySpaces(e.target.value)}
+                  className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
+                />
+              </div>
+            )}
+
+            {profile?.role !== "Admin" && (
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer"
+              >
+                <img src="/collaborative space-logo.png" className="h-5" alt="create" />
+                Create Space
+              </button>
+            )}
+
+            {profile && profile.role !== "Admin" && (
+              <>
+                {mySpaces.length === 0 ? (
+                  <p>You are not a member of any spaces yet.</p>
+                ) : (
+                  displayedMySpaces.map((space) => (
+                    <div key={space._id} className="relative py-6 px-5 bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em] flex">
+                      <div className="flex-1 min-w-0 pr-4">
+                        <h3 className="text-lg font-medium text-[#103E93] truncate">{space.spaceName}</h3>
+                        <p className="text-sm text-gray-600 mt-1 truncate">{space.description}</p>
+
+                        <div className="flex items-center gap-3 mt-3">
+                          <p className="text-sm text-gray-500">
+                            <strong>Members:</strong> {(space.members || []).length}
+                          </p>
+                          <button onClick={() => toggleMembers(space._id, "my")} className="px-2 py-0.5 rounded-md bg-gray-100 text-sm cursor-pointer">
+                            {expandedMembers[`my:${space._id}`] ? "Hide" : "Show"}
+                          </button>
+                        </div>
+
+                        <p className="text-sm text-gray-500 mt-1">
+                          <strong>Owner:</strong> {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
+                        </p>
+
+                        {expandedMembers[`my:${space._id}`] && (
+                          <ul className="mt-2 pl-4 list-disc text-sm text-gray-700">
+                            {(space.members || []).map((m) => {
+                              const user = m.userId;
+                              const displayName = (user && (user.username || user.email)) || (typeof user === "string" ? `UserId:${user}` : "Unknown User");
+                              return (
+                                <li key={user?._id || user}>
+                                  {displayName} ({m.role})
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col items-end justify-end gap-2">
+                        <div className="flex gap-2">
+                          <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 rounded-md bg-gray-100 cursor-pointer">
+                            View Space
+                          </button>
+                              <button onClick={() => startEdit(space)} className="px-3 rounded-md bg-yellow-50 cursor-pointer">
+                                Edit
+                              </button>
+                          <button onClick={() => handleLeave(space._id)} className="px-3 rounded-md bg-red-50 text-red-700 cursor-pointer">
+                            Leave
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Available Spaces */}
+          <div className="w-1/2 pl-4 max-h-[25em] overflow-y-auto">
+            <h2 className="text-xl font-semibold mb-3">Available Spaces</h2>
+
+            <div className="mb-3">
+              <input
+                type="text"
+                placeholder="Search Available Spaces by title, owner or members..."
+                value={searchAvailableSpaces}
+                onChange={(e) => setSearchAvailableSpaces(e.target.value)}
+                className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
+              />
+            </div>
+
+            {showCreateModal && (
+              <div className="fixed inset-0 z-60 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40" onClick={() => setShowCreateModal(false)} />
+                <div className="relative z-70 w-full max-w-md bg-white rounded-lg shadow-xl px-6 py-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium">Create a Collaborative Space</h3>
+                    <button onClick={() => setShowCreateModal(false)} className="text-gray-500 hover:text-gray-700 cursor-pointer">
+                      Close
+                    </button>
+                  </div>
+
+                  <form onSubmit={(e) => { handleCreate(e); setShowCreateModal(false); }} className="flex flex-col gap-3">
+                    <input type="text" placeholder="Space name" value={spaceName} onChange={(e) => setSpaceName(e.target.value)} required className="p-2 rounded-md border" />
+                    <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="p-2 rounded-md border" />
+                    <div className="flex justify-end gap-2">
+                      <button type="button" onClick={() => setShowCreateModal(false)} className="px-3 py-2 rounded-md border cursor-pointer">
+                        Cancel
+                      </button>
+                      <button type="submit" className="px-4 py-2 rounded-md bg-[#1D2F58] text-white cursor-pointer">
+                        Create
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {loading ? (
+              <p>Loading spaces...</p>
+            ) : spaces.length === 0 ? (
+              <p>No spaces available yet.</p>
+            ) : (
+              <ul>
+                {displayedAvailableSpaces.map((space) => {
+                  const joined = mySpaces.some((s) => s._id === space._id);
+                  return (
+                    <li key={space._id} className="relative py-6 px-5 bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em]">
+                      <div className="flex items-start justify-between">
+                        <div className="min-w-0">
+                          <h3 className="text-lg font-medium text-[#103E93] truncate">{space.spaceName}</h3>
+                          <p className="text-sm text-gray-600">{space.description}</p>
+
+                          <div className="flex items-center gap-3 mt-2">
+                            <p className="text-sm text-gray-500">
+                              <strong>Members:</strong> {(space.members || []).length}
+                            </p>
+                            <button onClick={() => toggleMembers(space._id, "available")} className="px-2 py-0.5 rounded-md bg-gray-100 text-sm cursor-pointer">
+                              {expandedMembers[`available:${space._id}`] ? "Hide" : "Show"}
+                            </button>
+                          </div>
+
+                          <p className="text-sm text-gray-500 mt-1">
+                            <strong>Owner:</strong> {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
+                          </p>
+                          {expandedMembers[`available:${space._id}`] && (
+                          <ul className="mt-2 pl-4 list-disc text-sm text-gray-700">
+                            {(space.members || []).map((m) => (
+                              <li key={m.userId?._id || m.userId}>
+                                {m.userId?.username || m.userId?.email || "Unknown User"} ({m.role})
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        </div>
+
+                        <div className="flex flex-col items-end gap-2">
+                          <div className="flex gap-2">
+                            {joined ? (
+                              <span className="text-green-600 font-semibold self-center">Joined</span>
+                            ) : (
+                              profile?.role !== "Admin" ? (
+                                <button onClick={() => handleJoin(space._id)} className="px-3 py-1 rounded-md bg-blue-50">
+                                  Join
+                                </button>
+                              ) : null
+                            )}
+
+                            {profile?.role === "Admin" && (
+                              <>
+                                <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 py-1 rounded-md border">
+                                  View Space
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    if (!confirm("Delete this space? This will remove the space and any linked docs.")) return;
+                                    try {
+                                      setLoading(true);
+                                      await deleteSpace(space._id);
+                                      await fetchSpaces();
+                                      await fetchMySpaces();
+                                    } catch (err) {
+                                      console.error("Failed to delete space", err);
+                                      alert(err?.response?.data?.message || "Failed to delete space");
+                                    } finally {
+                                      setLoading(false);
+                                    }
+                                  }}
+                                  className="px-3 py-1 rounded-md bg-red-600 text-white"
+                                >
+                                  Delete
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
       </div>
     </AppShell>
   );
 }
+

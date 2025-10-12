@@ -43,7 +43,7 @@ export default function AppShell({ children }) {
   return (
     <div className="w-auto h-auto flex flex-col items-center justify-center">
       {/* Header */}
-      <div className="w-[1500px] flex justify-between items-center space-y-8 py-8 mb-7">
+      <div className="w-[1500px] flex justify-between items-center space-y-8 pt-8 pb-2">
         {/* Logo Section */}
         <section className="flex items-center justify-center gap-4">
           <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
@@ -64,19 +64,19 @@ export default function AppShell({ children }) {
         </section>
       </div>
 
-      <div className="flex w-[1500px] gap-35">
+      <div className="flex w-[1500px] gap-10">
         {/* Left navigation column */}
         <section>
-          <section className="w-max h-auto flex flex-col justify-center mb-35">
+          <section className="w-max h-auto flex flex-col justify-center mb-20">
             {/* Dynamic page title based on current route */}
-            <h1 className="text-[45px] font-inter font-normal leading-[16px] tracking-[0%] text-[#1D2F58]">{pageTitle}</h1>
+            <h1 className="text-[38px] font-inter font-normal leading-[16px] tracking-[0%] text-[#1D2F58]">{pageTitle}</h1>
           </section>
 
           <section className="flex flex-col gap-10">
             <Link to="/homepage">
               <section className="flex gap-3">
                 <img src="/dashboard-logo.png"/>
-                <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Dashboard</button>
+                <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Dashboard</button>
               </section>
             </Link>
             {profile?.role !== 'Admin' && (
@@ -84,13 +84,13 @@ export default function AppShell({ children }) {
                 <Link to="/bookmarks">
                   <section className="flex gap-3">
                     <img src="/bookmarks-logo.png"/>
-                    <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Bookmarks</button>
+                    <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Bookmarks</button>
                   </section>
                 </Link>
                 <Link to="/my-files">
                   <section className="flex gap-3">
                     <img src="/yourfiles-logo.png"/>
-                    <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Your Files</button>
+                    <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Your Files</button>
                   </section>
                 </Link>
               </>
@@ -98,15 +98,15 @@ export default function AppShell({ children }) {
             <Link to="/spaces">
               <section className="flex gap-3">
                 <img src="/collaborate-logo.png"/>
-                <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Collaboration</button>
+                <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Collaboration</button>
               </section>
             </Link>
 
-            <section>
+            <section className='mt-20'>
               <Link to="/profile">
                 <section className="flex gap-3">
                   <img src="/settings_logo.png"/>
-                  <button className="text-[20px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Profile & Settings</button>
+                  <button className="text-[17px] font-inter font-normal leading-[14px] tracking-[-0] text-[#1D2F58] cursor-pointer">Profile & Settings</button>
                 </section>
               </Link>
             </section>

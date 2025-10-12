@@ -57,11 +57,12 @@ export default function RatingSection({
 
   if (showAverageOnly) {
     return (
-      <div style={{ marginTop: "5px" }}>
-        <strong>⭐ Average Rating:</strong> {average.toFixed(1)} / 5
+      <div className="w-[9vh] geologica flex justify-between">
+       {average.toFixed(1)} / 5 
+       <img src="/star-logo.png" className="w-[20px] h-[20px]"/>
       </div>
     );
-  }
+  } 
 
   return (
     <div style={{ marginTop: "10px" }}>

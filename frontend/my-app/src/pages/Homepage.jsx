@@ -19,6 +19,7 @@ export default function Homepage() {
   const [newSubjectName, setNewSubjectName] = useState("");
   const [showManageSubjects, setShowManageSubjects] = useState(false);
   const [manageSubjectName, setManageSubjectName] = useState("");
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [openComments, setOpenComments] = useState({});
   const [fileAverages, setFileAverages] = useState({}); // ⭐ Live average sync per file
   const [description, setDescription] = useState("");
@@ -338,17 +339,17 @@ const toggleBookmark = async (fileID) => {
   return (
     <AppShell>
       {/* Center and constrain homepage content width to match other pages (Tailwind/shadcn) */}
-      <div className="mx-auto w-full max-w-[1100px] px-4 py-5">
-        <div className="flex gap-5 items-start w-full">
+      <div className="mx-auto w-full max-w-[1100px] px-4">
+        <div className="flex justify-between gap-10 items-start w-full">
           {/* Center column: keep all existing page content here (unchanged) */}
-          <section className="mb-5 w-[700px]">
+          <section className="w-[800px] mr-7">
           {profile && (
-            <h1 className="text-[32px] font-inter font-normal leading-[16px] tracking-[0%] mb-10">Welcome, {profile.firstName}! </h1>
+            <h1 className="text-[32px] font-inter font-normal leading-[14px] tracking-[0%] mb-7">Welcome, {profile.firstName}! </h1>
           )}
 
           {/* Realtime search: filter uploaded files by filename or uploader */}
-        {/* Search + filter toggle (CSS-only) */}
-        <div className="mb-4 relative">
+          {/* Search + filter toggle (CSS-only) */}
+          <div className="mb-4 relative">
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -366,97 +367,149 @@ const toggleBookmark = async (fileID) => {
           <input id="filters-toggle" type="checkbox" className="hidden peer" />
 
           {/* Filter & Sort: absolute overlay hidden by default, shown when #filters-toggle is checked */}
-          <div className="filter-panel absolute left-0 mt-2 w-full z-50 transform origin-top scale-y-0 peer-checked:scale-y-100 peer-checked:block hidden bg-white rounded-md shadow-lg p-3">
-            <div className="flex flex-col gap-2">
-              <label>
-                Filter by Subject:{" "}
-                <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)}>
-                  <option value="">All Subjects</option>
-                  {subjects.map((subj) => (
-                    <option key={subj._1d} value={subj._id}>{subj.name}</option>
-                  ))}
-                </select>
-              </label>
+          <div className="filter-panel absolute left-0 mt-2 w-full z-50 transform origin-top scale-y-0 peer-checked:scale-y-100 peer-checked:block hidden bg-white rounded-lg shadow-2xl p-4 py-6 border">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-semibold text-[#103E93]">Filters & Sorting</h4>
+              </div>
 
-              <label>
-                Sort by:{" "}
-                <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-                  <option value="newest">Newest - Oldest</option>
-                  <option value="oldest">Oldest - Newest</option>
-                </select>
-              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-600 mb-1">Filter by Subject</label>
+                  <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                    <option value="">All Subjects</option>
+                    {subjects.map((subj) => (
+                      <option key={subj._id} value={subj._id}>{subj.name}</option>
+                    ))}
+                  </select>
+                </div>
 
-              <button
-                onClick={() => {
-                  setFilterSubject("");
-                  setSortOption("newest");
-                }}
-                className="inline-flex items-center px-2 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200"
-              >
-                Clear Filters
-              </button>
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-600 mb-1">Sort by</label>
+                  <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                    <option value="newest">Newest - Oldest</option>
+                    <option value="oldest">Oldest - Newest</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mt-2">
+                <button
+                  onClick={() => {
+                    setFilterSubject("");
+                    setSortOption("newest");
+                  }}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200"
+                >
+                  Clear Filters
+                </button>
+
+                {/* Admin: Manage Subjects button kept here for convenience */}
+              </div>
             </div>
             {/* Admin: Manage Subjects button */}
             {profile?.role === 'Admin' && (
-              <div style={{ marginLeft: 12 }}>
-                <button onClick={openManageSubjects} style={{ padding: '6px 10px', background: '#2b6cb0', color: '#fff', border: 'none', borderRadius: 6 }}>
+              <div className="ml-3">
+                <button onClick={openManageSubjects} className="px-3 py-1.5 bg-[#2b6cb0] text-white border-0 rounded-md">
                   Manage Subjects
                 </button>
               </div>
             )}
             
           </div>
-        </div>
+          </div>
 
           {uploadedFiles.length === 0 ? (
             <p>No files uploaded yet.</p>
           ) : (
             // Scrollable area: fixed height to show ~2 cards, inner scroll for additional items
-            <div className="overflow-hidden bg-transparent">
-              <div className="overflow-y-auto h-[400px] pr-2">
+            <div className="overflow-hidden bg-transparent py-1">
+              <div className="overflow-y-auto h-[480px] pr-2">
                 {displayedFiles.map((file) => {
-                  return (
-                    <div key={file._id} className="py-7 px-5 bg-white mb-8 rounded-lg shadow-md">
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    <div style={{ width: 72, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                      <Avatar user={file.user} size={48} />
-                      <div style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {(() => {
-                          const name = (file.originalName || file.filename || '').toLowerCase();
-                          if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" style={{ width: 28, height: 28 }} />;
-                          if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" style={{ width: 28, height: 28 }} />;
-                          if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" style={{ width: 28, height: 28 }} />;
-                          return <img src="/icons/file.svg" alt="file" style={{ width: 28, height: 28 }} />;
-                        })()}
-                      </div>
+                  return (  
+                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
+                  {/* Bookmark icon button (top-right) */}
+                  <button
+                    type="button"
+                    onClick={() => toggleBookmark(file._id)}
+                    aria-pressed={bookmarkedFiles.includes(file._id)}
+                    className={
+                      `absolute -top-1 right-3 p-0 transition-transform focus:outline-none z-20 cursor-pointer ` +
+                      'hover:scale-110'
+                    }
+                    title={bookmarkedFiles.includes(file._id) ? 'Remove bookmark' : 'Add bookmark'}
+                  >
+                    <img
+                      src="/bookmark-logo.png"
+                      alt="bookmark"
+                      className={
+                        "w-10 h-10 transition-all duration-150 " +
+                        (bookmarkedFiles.includes(file._id)
+                          ? 'filter-none saturate-150 drop-shadow-md'
+                          : 'filter grayscale hover:grayscale-0')
+                      }
+                    />
+                    <span className="sr-only">{bookmarkedFiles.includes(file._id) ? 'Bookmarked' : 'Bookmark'}</span>
+                  </button>
+
+                  <div className="flex gap-3">
+                    <div className="w-[72px] flex flex-col items-center gap-2 flex-shrink-0">
+                      <Avatar user={file.user} size={50} />
                     </div>
 
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <button onClick={() => setPreviewFile(file)} style={{ background: 'transparent', border: 'none', padding: 0, color: '#0b66c3', textDecoration: 'underline', cursor: 'pointer' }}>{file.originalName}</button>
-                        <button style={{ marginLeft: "10px" }} onClick={() => downloadFile(file.filename)}>Download</button>
+                    <div className="flex-1 w-[40em]">
+
+                      <section className="flex justify-between items-start">
+                        <div className="flex flex-col mb-2 justify-between">
+                          <section className="flex gap-4 mb-3 items-center min-w-0">
+                            <p className="font-inter font-medium text-[20px] leading-[16px] text-[#103E93] w-[10em]">{file.user?.username || "Unknown"}</p>
+                            <p className="font-inter font-normal text-[16px] leading-[16px] text-[#103E93] w-[60%]">Subject: {file.subject?.name || "No subject"}</p>
+                          </section>
+
+                        <div className="flex flex-col justify-between w-full">
+                          <div className="w-[calc(100%-11rem)]">
+                            <div className="flex gap-3 items-start">
+                              <div className="w-[36px] h-[36px] flex items-center justify-center flex-shrink-0">
+                                {(() => {
+                                  const name = (file.originalName || file.filename || '').toLowerCase();
+                                  if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" className="w-7 h-7" />;
+                                  if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" className="w-7 h-7" />;
+                                  if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" className="w-7 h-7" />;
+                                  return <img src="/icons/file.svg" alt="file" className="w-7 h-7" />;
+                                })()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#0b66c3] underline text-left cursor-pointer truncate block">{file.originalName}</button>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="w-44 flex-shrink-0 mt-1.5 text-left">
+                            <h1 className="text-sm font-semibold mb-1">Description</h1>
+                            <p className="font-inter font-normal text-[15px] leading-[16px] text-[#D05A02] break-words">{file.description || "No description"}</p>
+                          </div>
+                        </div>
+
+                        </div>
+                      </section>
+
+                      {/* ⭐ Show Average Rating (auto-updates) and actions aligned */}
+                      <div className="mt-2 flex items-start justify-between">
+                        <div className="flex flex-col">
+                          <RatingSection itemId={file._id} userId={profile?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
+                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
+                        </div>
+
+                        <div className="flex flex-col items-end gap-3">
+                          <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-[8em]">Download</button>
+                          {file.user?._id === profile?._id && (
+                            <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-[8em]">Delete</button>
+                          )}
+                        </div>
                       </div>
 
-                      <p>Uploaded by: {file.user?.username || "Unknown"}</p>
-                      <p>Subject: {file.subject?.name || "No subject"}</p>
-                      <p><strong>Description:</strong> {file.description || "No description"}</p>
-
-                      {/* 🗑️ Delete button (visible only to owner) */}
-                      {file.user?._id === profile?._id && (
-                        <button onClick={() => handleDeleteFile(file._id)} style={{ marginTop: "8px", backgroundColor: "#e74c3c", color: "white", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}>Delete File</button>
-                      )}
-
-                      {profile?.role !== 'Admin' && (
-                        <button onClick={() => toggleBookmark(file._id)} style={{ marginLeft: "10px", backgroundColor: bookmarkedFiles.includes(file._id) ? "#f1c40f" : "#bdc3c7", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}>{bookmarkedFiles.includes(file._id) ? "Bookmarked ★" : "Bookmark ☆"}</button>
-                      )}
-
-                      {/* ⭐ Show Average Rating (auto-updates) */}
-                      <RatingSection itemId={file._id} userId={profile?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
-
-                      <button onClick={() => toggleComments(file._id)} style={{ marginTop: "8px" }}>{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
-
                       {openComments[file._id] && (
-                        <div style={{ marginTop: "10px", borderTop: "1px dashed gray", paddingTop: "10px" }}>
+                        <div className="mt-3 border-t border-dashed border-gray-300 pt-3">
                           <CommentsSection fileId={file._id} userId={profile?._id} />
                           <RatingSection itemId={file._id} userId={profile?._id} allowRating onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
                         </div>
@@ -470,88 +523,124 @@ const toggleBookmark = async (fileID) => {
             </div>
           )}
 
-          {/* =====================
-              Upload File Section
-          ===================== */}
-          {profile?.role === 'Admin' ? null : (
-            <>
-              <h3>Upload a File</h3>
-              <form onSubmit={handleFileUpload}>
-                <input
-                  type="file"
-                  onChange={(e) => setSelectedFile(e.target.files[0])}
-                  accept=".pdf,.doc,.docx,.txt"
-                />
-
-                <div style={{ marginTop: "10px" }}>
-                  <label>
-                    Select Subject:{" "}
-                    <select
-                      value={selectedSubject}
-                      onChange={(e) => setSelectedSubject(e.target.value)}
-                      required
-                    >
-                      <option value="">-- Select a Subject --</option>
-                      {subjects.map((subj) => (
-                        <option key={subj._id} value={subj._id}>
-                          {subj.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-
-                <div style={{ marginTop: "10px" }}>
-                  <input
-                    type="text"
-                    placeholder="Add new subject"
-                    value={newSubjectName}
-                    onChange={(e) => setNewSubjectName(e.target.value)}
-                  />
-                  <button type="button" onClick={handleAddSubject}>
-                    Add Subject
-                  </button>
-                </div>
-
-                <div style={{ marginTop: "10px" }}>
-                  <input
-                    type="text"
-                    placeholder="Add file description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                  />
-                </div>
-
-
-                <button type="submit" style={{ marginTop: "10px" }}>
-                  Upload
-                </button>
-              </form>
-            </>
-          )}
-        </section>
+          </section>
 
           {/* Right-side Top Rated panel */}
           <TopRatedPanel scope="all" token={token} />
         </div>
 
         {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
+
+        {/* Floating Upload File button (bottom-right) */}
+        <button
+          onClick={() => setShowUploadModal(true)}
+          className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer"
+        >
+          <img src="/file-upload.png" className="h-5"/>
+          Upload File
+        </button>
+
+        {/* Upload Modal (reuses existing handlers/state) */}
+        {showUploadModal && (
+          <div className="fixed inset-0 z-60 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/40" onClick={() => setShowUploadModal(false)} />
+            <div className="relative z-70 w-full max-w-2xl bg-white rounded-lg shadow-xl px-8 py-10">
+              <div className="flex items-center justify-between mb-7">
+                <h3 className="text-lg font-medium">Upload a File</h3>
+                <button onClick={() => setShowUploadModal(false)} className="text-gray-500 hover:text-gray-700 cursor-pointer">Close</button>
+              </div>
+
+                <form onSubmit={(e) => { handleFileUpload(e); setShowUploadModal(false); }}>
+                  <input
+                    type="file"
+                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                    accept=".pdf,.doc,.docx,.txt"
+                    className="block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#1D2F58] file:text-white hover:file:bg-[#103E93] mb-5"
+                  />
+
+                  <div className="mt-4">
+                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Select Subject:</label>
+                    <select
+                      value={selectedSubject}
+                      onChange={(e) => setSelectedSubject(e.target.value)}
+                      required
+                      className="w-full p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                    >
+                      <option value="">Select a Subject</option>
+                      {subjects.map((subj) => (
+                        <option key={subj._id} value={subj._id}>
+                          {subj.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="mt-4 gap-2">
+                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Add Subject:</label>
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        placeholder="Add new subject"
+                        value={newSubjectName}
+                        onChange={(e) => setNewSubjectName(e.target.value)}
+                        className="flex-1 p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddSubject}
+                        className="px-3 py-2 rounded-md bg-[#103E93] text-white hover:bg-[#1D2F58] transition-colors cursor-pointer"
+                      >
+                        Add New Subject
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 mb-6">
+                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Description:</label>
+                    <input
+                      type="text"
+                      placeholder="Add file description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      required
+                      className="w-full p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setShowUploadModal(false)}
+                      className="mr-2 px-4 py-2 rounded-md border border-[#1D2F58] text-[#103E93] hover:bg-gray-100 cursor-pointer transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#103E93] transition-colors cursor-pointer"
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </form>
+            </div>
+          </div>
+        )}
         {/* Admin Manage Subjects Modal */}
         {showManageSubjects && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ background: '#fff', padding: 20, borderRadius: 8, width: 600, maxHeight: '80vh', overflow: 'auto' }}>
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+            <div className="bg-white p-5 rounded-md w-[600px] max-h-[80vh] overflow-auto">
               <h3>Manage Subjects</h3>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                <input placeholder="New subject" value={manageSubjectName} onChange={(e) => setManageSubjectName(e.target.value)} style={{ flex: 1 }} />
-                <button onClick={handleManageAdd} style={{ background: '#2b6cb0', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: 6 }}>Add</button>
-                <button onClick={() => setShowManageSubjects(false)} style={{ marginLeft: 8 }}>Close</button>
+              <div className="flex gap-2 mb-3">
+                <input placeholder="New subject" value={manageSubjectName} onChange={(e) => setManageSubjectName(e.target.value)} className="flex-1 p-2 border rounded-md" />
+                <button onClick={handleManageAdd} className="bg-[#2b6cb0] text-white border-0 px-3 py-1.5 rounded-md">Add</button>
+                <button onClick={() => setShowManageSubjects(false)} className="ml-2">Close</button>
               </div>
               <ul>
                 {subjects.map(s => (
-                  <li key={s._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #eee' }}>
+                  <li key={s._id} className="flex justify-between items-center py-1.5 border-b border-gray-100">
                     <span>{s.name}</span>
-                    <button onClick={() => handleManageDelete(s._id)} style={{ background: '#e53e3e', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: 6 }}>Delete</button>
+                    <button onClick={() => handleManageDelete(s._id)} className="bg-red-600 text-white border-0 px-2 py-1 rounded-md">Delete</button>
                   </li>
                 ))}
               </ul>

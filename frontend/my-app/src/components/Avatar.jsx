@@ -30,7 +30,7 @@ export default function Avatar({ user, size = 48, style = {}, className = '' }) 
     justifyContent: 'center',
     background: '#e2e8f0',
     color: '#0b66c3',
-    borderRadius: 8,
+    borderRadius: '50%',
     fontWeight: 600,
   };
 
@@ -41,7 +41,7 @@ export default function Avatar({ user, size = 48, style = {}, className = '' }) 
     width: size,
     height: size,
     objectFit: 'cover',
-    borderRadius: 8,
+    borderRadius: '50%',
   };
 
   return (
