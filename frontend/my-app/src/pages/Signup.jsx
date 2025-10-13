@@ -36,7 +36,17 @@ export default function Signup() {
       <div className="w-full max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-4 mb-8 px-4">
         {/* Logo Section */}
         <section className="flex items-center justify-center gap-4">
-          <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
+          <button
+            aria-label="ShareSource Home"
+            onClick={() => {
+              const t = localStorage.getItem('accessToken');
+              if (t) navigate('/homepage');
+              else navigate('/');
+            }}
+            className="p-0 bg-transparent border-0 cursor-pointer"
+          >
+            <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
+          </button>
           <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
         </section>
 
@@ -59,31 +69,31 @@ export default function Signup() {
 
   <div className="w-full max-w-xl mx-auto flex flex-col mb-7 px-4">
         <section className="mb-9">
-          <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Signup</h1>
-          <p className="inter-text font-normal text-[16px] leading-[16px] tracking-[0%] pl-5 text-[#1D2F58]">Ready to collaborate? Let’s get you started.</p>
-        </section>
+                <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Sign Up</h1>
+                <p className="inter-text font-normal text-[16px] leading-[16px] tracking-[0%] pl-5 text-[#1D2F58]">Ready to collaborate? Let’s get you started.</p>
+              </section>
 
-  <section className="flex bg-[#FFFCF7] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-6 w-full">
+        <section className="flex bg-[#1D2F58] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-6 w-full">
           <form
             onSubmit={handleSubmit}
             className="flex flex-col justify-center w-full gap-5"
           >
             {/* Username */}
             <section className="flex flex-col w-full">
-              <label htmlFor="username" className="mb-2 text-md font-medium text-left text-[#103E93]">Username</label>
+                    <label htmlFor="username" className="mb-2 text-md font-medium text-left text-[#FFFFFF] bg-transparent">Username</label>
               <input
                 id="username"
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-[#FFFFFF] text-[#103E93A6] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* Password */}
             <section className="flex flex-col w-full">
-              <label htmlFor="password" className="mb-2 text-md font-medium text-[#103E93]">Password</label>
+              <label htmlFor="password" className="mb-2 text-md font-medium text-[#FFFFFF]">Password</label>
               <input
                 id="password"
                 type="password"
@@ -91,13 +101,13 @@ export default function Signup() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-[#FFFFFF] text-[#103E93A6] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* Email */}
             <section className="flex flex-col w-full">
-              <label htmlFor="email" className="mb-2 text-md font-medium text-left text-[#103E93]">Email</label>
+              <label htmlFor="email" className="mb-2 text-md font-medium text-left text-[#FFFFFF]">Email</label>
               <input
                 id="email"
                 type="email"
@@ -105,33 +115,33 @@ export default function Signup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-[#FFFFFF] text-[#103E93A6] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* First Name */}
             <section className="flex flex-col w-full">
-              <label htmlFor="firstName" className="mb-2 text-md font-medium text-left text-[#D05A02]">First Name</label>
+              <label htmlFor="firstName" className="mb-2 text-md font-medium text-left text-[#FFFFFF]">First Name</label>
               <input
                 id="firstName"
                 placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-[#FFFFFF] text-[#103E93A6] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* Last Name */}
             <section className="flex flex-col w-full">
-              <label htmlFor="lastName" className="mb-2 text-md font-medium text-left text-[#D05A02]">Last Name</label>
+              <label htmlFor="lastName" className="mb-2 text-md font-medium text-left text-[#FFFFFF]">Last Name</label>
               <input
                 id="lastName"
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-[#FFFFFF] text-[#103E93A6] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58] mb-4"
               />
             </section>
 
@@ -141,9 +151,9 @@ export default function Signup() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-[#103E93] text-white rounded-[8px] p-2 hover:bg-[#0d2c70] mt-2 mb-5 cursor-pointer"
+              className="w-full border-2 border-[#F8F8FF] text-white rounded-[8px] p-2 hover:bg-[#F8F8FF] hover:text-[#1D2F58] mt-2 mb-5 cursor-pointer transition-colors duration-150"
             >
-              Signup
+              Sign up
             </button>
           </form>
         </section>

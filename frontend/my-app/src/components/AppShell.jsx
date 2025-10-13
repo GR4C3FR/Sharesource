@@ -45,10 +45,20 @@ export default function AppShell({ children }) {
   <div className="w-full flex flex-col items-center justify-center overflow-x-hidden bg-[#F8F8FF] min-h-screen">
       {/* Header */}
   <div className="w-full max-w-screen-xl flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 pt-6 pb-2 px-4 mb-15 relative">
-        {/* Logo Section */}
+        {/* Logo Section (logo only for app shell; text removed on internal pages) */}
         <section className="flex items-center justify-start gap-4 w-full lg:w-auto">
-          <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-16 sm:w-20 md:w-24 lg:w-[90px] h-auto" />
-          <img src="/sharessource-text.png" alt="ShareSource Text" className="w-28 sm:w-36 md:w-44 lg:w-[180px] h-auto"/>
+          <button
+            aria-label="ShareSource Home"
+            onClick={() => {
+              const t = localStorage.getItem('accessToken');
+              if (t) navigate('/homepage');
+              else navigate('/');
+            }}
+            className="p-0 bg-transparent border-0 cursor-pointer"
+          >
+            <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-16 sm:w-20 md:w-24 lg:w-[90px] h-auto" />
+          </button>
+          {/* intentional: no sharessource-text on internal pages */}
         </section>
 
         {/* Mobile hamburger (fixed on small and medium screens) - moved to top-right and enlarged */}

@@ -30,7 +30,17 @@ export default function Login() {
       <div className="w-full max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-4 mb-8 px-4">
         {/* Logo Section */}
         <section className="flex items-center justify-center gap-4">
-          <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
+          <button
+            aria-label="ShareSource Home"
+            onClick={() => {
+              const t = localStorage.getItem('accessToken');
+              if (t) navigate('/homepage');
+              else navigate('/');
+            }}
+            className="p-0 bg-transparent border-0 cursor-pointer"
+          >
+            <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
+          </button>
           <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
         </section>
 
@@ -54,18 +64,18 @@ export default function Login() {
       <div className="w-full max-w-screen-xl mx-auto flex items-center justify-center px-4">
         <div className="w-full max-w-xl flex flex-col mb-7">
         <section className="mb-9">
-          <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Login</h1>
-          <p className="inter-text font-normal text-[16px] leading-[16px] tracking-[0%] pl-5 text-[#1D2F58]">Hey, you’re back! Let’s pick up where you left off.</p>
+          <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Sign In</h1>
+          <p className="inter-text font-normal text-[16px] leading-[16px] tracking-[0%] pl-5 text-[#1D2F58]">Please fill out the form to continue.</p>
         </section>
 
-        <section className="flex bg-[#FFFCF7] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-6 w-full">
+        <section className="flex bg-[#1D2F58] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-6 w-full">
           <form
             onSubmit={handleSubmit}
             className="flex flex-col justify-center w-full gap-5"
           >
             {/* Email */}
             <section className="flex flex-col w-full">
-              <label htmlFor="email" className="mb-2 text-md font-medium text-left text-[#103E93]">
+              <label htmlFor="email" className="mb-2 text-md font-medium text-left text-[#FFFFFF] bg-transparent">
                 Email
               </label>
               <input
@@ -75,13 +85,13 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="Email"
-                className="w-full border border-[#D9D9D9] bg-[#FFFFFF] text-[#103E93A6] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* Password */}
             <section className="flex flex-col w-full mb-3">
-              <label htmlFor="password" className="mb-2 text-md font-medium text-[#D05A02]">
+              <label htmlFor="password" className="mb-2 text-md font-medium text-[#FFFF]">
                 Password
               </label>
               <input
@@ -91,16 +101,16 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Password"
-                className="w-full border border-[#D9D9D9] bg-[#FFFFFF] text-[#103E93A6] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-[#103E93] text-white rounded-[8px] p-2 hover:bg-[#0d2c70] mb-5 cursor-pointer"
+              className="w-full border-2 border-[#F8F8FF] text-white rounded-[8px] p-2 hover:bg-[#F8F8FF] hover:text-[#1D2F58] mb-5 cursor-pointer transition-colors duration-150"
             >
-              Login
+              Sign In
             </button>
           </form>
         </section>

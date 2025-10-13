@@ -32,7 +32,13 @@ function App() {
             <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6">
               {/* Logo Section */}
               <section className="flex items-center justify-center gap-4">
-                <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
+                <button
+                  aria-label="ShareSource Home"
+                  onClick={() => navigate('/')}
+                  className="p-0 bg-transparent border-0 cursor-pointer"
+                >
+                  <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
+                </button>
                 <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
               </section>
 
@@ -46,15 +52,14 @@ function App() {
                 </button>
                 <button
                   onClick={() => navigate("/signup")}
-                  className="px-6 py-2 border-2 border-[#1D2F58] rounded-[20px] text-[#1D2F58] geologica 
-                   hover:bg-[#1D2F58] hover:text-white transition-colors duration-200 cursor-pointer text-[20px]"
+                  className="px-6 py-2 bg-[#1D2F58] border-2 border-[#1D2F58] rounded-lg text-white geologica hover:bg-[#162240] hover:text-[#FFFFFF] transition-colors duration-200 cursor-pointer text-[20px]"
                 >
                   Sign up
                 </button>
               </section>
             </div>
             
-            <div className="w-full max-w-screen-xl min-h-[75vh] flex flex-col lg:flex-row justify-between items-center gap-6 px-4 text-[#103E93]">
+            <div className="w-full max-w-screen-xl min-h-[75vh] flex flex-col lg:flex-row justify-between items-center gap-6 px-4 text-[#1D2F58]">
               <section className="flex flex-col gap-6 flex-1 max-w-2xl">
                 <h1 className="inter-text font-normal text-3xl md:text-4xl lg:text-5xl leading-tight">
                   <span className="font-sans font-medium text-3xl md:text-4xl lg:text-5xl">
@@ -65,10 +70,10 @@ function App() {
                 </h1>
 
                 <div>
-                  <p className="font-geologica font-normal text-lg md:text-xl leading-relaxed mb-5">Join the Sharesource community and make it yours.</p>
+                  <p className="font-geologica font-normal text-lg md:text-xl leading-relaxed mb-5 text-[#1D2F58]">Join the Sharesource community and make it yours.</p>
 
                   <button
-                    className="px-8 py-3 font-geologica text-base text-[#D05A02] border-2 border-[#D05A02] rounded-lg hover:bg-[#D05A02] hover:text-white transition-colors duration-200 cursor-pointer"
+                    className="px-8 py-3 font-geologica text-base text-[#1D2F58] border-2 border-[#1D2F58] rounded-lg hover:bg-[#1D2F58] hover:border-[#1D2F58] hover:text-[#FFFFFF] transition-colors duration-200 cursor-pointer"
                     onClick={() => (window.location.href = "/login")}
                   >
                     Get Started
@@ -76,8 +81,8 @@ function App() {
                 </div>
               </section>
 
-              <section className="flex-1 flex items-center justify-center">
-                <img src="/hero-img-landing.png" className="w-full max-w-md md:max-w-lg lg:max-w-xl object-contain" alt="hero"/>
+                <section className="flex-1 flex items-center justify-center">
+                <img src="/landingArt.png" className="w-full max-w-md md:max-w-lg lg:max-w-xl object-contain" alt="hero"/>
               </section>
             </div>
 
