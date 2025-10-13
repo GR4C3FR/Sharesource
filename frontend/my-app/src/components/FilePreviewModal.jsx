@@ -41,7 +41,7 @@ export default function FilePreviewModal({ file, token, onClose }) {
               if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" className="h-7 w-7" />;
               return <img src="/icons/file.svg" alt="file" className="h-7 w-7" />;
             })()}
-            <h3 className="text-lg font-semibold m-0">{file.originalName}</h3>
+            <h3 className="text-lg font-semibold m-0 text-[#1D2F58]">{file.originalName}</h3>
           </div>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl cursor-pointer">Close</button>
         </div>
@@ -59,7 +59,7 @@ export default function FilePreviewModal({ file, token, onClose }) {
             <iframe title="file-preview" src={fileUrl} className="w-full h-full border-0" />
           </div>
           <div className="mt-3 text-sm">
-            <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-[#103E93] hover:underline">Open in new tab</a>
+            <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-[#1D2F58] hover:underline">Open in new tab</a>
           </div>
         </div>
       </div>

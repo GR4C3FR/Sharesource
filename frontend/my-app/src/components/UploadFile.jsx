@@ -88,8 +88,8 @@ export default function UploadFile({ onUploadSuccess }) {
             <h4>Your Files</h4>
             <ul>
                 {files.map(f => (
-                    <li key={f._id}>
-                        <a href={`/api/files/${f._id}/download`} target="_blank" rel="noreferrer">{f.title || f.originalName}</a>
+                <li key={f._id}>
+                <a href={`/api/files/${f._id}/download`} target="_blank" rel="noreferrer" className="text-[#1D2F58]">{f.title || f.originalName}</a>
                         &nbsp;({(f.size/1024).toFixed(1)} KB)
                         <button onClick={() => handleDelete(f._id)}>Delete</button>
                     </li>

@@ -480,7 +480,7 @@ const toggleBookmark = async (fileID) => {
                                 })()}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="    bg-transparent border-0 p-0 text-[#0b66c3] underline text-left cursor-pointer
+                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="    bg-transparent border-0 p-0 text-[#1D2F58] underline text-left cursor-pointer
                                 block truncate overflow-hidden text-ellipsis whitespace-nowrap
                                 w-[150px] sm:w-[180px] md:w-auto lg:w-auto ">
                                 {file.originalName}

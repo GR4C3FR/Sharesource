@@ -84,9 +84,9 @@ export default function AppShell({ children }) {
           >
             {/* simple hamburger icon - larger on phone/iPad */}
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-10 h-10 md:w-12 md:h-12 lg:w-7 lg:h-7 transform transition-transform duration-200 ${mobileOpen ? 'rotate-90' : 'rotate-0'}`}>
-              <path d="M4 7H20" stroke="#103E93" strokeWidth="3" strokeLinecap="round" />
-              <path d="M4 12H20" stroke="#103E93" strokeWidth="3" strokeLinecap="round" />
-              <path d="M4 17H20" stroke="#103E93" strokeWidth="3" strokeLinecap="round" />
+              <path d="M4 7H20" stroke="#1D2F58" strokeWidth="3" strokeLinecap="round" />
+              <path d="M4 12H20" stroke="#1D2F58" strokeWidth="3" strokeLinecap="round" />
+              <path d="M4 17H20" stroke="#1D2F58" strokeWidth="3" strokeLinecap="round" />
             </svg>
           </button>
         </div>
@@ -112,7 +112,7 @@ export default function AppShell({ children }) {
           <div className={`fixed inset-0 bg-black/30 z-40 transition-opacity duration-200 ${mobileOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setMobileOpen(false)} />
 
           <div className={`fixed inset-0 left-0 top-0 z-50 transform transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-            <nav className="bg-white w-full h-full shadow-sm p-6 relative">
+            <nav className="bg-[#F8F8FF] w-full h-full shadow-sm p-6 relative">
               {/* Close button inside the panel */}
               <button
                 onClick={() => setMobileOpen(false)}

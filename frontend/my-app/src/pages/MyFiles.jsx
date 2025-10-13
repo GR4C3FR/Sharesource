@@ -330,7 +330,7 @@ export default function MyFiles() {
                                     })()}
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#0b66c3] underline text-left cursor-pointer truncate block">{file.originalName}</button>
+                                    <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#1D2F58] underline text-left cursor-pointer truncate block">{file.originalName}</button>
 
                                     {/* Subject value below file name (no 'Subject:' label) */}
                                     <p className="text-sm text-[#103E93] mt-2 truncate">{file.subject?.name || "No subject"}</p>
@@ -406,12 +406,12 @@ export default function MyFiles() {
                   />
 
                   <div className="mt-4">
-                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Select Subject:</label>
+                    <label className="block mb-1 text-[#1D2F58] font-inter font-medium">Select Subject:</label>
                     <select
                       value={selectedSubject}
                       onChange={(e) => setSelectedSubject(e.target.value)}
                       required
-                      className="w-full p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                      className="w-full p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#1D2F58] focus:outline-none"
                     >
                       <option value="">Select a Subject</option>
                       {subjects.map((subj) => (
@@ -423,19 +423,19 @@ export default function MyFiles() {
                   </div>
 
                   <div className="mt-4 gap-2">
-                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Add Subject:</label>
+                    <label className="block mb-1 text-[#1D2F58] font-inter font-medium">Add Subject:</label>
                     <div className="flex gap-3">
                       <input
                         type="text"
                         placeholder="Add new subject"
                         value={newSubjectName}
                         onChange={(e) => setNewSubjectName(e.target.value)}
-                        className="flex-1 p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                        className="flex-1 p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#1D2F58] focus:outline-none"
                       />
                       <button
                         type="button"
                         onClick={handleAddSubject}
-                        className="px-3 py-2 rounded-md bg-[#103E93] text-white hover:bg-[#1D2F58] transition-colors cursor-pointer"
+                        className="px-3 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#1D2F58] transition-colors cursor-pointer"
                       >
                         Add New Subject
                       </button>
@@ -443,7 +443,7 @@ export default function MyFiles() {
                   </div>
 
                   <div className="mt-4 mb-6">
-                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Description:</label>
+                    <label className="block mb-1 text-[#1D2F58] font-inter font-medium">Description:</label>
                     <input
                       type="text"
                       placeholder="Add file description"
