@@ -197,26 +197,29 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Danger Zone aligned under the right column (aligned with header signout) */}
-        <div className="mt-20 w-full grid grid-cols-1 lg:grid-cols-3">
-          {/* empty left column aligns with avatar column */}
-          <div className="hidden lg:block" />
-          <div className="lg:col-span-2">
-            <div className="flex items-center justify-between p-4 rounded-md">
-              <div className="flex items-start gap-4">
-                <img src="/delete-icon.png" alt="trash" className="w-10 h-10 text-red-600" />
-                <div>
-                  <p className="text-base font-semibold text-red-600">DELETE MY ACCOUNT</p>
-                  <p className="text-sm text-red-500">Say goodbye to your account and exit all workspaces.</p>
+        {/* Danger Zone aligned under the right column (aligned with header signout) 
+            NOTE: hidden for Admin users per admin-profile UI requirement */}
+        {profile?.role !== 'Admin' && (
+          <div className="mt-20 w-full grid grid-cols-1 lg:grid-cols-3">
+            {/* empty left column aligns with avatar column */}
+            <div className="hidden lg:block" />
+            <div className="lg:col-span-2">
+              <div className="flex items-center justify-between p-4 rounded-md">
+                <div className="flex items-start gap-4">
+                  <img src="/delete-icon.png" alt="trash" className="w-10 h-10 text-red-600" />
+                  <div>
+                    <p className="text-base font-semibold text-red-600">DELETE MY ACCOUNT</p>
+                    <p className="text-sm text-red-500">Say goodbye to your account and exit all workspaces.</p>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <button onClick={handleDeleteProfile} className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
+                <div>
+                  <button onClick={handleDeleteProfile} className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </AppShell>
   );

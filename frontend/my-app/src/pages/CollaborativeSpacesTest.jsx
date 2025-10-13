@@ -285,7 +285,7 @@ export default function CollaborativeSpaces() {
           )}
 
           {/* Available Spaces */}
-          <div className="w-full lg:w-1/2 pl-0 lg:pl-4">
+          <div className={profile?.role === 'Admin' ? "w-full lg:w-full pl-0 lg:pl-4" : "w-full lg:w-1/2 pl-0 lg:pl-4"}>
             <div className="sticky top-6 bg-transparent z-10">
               <h2 className="text-xl font-semibold mb-3">Available Spaces</h2>
               <div className="mb-3">
@@ -294,7 +294,7 @@ export default function CollaborativeSpaces() {
                   placeholder="Search Available Spaces by title, owner or members..."
                   value={searchAvailableSpaces}
                   onChange={(e) => setSearchAvailableSpaces(e.target.value)}
-                  className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white w-full"
+                  className={profile?.role === 'Admin' ? "w-full p-3 rounded-xl border border-[#1D2F58] bg-white text-sm" : "w-full p-2 rounded-xl border border-[#1D2F58] bg-white"}
                 />
               </div>
             </div>
@@ -336,13 +336,13 @@ export default function CollaborativeSpaces() {
                 {displayedAvailableSpaces.map((space) => {
                   const joined = mySpaces.some((s) => s._id === space._id);
                   return (
-                    <li key={space._id} className="relative py-6 px-5 bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em]">
+                    <li key={space._id} className={"relative py-6 " + (profile?.role === 'Admin' ? 'px-6' : 'px-5') + " bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em] w-full"}>
                       <div className="flex items-start justify-between">
-                        <div className="min-w-0">
+                        <div className="min-w-0 pr-4">
                           <h3 className="text-lg font-medium text-[#103E93] truncate">{space.spaceName}</h3>
-                          <p className="text-sm text-gray-600">{space.description}</p>
+                          <p className="text-sm text-gray-600 mt-1 truncate">{space.description}</p>
 
-                          <div className="flex items-center gap-3 mt-2">
+                          <div className="flex items-center gap-3 mt-3">
                             <p className="text-sm text-gray-500">
                               <strong>Members:</strong> {(space.members || []).length}
                             </p>
@@ -365,7 +365,7 @@ export default function CollaborativeSpaces() {
                         )}
                         </div>
 
-                        <div className="flex flex-col items-end gap-2">
+                        <div className="flex flex-col items-end justify-end gap-2">
                           <div className="flex gap-2">
                             {joined ? (
                               <span className="text-green-600 font-semibold self-center">Joined</span>
