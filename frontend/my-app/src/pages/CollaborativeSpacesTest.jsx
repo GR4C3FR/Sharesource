@@ -191,6 +191,7 @@ export default function CollaborativeSpaces() {
         </div>
       )}
   <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
+    <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">Collaboration</h1>
         {/* Set a taller viewport for spaces and keep titles/search bars sticky */}
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           {/* My Spaces (hidden for Admins) */}

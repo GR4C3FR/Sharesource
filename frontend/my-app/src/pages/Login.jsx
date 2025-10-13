@@ -25,7 +25,7 @@ export default function Login() {
   };
 
   return (
-      <div className="w-full h-screen flex flex-col items-center sm:items-stretch overflow-hidden py-0 px-4">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center overflow-auto py-0 px-4 mb-10">
 
   <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6 px-4 mx-auto relative z-50">
         {/* Logo Section (match landing mobile sizes/stacking) */}
@@ -56,8 +56,8 @@ export default function Login() {
           </section>
       </div>
       
-    <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-center justify-center px-4 mt-[-130px] sm:mt-[-200px]">
-      <div className="w-full max-w-xl flex flex-col my-0 -mt-4 sm:mt-0">
+    <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-center justify-center px-4">
+      <div className="w-full max-w-xl flex flex-col my-0 sm:mt-0">
           <section className="mb-6">
             <h1 className="inter-text font-normal text-2xl sm:text-3xl leading-tight mb-2 text-[#1D2F58] text-center sm:text-left">Sign In</h1>
             <p className="inter-text font-normal text-xs sm:text-sm leading-[16px] text-[#1D2F58] text-center sm:text-left">Please fill out the form to continue.</p>

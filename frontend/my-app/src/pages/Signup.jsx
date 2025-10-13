@@ -31,7 +31,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col overflow-hidden py-0 px-4">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center overflow-auto py-0 px-4 mb-10">
 
   <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-center sm:justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6 px-4 mx-auto relative z-50">
         {/* Logo Section (match landing mobile sizes/stacking) */}
@@ -62,7 +62,8 @@ export default function Signup() {
         </section>
       </div>
 
-  <main className="flex-1 w-full max-w-xl mx-auto flex flex-col items-center sm:items-start text-center sm:text-left my-0 px-4 mt-[-15px]">
+  <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-center justify-center px-4">
+  <div className="w-full max-w-xl flex flex-col my-0 sm:mt-0">
         <section className="mb-6 w-full px-4 sm:px-0">
                 <h1 className="inter-text font-normal text-2xl sm:text-[36px] leading-tight mb-3 text-[#1D2F58]">Sign Up</h1>
                 <p className="inter-text font-normal text-sm sm:text-[16px] leading-[16px] text-[#1D2F58]">Ready to collaborate? Let’s get you started.</p>
@@ -162,7 +163,7 @@ export default function Signup() {
             Sign In
           </button>
         </p>
-
+    </div>
   </main>
     </div>
   );

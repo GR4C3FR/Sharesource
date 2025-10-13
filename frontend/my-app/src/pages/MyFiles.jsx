@@ -236,11 +236,11 @@ export default function MyFiles() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
+      <div className="mx-auto w-full max-w-screen-xl px-4 min-h-screen">
+        <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">My Files</h1>
         <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
           <div className="flex-1">
             {/* Search + Filters (CSS-only toggle like Bookmarks/Homepage) */}
-            <h1 className="text-3xl font-semibold text-[#1D2F58] mb-7">Your Files</h1>
             <div className="mb-4 relative">
               <div className="flex items-center gap-2">
                 <input
@@ -304,13 +304,13 @@ export default function MyFiles() {
               <div className="overflow-hidden bg-transparent">
                 <div className="overflow-y-auto max-h-[65vh] pr-2">
                   {displayedFiles.map((file) => (
-                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
-                      <div className="flex gap-3">
+                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md mx-auto sm:mx-0">
+                      <div className="flex flex-col sm:flex-row gap-3">
                         <div className="w-[72px] flex flex-col items-center gap-2 flex-shrink-0">
                           <Avatar user={file.user} size={50} className="rounded-full" />
                         </div>
 
-                        <div className="flex-1 w-[40em]">
+                        <div className="flex-1 w-[18rem] sm:w-[40em] min-w-0">
                           <section className="flex justify-between items-start">
                             <div className="flex flex-col mb-2 justify-between min-w-0">
                               {/* Owner username on top (above icon & filename) */}
@@ -330,7 +330,7 @@ export default function MyFiles() {
                                     })()}
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#1D2F58] underline text-left cursor-pointer truncate block">{file.originalName}</button>
+                                    <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#1D2F58] underline text-left cursor-pointer w-[12rem] sm:w-auto overflow-hidden truncate block">{file.originalName}</button>
 
                                     {/* Subject value below file name (no 'Subject:' label) */}
                                     <p className="text-sm text-[#103E93] mt-2 truncate">{file.subject?.name || "No subject"}</p>

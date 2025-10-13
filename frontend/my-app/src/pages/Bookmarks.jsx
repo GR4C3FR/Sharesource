@@ -176,9 +176,9 @@ export default function Bookmarks() {
 
   return (
     <AppShell>
-  <div className="mx-auto w-full max-w-screen-xl px-4 py-3 sm:py-6 -mt-3 sm:mt-0">
+  <div className="mx-auto w-full max-w-screen-xl px-4 min-h-screen">
+      <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">Bookmarks</h1>
       {/* Title */}
-      <h1 className="text-3xl font-semibold text-[#1D2F58] mb-7">Bookmarks</h1>
       {/* Filter & Sort for bookmarks (CSS-only toggle like Homepage) */}
       <div className="mb-4 relative">
         <div className="flex items-center gap-2">
@@ -235,7 +235,7 @@ export default function Bookmarks() {
         </div>
       </div>
 
-      <div className="flex gap-6 items-start">
+      <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
         <div className="flex-1">
           {displayedBookmarks.filter(file => file && file._id).length === 0 ? (
             <p>No bookmarks yet.</p>
@@ -244,7 +244,7 @@ export default function Bookmarks() {
               <div className="overflow-y-auto max-h-[65vh] pr-2 min-h-0">
                 {displayedBookmarks.filter(file => file && file._id).map((file) => {
                   return (
-                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
+                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md mx-auto sm:mx-0">
                       {/* Bookmark icon button (top-right) */}
                       {profile?.role !== 'Admin' && (
                         <button
@@ -271,49 +271,42 @@ export default function Bookmarks() {
                         </button>
                       )}
 
-                      <div className="flex gap-3">
+                      <div className="flex flex-col sm:flex-row gap-3">
                         <div className="w-[72px] flex flex-col items-center gap-2 flex-shrink-0">
                           <Avatar user={file.user} size={50} />
                         </div>
 
-                        <div className="flex-1 max-w-[40em] min-w-0">
+                        <div className="flex-1 w-[18rem] sm:w-[40em] min-w-0">
 
                           <section className="flex justify-between items-start">
-                            <div className="flex flex-col mb-2 justify-between">
-                              <section className="flex flex-col sm:flex-row gap-4 mb-3 items-center sm:items-center min-w-0">
-                                <p className="font-inter font-medium text-lg leading-tight text-[#103E93] w-full sm:w-[10em] truncate">{file.user?.username || "Unknown"}</p>
-                                <p className="font-inter font-normal text-sm leading-tight text-[#103E93] w-full sm:w-[60%] truncate">Subject: {file.subject?.name || "No subject"}</p>
+                            <div className="flex flex-col mb-2 justify-between min-w-0">
+                              {/* Owner username on top (above icon & filename) */}
+                              <section className="flex gap-4 mb-3 items-center min-w-0">
+                                <p className="font-inter font-medium text-sm text-[#103E93] w-[70%] truncate">{file.user?.username || file.user?.email || "Unknown"}</p>
                               </section>
 
                               <div className="flex flex-col justify-between w-full">
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex gap-3 items-start">
-                                    <div className="w-[36px] h-[36px] flex items-center justify-center flex-shrink-0">
-                                      {(() => {
-                                        const name = (file.originalName || file.filename || '').toLowerCase();
-                                        if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" className="w-7 h-7" />;
-                                        if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" className="w-7 h-7" />;
-                                        if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" className="w-7 h-7" />;
-                                        return <img src="/icons/file.svg" alt="file" className="w-7 h-7" />;
-                                      })()}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <button
-                                        onClick={() => setPreviewFile(file)}
-                                        title={file.originalName}
-                                        className="bg-transparent border-0 p-0 text-[#1D2F58] underline text-left cursor-pointer block truncate overflow-hidden text-ellipsis whitespace-nowrap w-[150px] sm:w-[180px] md:w-auto lg:w-auto"
-                                      >
-                                        {file.originalName}
-                                      </button>
-                                    </div>
+                                <div className="flex gap-3 items-start">
+                                  <div className="w-[36px] h-[36px] flex items-center justify-center flex-shrink-0">
+                                    {(() => {
+                                      const name = (file.originalName || file.filename || '').toLowerCase();
+                                      if (name.endsWith('.pdf')) return <img src="/icons/pdf.svg" alt="pdf" className="w-7 h-7" />;
+                                      if (name.endsWith('.txt')) return <img src="/icons/txt.svg" alt="txt" className="w-7 h-7" />;
+                                      if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" className="w-7 h-7" />;
+                                      return <img src="/icons/file.svg" alt="file" className="w-7 h-7" />;
+                                    })()}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#1D2F58] underline text-left cursor-pointer w-[12rem] sm:w-auto overflow-hidden truncate block">{file.originalName}</button>
+
+                                    {/* Subject value below file name (no 'Subject:' label) */}
+                                    <p className="text-sm text-[#103E93] mt-2 truncate">{file.subject?.name || "No subject"}</p>
                                   </div>
                                 </div>
 
-                                <div className="w-44 max-w-xs sm:flex-shrink-0 flex-shrink mt-1.5 text-left">
-                                  {/* Subject value in uppercase (label removed) */}
-                                  <p className="text-xs font-semibold mb-1 text-[#103E93] uppercase">{(file.subject?.name || 'NO SUBJECT').toUpperCase()}</p>
-                                  {/* Description value kept (label removed) */}
-                                  <p className="font-inter font-normal text-[15px] leading-[16px] text-[#D05A02] break-words">{file.description || "No description"}</p>
+                                <div className="w-44 flex-shrink-0 mt-1.5 text-left">
+                                  {/* Keep description value but remove literal 'Description' label */}
+                                  <p className="text-[15px] text-[#D05A02] break-words">{file.description || "No description"}</p>
                                 </div>
                               </div>
 
@@ -321,16 +314,16 @@ export default function Bookmarks() {
                           </section>
 
                           {/* ⭐ Show Average Rating (auto-updates) and actions aligned */}
-                          <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-start justify-between">
+                          <div className="mt-2 flex items-start justify-between">
                             <div className="flex flex-col">
                               <RatingSection itemId={file._id} userId={file.user?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
                               <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                             </div>
 
-                            <div className="flex flex-col items-start sm:items-end gap-3 mt-3 sm:mt-0 w-full sm:w-auto">
-                              <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-full sm:w-32">Download</button>
+                            <div className="flex flex-col items-end gap-3">
+                              <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-[8em]">Download</button>
                               {(file.user?._id === profile?._id || profile?.role === 'Admin') && (
-                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-full sm:w-32">Delete</button>
+                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-[8em]">Delete</button>
                               )}
                             </div>
                           </div>

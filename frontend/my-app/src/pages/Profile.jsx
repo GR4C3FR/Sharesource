@@ -114,6 +114,7 @@ export default function Profile() {
   return (
     <AppShell>
       <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
+        <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">Profile</h1>
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left: Avatar + controls */}
           <div className="w-full lg:w-1/3 flex flex-col items-center">
@@ -130,7 +131,7 @@ export default function Profile() {
               <input id="profile-pic-input" type="file" accept="image/*" className="hidden" onChange={(e) => setImageFile(e.target.files[0])} />
             </div>
 
-            <div className="w-full mt-4 text-center">
+            <div className="w-full mt-4 text-center ">
               <div className="flex items-center justify-center gap-3">
                 <button onClick={handleImageUpload} className="px-4 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">Upload</button>
                 {profile.profileImageURL && (
@@ -144,7 +145,7 @@ export default function Profile() {
           </div>
 
           {/* Right: Profile details */}
-          <div className="w-full lg:w-2/3 relative">
+          <div className="w-full lg:w-2/3 relative bg-white rounded-lg border py-6 px-9">
             <div>
               <div className="text-center lg:text-left">
                 <h2 className="text-4xl font-semibold text-[#103E93]">{profile.firstName} {profile.lastName}</h2>
@@ -152,7 +153,7 @@ export default function Profile() {
               </div>
 
               {/* Username block: under the name/email and above the password section */}
-              <div className="mt-6">
+              <div className="mt-6 border py-3 px-5">
                 <p className="text-base font-medium">Username</p>
                 {!showUsernameInput ? (
                   <div className="flex items-center gap-3 mt-2 justify-between">
@@ -170,7 +171,7 @@ export default function Profile() {
             </div>
 
             <div className="mt-8">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between border rounded-md py-3 px-5">
                 <h3 className="text-lg font-medium mb-2 lg:mb-0">Password</h3>
                 {!showPasswordForm && (
                   <button onClick={() => setShowPasswordForm(true)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Change Password</button>
@@ -178,7 +179,7 @@ export default function Profile() {
               </div>
 
               {showPasswordForm && (
-                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
+                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg 3 px-5">
                   <div>
                     <label className="block text-sm mb-1">Current Password</label>
                     <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm(s => ({ ...s, currentPassword: e.target.value }))} className="w-full p-2 border rounded-md" />
@@ -198,32 +199,33 @@ export default function Profile() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-
-        {/* Danger Zone aligned under the right column (aligned with header signout) 
+            {/* Danger Zone aligned under the right column (aligned with header signout) 
             NOTE: hidden for Admin users per admin-profile UI requirement */}
-        {profile?.role !== 'Admin' && (
-          <div className="mt-20 w-full grid grid-cols-1 lg:grid-cols-3">
-            {/* empty left column aligns with avatar column */}
-            <div className="hidden lg:block" />
-            <div className="lg:col-span-2">
-              <div className="flex items-center justify-between p-4 rounded-md">
-                <div className="flex items-start gap-4">
-                  <img src="/delete-icon.png" alt="trash" className="w-10 h-10 text-red-600" />
-                  <div>
-                    <p className="text-base font-semibold text-red-600">DELETE MY ACCOUNT</p>
-                    <p className="text-sm text-red-500">Say goodbye to your account and exit all workspaces.</p>
+            {profile?.role !== 'Admin' && (
+              <div className="mt-20 w-full border py-3 px-5 rounded-md mb-5">
+                {/* empty left column aligns with avatar column */}
+                <div className="lg:col-span-2">
+                  <div className="flex items-center justify-between p-4 rounded-md">
+                    <div className="flex items-start gap-4">
+                      <img src="/delete-icon.png" alt="trash" className="w-10 h-10 text-red-600" />
+                      <div>
+                        <p className="text-base font-semibold text-red-600">DELETE MY ACCOUNT</p>
+                        <p className="text-sm text-red-500">Say goodbye to your account and exit all workspaces.</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <button onClick={handleDeleteProfile} className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
+                    </div>
                   </div>
                 </div>
-
-                <div>
-                  <button onClick={handleDeleteProfile} className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
-                </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
+
+          
+        </div>
+
       </div>
     </AppShell>
   );

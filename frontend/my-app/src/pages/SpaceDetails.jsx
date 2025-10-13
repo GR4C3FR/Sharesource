@@ -145,7 +145,7 @@ export default function SpaceDetails() {
   return (
     <AppShell>
       <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen overflow-auto">
-        <div className="flex flex-col lg:flex-row items-start gap-6">
+  <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
           <div className="flex-1 flex flex-col min-h-0">
             <div className="mb-6">
               <button onClick={() => navigate('/spaces')} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50 cursor-pointer">
@@ -206,21 +206,21 @@ export default function SpaceDetails() {
             </div>
 
             {/* Shared files in center column */}
-            <section className="flex flex-col flex-1 min-h-0">
-              <div className="flex items-center justify-between flex-none mb-5">
-                <h3 className="text-lg font-medium">Shared Files</h3>
+            <section className="flex flex-col flex-1 min-h-0 items-center md:items-stretch">
+              <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between mb-5 gap-3">
+                <h3 className="text-lg font-medium w-full md:w-auto text-center md:text-left">Shared Files</h3>
 
                 {/* Search + Filters (homepage-style, but scoped to document title) */}
-                <div className="ml-4 relative w-1/2">
-                  <div className="flex items-center gap-2">
+                <div className="w-full md:w-1/2 relative">
+                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full">
                     <input
                       type="text"
                       placeholder="Search by document title"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="flex-1 p-2 rounded-xl border border-[#1D2F58] bg-white text-sm"
+                      className="w-full p-2 rounded-xl border border-[#1D2F58] bg-white text-sm"
                     />
-                    <label htmlFor="space-filters-toggle" className="inline-flex items-center px-3 py-2 rounded-md bg-[#1D2F58] text-white text-sm cursor-pointer select-none hover:bg-[#16325a]">Filters</label>
+                    <label htmlFor="space-filters-toggle" className="inline-flex justify-center w-full md:w-auto items-center px-3 py-2 rounded-md bg-[#1D2F58] text-white text-sm cursor-pointer select-none hover:bg-[#16325a]">Filters</label>
                   </div>
 
                   <input id="space-filters-toggle" type="checkbox" className="hidden peer" />
