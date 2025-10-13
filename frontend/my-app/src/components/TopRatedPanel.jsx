@@ -28,7 +28,7 @@ export default function TopRatedPanel({ scope = 'all', token }) {
   if (loading) return <div className="p-3 text-sm text-gray-600">Loading top rated...</div>;
 
   return (
-    <aside className="w-full overflow-x-hidden">
+    <aside className="w-full overflow-x-hidden mb-5">
       <h4 className="text-[24px] font-semibold text-[#103E93]">Top-Rated Notes</h4>
       {topFiles.length === 0 ? (
         <p className="text-sm text-gray-600">No top rated files yet.</p>

@@ -242,7 +242,7 @@ export default function Bookmarks() {
               <div className="overflow-y-auto max-h-[65vh] pr-2 min-h-0">
                 {displayedBookmarks.filter(file => file && file._id).map((file) => {
                   return (
-                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
+                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md w-[20rem] sm:w-full max-w-[calc(100vw-2rem)] mx-auto overflow-hidden box-border">
                       {/* Bookmark icon button (top-right) */}
                       {profile?.role !== 'Admin' && (
                         <button
@@ -269,7 +269,7 @@ export default function Bookmarks() {
                         </button>
                       )}
 
-                      <div className="flex gap-3">
+                      <div className="flex gap-3 min-w-0">
                         <div className="w-18 sm:w-20 flex flex-col items-center gap-2 flex-shrink-0">
                           <Avatar user={file.user} size={50} />
                         </div>
@@ -278,9 +278,9 @@ export default function Bookmarks() {
 
                           <section className="flex justify-between items-start">
                             <div className="flex flex-col mb-2 justify-between">
-                              <section className="flex gap-4 mb-3 items-center min-w-0">
-                                <p className="font-inter font-medium text-lg leading-tight text-[#103E93] truncate">{file.user?.username || "Unknown"}</p>
-                                <p className="font-inter font-normal text-sm leading-tight text-[#103E93] truncate">Subject: {file.subject?.name || "No subject"}</p>
+                              <section className="flex flex-col sm:flex-row gap-4 mb-3 items-center sm:items-center min-w-0">
+                                <p className="font-inter font-medium text-lg leading-tight text-[#103E93] w-full sm:w-[10em] truncate">{file.user?.username || "Unknown"}</p>
+                                <p className="font-inter font-normal text-sm leading-tight text-[#103E93] w-full sm:w-[60%] truncate">Subject: {file.subject?.name || "No subject"}</p>
                               </section>
 
                               <div className="flex flex-col justify-between w-full">
@@ -296,12 +296,18 @@ export default function Bookmarks() {
                                       })()}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#0b66c3] underline text-left cursor-pointer truncate block">{file.originalName}</button>
+                                      <button
+                                        onClick={() => setPreviewFile(file)}
+                                        title={file.originalName}
+                                        className="bg-transparent border-0 p-0 text-[#0b66c3] underline text-left cursor-pointer block truncate overflow-hidden text-ellipsis whitespace-nowrap w-[150px] sm:w-[180px] md:w-auto lg:w-auto"
+                                      >
+                                        {file.originalName}
+                                      </button>
                                     </div>
                                   </div>
                                 </div>
 
-                                <div className="w-44 max-w-xs flex-shrink-0 mt-1.5 text-left">
+                                <div className="w-44 max-w-xs sm:flex-shrink-0 flex-shrink mt-1.5 text-left">
                                   <h1 className="text-sm font-semibold mb-1">Description</h1>
                                   <p className="font-inter font-normal text-[15px] leading-[16px] text-[#D05A02] break-words">{file.description || "No description"}</p>
                                 </div>
@@ -311,17 +317,17 @@ export default function Bookmarks() {
                           </section>
 
                           {/* ⭐ Show Average Rating (auto-updates) and actions aligned */}
-                          <div className="mt-2 flex items-start justify-between">
+                          <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-start justify-between">
                             <div className="flex flex-col">
                               <RatingSection itemId={file._id} userId={file.user?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
-                              <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                             </div>
 
-                              <div className="flex flex-col items-end gap-3">
-                              <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-32">Download</button>
+                              <div className="flex flex-col items-start sm:items-end gap-3 mt-3 sm:mt-0 w-full sm:w-auto">
+                              <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-full sm:w-32">Download</button>
                               {(file.user?._id === profile?._id || profile?.role === 'Admin') && (
-                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-32">Delete</button>
+                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-full sm:w-32">Delete</button>
                               )}
+                              <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700 w-full sm:w-auto text-left sm:text-right">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                             </div>
                           </div>
 
