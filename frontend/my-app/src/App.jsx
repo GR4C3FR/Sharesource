@@ -27,7 +27,7 @@ function App() {
           isLoggedIn ? (
             <Navigate to="/homepage" />
           ) : (
-          <div className="w-full min-h-screen flex flex-col items-center md:justify-center justify-start px-4 pt-2 sm:pt-6 md:pt-0">
+          <div className="w-full min-h-screen flex flex-col items-center justify-center md:justify-center px-4 pt-2 sm:pt-6 md:pt-0">
             {/* Header */}
             <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-2 sm:mb-6 relative z-50">
               {/* Logo Section (mobile: stacked & smaller; desktop: inline) */}
