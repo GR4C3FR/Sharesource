@@ -58,7 +58,8 @@ export default function RatingSection({
   if (showAverageOnly) {
     return (
       <div className="flex items-center gap-2 geologica text-sm">
-        <span className="font-medium text-sm text-[#103E93]">{average.toFixed(1)} / 5</span>
+        {/* show no decimals when average is a whole number, otherwise one decimal */}
+        <span className="font-medium text-sm text-[#103E93]">{Number.isInteger(average) ? average : average.toFixed(1)} / 5</span>
         <img src="/star-logo.png" className="w-5 h-5" alt="star" />
       </div>
     );

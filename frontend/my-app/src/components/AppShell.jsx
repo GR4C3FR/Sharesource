@@ -42,7 +42,7 @@ export default function AppShell({ children }) {
   }, [token]);
 
   return (
-    <div className="w-full flex flex-col items-center justify-center overflow-x-hidden">
+  <div className="w-full flex flex-col items-center justify-center overflow-x-hidden bg-[#F8F8FF] min-h-screen">
       {/* Header */}
   <div className="w-full max-w-screen-xl flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 pt-6 pb-2 px-4 mb-15 relative">
         {/* Logo Section */}

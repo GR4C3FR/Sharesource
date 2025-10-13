@@ -308,7 +308,9 @@ export default function Bookmarks() {
                                 </div>
 
                                 <div className="w-44 max-w-xs sm:flex-shrink-0 flex-shrink mt-1.5 text-left">
-                                  <h1 className="text-sm font-semibold mb-1">Description</h1>
+                                  {/* Subject value in uppercase (label removed) */}
+                                  <p className="text-xs font-semibold mb-1 text-[#103E93] uppercase">{(file.subject?.name || 'NO SUBJECT').toUpperCase()}</p>
+                                  {/* Description value kept (label removed) */}
                                   <p className="font-inter font-normal text-[15px] leading-[16px] text-[#D05A02] break-words">{file.description || "No description"}</p>
                                 </div>
                               </div>
@@ -320,14 +322,14 @@ export default function Bookmarks() {
                           <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-start justify-between">
                             <div className="flex flex-col">
                               <RatingSection itemId={file._id} userId={file.user?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
+                              <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                             </div>
 
-                              <div className="flex flex-col items-start sm:items-end gap-3 mt-3 sm:mt-0 w-full sm:w-auto">
+                            <div className="flex flex-col items-start sm:items-end gap-3 mt-3 sm:mt-0 w-full sm:w-auto">
                               <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-full sm:w-32">Download</button>
                               {(file.user?._id === profile?._id || profile?.role === 'Admin') && (
                                 <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-full sm:w-32">Delete</button>
                               )}
-                              <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700 w-full sm:w-auto text-left sm:text-right">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                             </div>
                           </div>
 

@@ -78,8 +78,8 @@ export default function TopRatedPanel({ scope = 'all', token }) {
                     <span className="ml-2">{file.description || 'No description'}</span>
                   </div>
                   <div>
-                    <span className="text-[#D05A02]">Avg:</span>
-                    <span className="ml-2">{Number(file.avgRating).toFixed(2)}</span>
+                    <span className="text-[#D05A02]">Rating:</span>
+                    <span className="ml-2">{Number.isInteger(Number(file.avgRating)) ? Number(file.avgRating) : Number(file.avgRating).toFixed(2)}</span>
                   </div>
                 </div>
               </div>

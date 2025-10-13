@@ -464,7 +464,7 @@ const toggleBookmark = async (fileID) => {
                         <div className="flex flex-col mb-2 justify-between">
                           <section className="flex flex-col sm:flex-row gap-4 mb-3 items-center sm:items-center min-w-0">
                             <p className="font-inter font-medium text-[20px] leading-[16px] text-[#103E93] w-full sm:w-[10em]">{file.user?.username || "Unknown"}</p>
-                            <p className="font-inter font-normal text-[16px] leading-[16px] text-[#103E93] w-full sm:w-[60%]">Subject: {file.subject?.name || "No subject"}</p>
+                            {/* Subject value moved below and displayed in uppercase near the description */}
                           </section>
 
                         <div className="flex flex-col justify-between w-full">
@@ -490,7 +490,9 @@ const toggleBookmark = async (fileID) => {
                           </div>
 
                           <div className="w-44 flex-shrink-0 mt-1.5 text-left">
-                            <h1 className="text-sm font-semibold mb-1">Description</h1>
+                            {/* Subject (uppercase) - label removed but value kept */}
+                            <p className="text-xs font-semibold mb-1 text-[#103E93] uppercase">{(file.subject?.name || "NO SUBJECT").toUpperCase()}</p>
+                            {/* Description value kept; label removed per requirement */}
                             <p className="font-inter font-normal text-[15px] leading-[16px] text-[#D05A02] break-words">{file.description || "No description"}</p>
                           </div>
                         </div>
@@ -502,6 +504,7 @@ const toggleBookmark = async (fileID) => {
                       <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-start justify-between">
                         <div className="flex flex-col">
                           <RatingSection itemId={file._id} userId={profile?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
+                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                         </div>
 
                         <div className="flex flex-col items-start sm:items-end gap-3 mt-3 sm:mt-0 w-full sm:w-auto">
@@ -509,8 +512,6 @@ const toggleBookmark = async (fileID) => {
                               {(file.user?._id === profile?._id || profile?.role === 'Admin') && (
                                 <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-full sm:w-[8em]">Delete</button>
                               )}
-                          {/* Move comments toggle here so it appears below Delete on mobile */}
-                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700 cursor-pointer w-full sm:w-auto text-left sm:text-right">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                         </div>
                       </div>
 
