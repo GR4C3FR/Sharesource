@@ -411,7 +411,8 @@ export default function MyFiles() {
                       value={selectedSubject}
                       onChange={(e) => setSelectedSubject(e.target.value)}
                       required
-                      className="w-full p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#1D2F58] focus:outline-none"
+                      className="w-full p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#103E93] focus:outline-none max-h-[10rem] overflow-auto"
+                      size={Math.min(subjects.length, 8)}
                     >
                       <option value="">Select a Subject</option>
                       {subjects.map((subj) => (
