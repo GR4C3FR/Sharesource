@@ -343,7 +343,9 @@ const toggleBookmark = async (fileID) => {
         <div className="flex flex-col lg:flex-row justify-between gap-10 items-start w-full">
           {/* Center column: use flexible width so right panel feels like part of the page */}
           <section className="w-full lg:flex-1 min-w-0">
-          <h1 className="text-3xl font-semibold text-[#1D2F58] mb-7">Dashboard</h1>
+          {/* Mobile: show simple 'Dashboard'; Desktop: show welcome with username (exclamation) */}
+          <h1 className="text-3xl font-semibold text-[#1D2F58] mb-7 block lg:hidden">Dashboard</h1>
+          <h1 className="text-3xl font-semibold text-[#1D2F58] mb-7 hidden lg:block">Welcome{profile ? `, ${profile.username || profile.email || ''}` : ''}!</h1>
 
           {/* Realtime search: filter uploaded files by filename or uploader */}
           {/* Search + filter toggle (CSS-only) */}
@@ -368,7 +370,7 @@ const toggleBookmark = async (fileID) => {
           <div className="filter-panel absolute left-0 mt-2 w-full z-50 transform origin-top scale-y-0 peer-checked:scale-y-100 peer-checked:block hidden bg-white rounded-lg shadow-2xl p-4 py-6 border">
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-[#103E93]">Filters & Sorting</h4>
+                <h4 className="text-sm font-semibold text-[#1D2F58]">Filters & Sorting</h4>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -461,7 +463,7 @@ const toggleBookmark = async (fileID) => {
                       <section className="flex justify-between items-start">
                         <div className="flex flex-col mb-2 justify-between">
                           <section className="flex flex-col sm:flex-row gap-4 mb-3 items-center sm:items-center min-w-0">
-                            <p className="font-inter font-medium text-[20px] leading-[16px] text-[#103E93] w-full sm:w-[10em]">{file.user?.username || "Unknown"}</p>
+                            <p className="font-inter font-medium text-[20px] leading-[16px] text-[#1D2F58] w-full sm:w-[10em]">{file.user?.username || "Unknown"}</p>
                             {/* Subject value moved below and displayed in uppercase near the description */}
                           </section>
 
@@ -489,9 +491,9 @@ const toggleBookmark = async (fileID) => {
 
                           <div className="w-44 flex-shrink-0 mt-1.5 text-left">
                             {/* Subject (uppercase) - label removed but value kept */}
-                            <p className="text-xs font-semibold mb-1 text-[#103E93] uppercase">{(file.subject?.name || "NO SUBJECT").toUpperCase()}</p>
+                            <p className="text-xs font-semibold mb-1 text-[#1D2F58] uppercase">{(file.subject?.name || "NO SUBJECT").toUpperCase()}</p>
                             {/* Description value kept; label removed per requirement */}
-                            <p className="font-inter font-normal text-[15px] leading-[16px] text-[#D05A02] break-words">{file.description || "No description"}</p>
+                            <p className="font-inter font-normal text-[15px] leading-[16px] text-[#1D2F58] break-words">{file.description || "No description"}</p>
                           </div>
                         </div>
 
@@ -567,12 +569,12 @@ const toggleBookmark = async (fileID) => {
                   />
 
                   <div className="mt-4">
-                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Select Subject:</label>
+                    <label className="block mb-1 text-[#1D2F58] font-inter font-medium">Select Subject:</label>
                     <select
                       value={selectedSubject}
                       onChange={(e) => setSelectedSubject(e.target.value)}
                       required
-                      className="w-full p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none max-h-[10rem] overflow-auto"
+                      className="w-full p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#103E93] focus:outline-none max-h-[10rem] overflow-auto"
                       size={Math.min(subjects.length, 8)}
                     >
                       <option value="">Select a Subject</option>
@@ -585,14 +587,14 @@ const toggleBookmark = async (fileID) => {
                   </div>
 
                   <div className="mt-4 gap-2">
-                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Add Subject:</label>
+                    <label className="block mb-1 text-[#1D2F58] font-inter font-medium">Add Subject:</label>
                     <div className="flex gap-3">
                       <input
                         type="text"
                         placeholder="Add new subject"
                         value={newSubjectName}
                         onChange={(e) => setNewSubjectName(e.target.value)}
-                        className="flex-1 p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                        className="flex-1 p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
                       />
                       <button
                         type="button"
@@ -605,7 +607,7 @@ const toggleBookmark = async (fileID) => {
                   </div>
 
                   <div className="mt-4 mb-6">
-                    <label className="block mb-1 text-[#103E93] font-inter font-medium">Description:</label>
+                    <label className="block mb-1 text-[#1D2F58] font-inter font-medium">Description:</label>
                     <input
                       type="text"
                       placeholder="Add file description"
