@@ -176,7 +176,9 @@ export default function Bookmarks() {
 
   return (
     <AppShell>
-  <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen">
+  <div className="mx-auto w-full max-w-screen-xl px-4 py-3 sm:py-6 -mt-3 sm:mt-0">
+      {/* Title */}
+      <h1 className="text-3xl font-semibold text-[#1D2F58] mb-7">Bookmarks</h1>
       {/* Filter & Sort for bookmarks (CSS-only toggle like Homepage) */}
       <div className="mb-4 relative">
         <div className="flex items-center gap-2">
@@ -242,7 +244,7 @@ export default function Bookmarks() {
               <div className="overflow-y-auto max-h-[65vh] pr-2 min-h-0">
                 {displayedBookmarks.filter(file => file && file._id).map((file) => {
                   return (
-                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md w-[20rem] sm:w-full max-w-[calc(100vw-2rem)] mx-auto overflow-hidden box-border">
+                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
                       {/* Bookmark icon button (top-right) */}
                       {profile?.role !== 'Admin' && (
                         <button
@@ -269,12 +271,12 @@ export default function Bookmarks() {
                         </button>
                       )}
 
-                      <div className="flex gap-3 min-w-0">
-                        <div className="w-18 sm:w-20 flex flex-col items-center gap-2 flex-shrink-0">
+                      <div className="flex gap-3">
+                        <div className="w-[72px] flex flex-col items-center gap-2 flex-shrink-0">
                           <Avatar user={file.user} size={50} />
                         </div>
 
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 max-w-[40em] min-w-0">
 
                           <section className="flex justify-between items-start">
                             <div className="flex flex-col mb-2 justify-between">
