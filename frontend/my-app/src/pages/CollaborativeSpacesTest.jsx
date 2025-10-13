@@ -215,12 +215,12 @@ export default function CollaborativeSpaces() {
 
                 {profile?.role !== "Admin" && (
                   <button
-                    onClick={() => setShowCreateModal(true)}
-                    className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer"
-                  >
-                    <img src="/collaborative space-logo.png" className="h-5" alt="create" />
-                    Create Space
-                  </button>
+                      onClick={() => setShowCreateModal(true)}
+                      className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer hide-when-mobile-open"
+                    >
+                      <img src="/collaborative space-logo.png" className="h-5" alt="create" />
+                      Create Space
+                    </button>
                 )}
 
                 {profile && profile.role !== "Admin" && (

@@ -375,7 +375,7 @@ export default function MyFiles() {
         {/* Floating Upload File button (bottom-right) */}
         <button
           onClick={() => setShowUploadModal(true)}
-          className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer"
+          className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer hide-when-mobile-open"
         >
           <img src="/file-upload.png" className="h-5" alt="upload" />
           Upload File

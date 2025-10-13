@@ -135,3 +135,15 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* When the mobile nav panel is translated to x=0 (open), hide elements that should not display (uses CSS :has) */
+@supports selector(:has) {
+  body:has(.fixed.inset-0.translate-x-0) .hide-when-mobile-open {
+    display: none !important;
+  }
+}
+
+/* Fallback for browsers without :has() — body class toggled by AppShell (styling only) */
+.mobile-nav-open .hide-when-mobile-open {
+  display: none !important;
+}

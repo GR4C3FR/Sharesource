@@ -41,6 +41,19 @@ export default function AppShell({ children }) {
     fetchProfile();
   }, [token]);
 
+  // keep body class in sync with mobile nav open state (styling-only, no logic change)
+  useEffect(() => {
+    try {
+      if (mobileOpen) document.body.classList.add('mobile-nav-open');
+      else document.body.classList.remove('mobile-nav-open');
+    } catch (err) {
+      // ignore
+    }
+    return () => {
+      try { document.body.classList.remove('mobile-nav-open'); } catch (e) {}
+    };
+  }, [mobileOpen]);
+
   return (
   <div className="w-full flex flex-col items-center justify-center overflow-x-hidden bg-[#F8F8FF] min-h-screen">
       {/* Header */}
@@ -54,15 +67,15 @@ export default function AppShell({ children }) {
               if (t) navigate('/homepage');
               else navigate('/');
             }}
-            className="p-0 bg-transparent border-0 cursor-pointer"
+            className="p-0 bg-transparent border-0 cursor-pointer fixed right-8 top-6 z-50 lg:static"
           >
-            <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-16 sm:w-20 md:w-24 lg:w-[90px] h-auto" />
+            <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-10 sm:w-16 md:w-24 lg:w-[90px] h-auto" />
           </button>
           {/* intentional: no sharessource-text on internal pages */}
         </section>
 
         {/* Mobile hamburger (fixed on small and medium screens) - moved to top-right and enlarged */}
-        <div className="fixed right-4 top-4 z-50 lg:hidden">
+        <div className="fixed left-4 top-4 z-50 lg:hidden">
           <button
             onClick={() => setMobileOpen((s) => !s)}
             aria-expanded={mobileOpen}
@@ -81,12 +94,13 @@ export default function AppShell({ children }) {
         {/* Buttons Section (show avatar + logout) - stack under logo on small/tablet, inline on desktop */}
       <section className="flex flex-row items-center justify-start gap-8 md:gap-10 lg:gap-6 lg:ml-4 mt-3 lg:mt-0 w-full lg:w-auto">
           {profile !== null && (
-            <div onClick={() => navigate('/profile')} className="cursor-pointer transform scale-110 md:scale-125 lg:scale-100 origin-left">
+            <div onClick={() => navigate('/profile')} className="hidden md:flex cursor-pointer transform scale-110 md:scale-125 lg:scale-100 origin-left">
               <Avatar user={profile} size={42} />
             </div>
           )}
 
-          <button onClick={() => { localStorage.removeItem('accessToken'); localStorage.removeItem('userEmail'); navigate('/'); }} className="bg-transparent border-0 cursor-pointer p-1 md:p-2 rounded">
+          {/* header logout: hide on small screens (moved into mobile nav) */}
+          <button onClick={() => { localStorage.removeItem('accessToken'); localStorage.removeItem('userEmail'); navigate('/'); }} className="hidden lg:inline-flex bg-transparent border-0 cursor-pointer p-1 md:p-2 rounded">
             <img src="/logout-icon.png" alt="logout" className="w-8 h-8 md:w-9 md:h-9 lg:w-7 lg:h-7" />
           </button>
         </section>
@@ -111,23 +125,49 @@ export default function AppShell({ children }) {
                 </svg>
               </button>
 
-              <ul className="flex flex-col gap-6 mt-6">
+              <ul className="flex flex-col gap-4 mt-6">
                 <li>
-                  <Link to="/homepage" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-sm text-[#1D2F58]">Dashboard</Link>
+                  <Link to="/homepage" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
+                    <img src="/dashboard-logo.png" alt="dashboard" className="w-5 h-5 object-contain" />
+                    <span>Dashboard</span>
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/bookmarks" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-sm text-[#1D2F58]">Bookmarks</Link>
+                  <Link to="/bookmarks" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
+                    <img src="/bookmarks-logo.png" alt="bookmarks" className="w-5 h-5 object-contain" />
+                    <span>Bookmarks</span>
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/my-files" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-sm text-[#1D2F58]">Your Files</Link>
+                  <Link to="/my-files" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
+                    <img src="/yourfiles-logo.png" alt="your files" className="w-5 h-5 object-contain" />
+                    <span>Your Files</span>
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/spaces" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-sm text-[#1D2F58]">Collaboration</Link>
+                  <Link to="/spaces" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
+                    <img src="/collaborate-logo.png" alt="collaboration" className="w-5 h-5 object-contain" />
+                    <span>Collaboration</span>
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/profile" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-sm text-[#1D2F58]">Profile</Link>
+                  <Link to="/profile" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
+                    <img src="/profile-logo.png" alt="profile" className="w-5 h-5 object-contain" />
+                    <span>Profile</span>
+                  </Link>
                 </li>
               </ul>
+
+                {/* Mobile logout placed at the bottom of the nav panel */}
+                <div className="absolute left-0 right-0 bottom-6 px-6">
+                  <button
+                    onClick={() => { localStorage.removeItem('accessToken'); localStorage.removeItem('userEmail'); setMobileOpen(false); navigate('/'); }}
+                    aria-label="Logout"
+                    className="w-12 h-12 mx-auto flex items-center justify-center rounded-full text-white shadow-md"
+                  >
+                    <img src="/logout-icon.png" alt="logout" className="w-5 h-5" />
+                  </button>
+                </div>
             </nav>
           </div>
         </div>

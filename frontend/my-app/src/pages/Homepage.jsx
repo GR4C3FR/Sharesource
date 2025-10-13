@@ -343,9 +343,7 @@ const toggleBookmark = async (fileID) => {
         <div className="flex flex-col lg:flex-row justify-between gap-10 items-start w-full">
           {/* Center column: use flexible width so right panel feels like part of the page */}
           <section className="w-full lg:flex-1 min-w-0">
-          {profile && (
-            <h1 className="text-3xl font-semibold text-[#103E93] mb-7">Welcome, {profile.username}!</h1>
-          )}
+          <h1 className="text-3xl font-semibold text-[#1D2F58] mb-7">Dashboard</h1>
 
           {/* Realtime search: filter uploaded files by filename or uploader */}
           {/* Search + filter toggle (CSS-only) */}
@@ -544,7 +542,7 @@ const toggleBookmark = async (fileID) => {
         {/* Floating Upload File button (bottom-right) */}
         <button
           onClick={() => setShowUploadModal(true)}
-          className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer"
+          className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer hide-when-mobile-open"
         >
           <img src="/file-upload.png" className="h-5"/>
           Upload File
