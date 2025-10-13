@@ -132,18 +132,22 @@ export default function AppShell({ children }) {
                     <span className="font-medium">Dashboard</span>
                   </Link>
                 </li>
-                <li>
-                  <Link to="/bookmarks" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
-                    <img src="/bookmarks-logo.png" alt="bookmarks" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
-                    <span className="font-medium">Bookmarks</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/my-files" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
-                    <img src="/yourfiles-logo.png" alt="your files" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
-                    <span className="font-medium">Your Files</span>
-                  </Link>
-                </li>
+                {profile?.role !== 'Admin' && (
+                  <>
+                    <li>
+                      <Link to="/bookmarks" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
+                        <img src="/bookmarks-logo.png" alt="bookmarks" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
+                        <span className="font-medium">Bookmarks</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/my-files" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
+                        <img src="/yourfiles-logo.png" alt="your files" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
+                        <span className="font-medium">Your Files</span>
+                      </Link>
+                    </li>
+                  </>
+                )}
                 <li>
                   <Link to="/spaces" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
                     <img src="/collaborate-logo.png" alt="collaboration" className="w-7 h-7 md:w-8 md:h-8 object-contain" />

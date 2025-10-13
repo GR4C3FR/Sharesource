@@ -656,7 +656,7 @@ const toggleBookmark = async (fileID) => {
               <h3>Manage Subjects</h3>
               <div className="flex gap-2 mb-3">
                 <input placeholder="New subject" value={manageSubjectName} onChange={(e) => setManageSubjectName(e.target.value)} className="flex-1 p-2 border rounded-md" />
-                <button onClick={handleManageAdd} className="bg-[#2b6cb0] text-white border-0 px-3 py-1.5 rounded-md">Add</button>
+                <button onClick={handleManageAdd} className="bg-[#1D2F58] text-white border-0 px-3 py-1.5 rounded-md">Add</button>
                 <button onClick={() => setShowManageSubjects(false)} className="ml-2">Close</button>
               </div>
               <ul>
