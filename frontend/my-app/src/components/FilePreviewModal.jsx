@@ -43,7 +43,7 @@ export default function FilePreviewModal({ file, token, onClose }) {
             })()}
             <h3 className="text-lg font-semibold m-0 text-[#1D2F58]">{file.originalName}</h3>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl cursor-pointer">Close</button>
+          <button onClick={onClose} className="text-[#1D2F58] hover:text-gray-700 text-xl cursor-pointer">Close</button>
         </div>
 
         <div className="mt-2 text-sm text-gray-600 space-y-1">
