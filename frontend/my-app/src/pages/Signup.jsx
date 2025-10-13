@@ -31,28 +31,23 @@ export default function Signup() {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center pb-12 px-4 mt-22 mb-10">
+    <div className="w-full h-screen flex flex-col overflow-hidden py-0 px-4">
 
-      <div className="w-full max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-4 mb-8 px-4">
+  <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6 px-4 mx-auto relative z-50">
         {/* Logo Section */}
-        <section className="flex items-center justify-center gap-4">
-          <button
-            aria-label="ShareSource Home"
-            onClick={() => {
-              const t = localStorage.getItem('accessToken');
-              if (t) navigate('/homepage');
-              else navigate('/');
-            }}
-            className="p-0 bg-transparent border-0 cursor-pointer"
-          >
+        <section className="flex items-center justify-start gap-4 relative z-50">
+          <a href="/" aria-label="ShareSource Home" onClick={(e) => { if (localStorage.getItem('accessToken')) { e.preventDefault(); window.location.href = '/homepage'; } }} className="p-0 bg-transparent border-0 cursor-pointer">
             <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
-          </button>
-          <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
+          </a>
+          <a href="/" aria-label="ShareSource Landing" className="p-0 bg-transparent border-0 cursor-pointer">
+            <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
+          </a>
         </section>
 
         <section>
           <button
-            onClick={() => (window.location.href = "/")}
+            type="button"
+            onClick={() => { window.location.href = '/'; }}
             style={{
               background: 'url("/close-btn.png") no-repeat center center',
               backgroundSize: "contain",
@@ -62,12 +57,11 @@ export default function Signup() {
               cursor: "pointer",
               padding: 0,
             }}
-          >
-          </button>
+          />
         </section>
       </div>
 
-  <div className="w-full max-w-xl mx-auto flex flex-col mb-7 px-4">
+  <main className="flex-1 w-full max-w-xl mx-auto flex flex-col my-0 px-4 mt-[-15px]">
         <section className="mb-9">
                 <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Sign Up</h1>
                 <p className="inter-text font-normal text-[16px] leading-[16px] tracking-[0%] pl-5 text-[#1D2F58]">Ready to collaborate? Let’s get you started.</p>
@@ -157,18 +151,18 @@ export default function Signup() {
             </button>
           </form>
         </section>
-      </div>
 
-      <p className="text-base text-[#103E93]">
-        Already have an account?{" "}
-        <button
-          onClick={() => (window.location.href = "/login")}
-          className="hover:text-blue-700 underline px-0 py-0 text-sm font-medium cursor-pointer"
-        >
-          Sign In
-        </button>
-      </p>
+        <p className="text-base text-[#103E93] mt-4 text-center">
+          Already have an account?{" "}
+          <button
+            onClick={() => (window.location.href = "/login")}
+            className="hover:text-blue-700 underline px-0 py-0 text-sm font-medium cursor-pointer"
+          >
+            Sign In
+          </button>
+        </p>
 
+  </main>
     </div>
   );
 }

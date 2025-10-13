@@ -25,28 +25,23 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center py-8 px-4 mb-10">
+    <div className="w-full h-screen flex flex-col overflow-hidden py-0 px-4">
 
-      <div className="w-full max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-4 mb-8 px-4">
+  <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6 px-4 mx-auto relative z-50">
         {/* Logo Section */}
-        <section className="flex items-center justify-center gap-4">
-          <button
-            aria-label="ShareSource Home"
-            onClick={() => {
-              const t = localStorage.getItem('accessToken');
-              if (t) navigate('/homepage');
-              else navigate('/');
-            }}
-            className="p-0 bg-transparent border-0 cursor-pointer"
-          >
+        <section className="flex items-center justify-start gap-4 relative z-50">
+          <a href="/" aria-label="ShareSource Home" onClick={(e) => { if (localStorage.getItem('accessToken')) { e.preventDefault(); window.location.href = '/homepage'; } }} className="p-0 bg-transparent border-0 cursor-pointer">
             <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
-          </button>
-          <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
+          </a>
+          <a href="/" aria-label="ShareSource Landing" className="p-0 bg-transparent border-0 cursor-pointer">
+            <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
+          </a>
         </section>
 
         <section>
           <button
-            onClick={() => (window.location.href = "/")}
+            type="button"
+            onClick={() => { window.location.href = '/'; }}
             style={{
               background: 'url("/close-btn.png") no-repeat center center',
               backgroundSize: "contain",
@@ -56,13 +51,12 @@ export default function Login() {
               cursor: "pointer",
               padding: 0,
             }}
-          >
-          </button>
+          />
         </section>
       </div>
       
-      <div className="w-full max-w-screen-xl mx-auto flex items-center justify-center px-4">
-        <div className="w-full max-w-xl flex flex-col mb-7">
+  <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-center justify-center px-4 mt-[-200px]">
+        <div className="w-full max-w-xl flex flex-col my-0">
         <section className="mb-9">
           <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Sign In</h1>
           <p className="inter-text font-normal text-[16px] leading-[16px] tracking-[0%] pl-5 text-[#1D2F58]">Please fill out the form to continue.</p>
@@ -91,7 +85,7 @@ export default function Login() {
 
             {/* Password */}
             <section className="flex flex-col w-full mb-3">
-              <label htmlFor="password" className="mb-2 text-md font-medium text-[#FFFF]">
+              <label htmlFor="password" className="mb-2 text-md font-medium text-[#FFFFFF]">
                 Password
               </label>
               <input
@@ -114,18 +108,19 @@ export default function Login() {
             </button>
           </form>
         </section>
+
+        <p className="text-base text-[#103E93] mt-4 text-center">
+          Don’t have an account yet?{" "}
+          <button
+            onClick={() => (window.location.href = "/signup")}
+            className="hover:text-blue-700 underline px-0 py-0 text-sm font-medium cursor-pointer"
+          >
+            Sign Up
+          </button>
+        </p>
+
         </div>
-      </div>
-      
-      <p className="text-base text-[#103E93]">
-        Don’t have an account yet?{" "}
-        <button
-          onClick={() => (window.location.href = "/signup")}
-          className="hover:text-blue-700 underline px-0 py-0 text-sm font-medium cursor-pointer"
-        >
-          Sign Up
-        </button>
-      </p>
+      </main>
 
     </div>
   );

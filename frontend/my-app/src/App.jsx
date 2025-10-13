@@ -29,17 +29,20 @@ function App() {
           ) : (
           <div className="w-full min-h-screen flex flex-col items-center justify-center px-4">
             {/* Header */}
-            <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6">
+            <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6 relative z-50">
               {/* Logo Section */}
-              <section className="flex items-center justify-center gap-4">
-                <button
+              <section className="flex items-center justify-center gap-4 relative z-50">
+                <a
+                  href="/"
                   aria-label="ShareSource Home"
-                  onClick={() => navigate('/')}
+                  onClick={(e) => { if (localStorage.getItem('accessToken')) { e.preventDefault(); window.location.href = '/homepage'; } }}
                   className="p-0 bg-transparent border-0 cursor-pointer"
                 >
                   <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
-                </button>
-                <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
+                </a>
+                <a href="/" aria-label="ShareSource Landing" onClick={() => { window.location.href = '/'; }} className="p-0 bg-transparent border-0 cursor-pointer">
+                  <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
+                </a>
               </section>
 
               {/* Buttons Section */}
