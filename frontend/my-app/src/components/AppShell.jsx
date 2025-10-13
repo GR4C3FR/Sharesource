@@ -69,7 +69,7 @@ export default function AppShell({ children }) {
             }}
             className="p-0 bg-transparent border-0 cursor-pointer fixed right-8 top-6 z-50 lg:static"
           >
-            <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-10 sm:w-16 md:w-24 lg:w-[90px] h-auto" />
+            <img src="/sharessource-logo.png" alt="ShareSource Logo" className={`${token ? 'w-12 sm:w-20 md:w-28 lg:w-[100px]' : 'w-10 sm:w-16 md:w-24 lg:w-[90px]'} h-auto`} />
           </button>
           {/* intentional: no sharessource-text on internal pages */}
         </section>
@@ -125,35 +125,35 @@ export default function AppShell({ children }) {
                 </svg>
               </button>
 
-              <ul className="flex flex-col gap-4 mt-6">
+              <ul className="flex flex-col gap-6 mt-8">
                 <li>
-                  <Link to="/homepage" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
-                    <img src="/dashboard-logo.png" alt="dashboard" className="w-5 h-5 object-contain" />
-                    <span>Dashboard</span>
+                  <Link to="/homepage" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
+                    <img src="/dashboard-logo.png" alt="dashboard" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
+                    <span className="font-medium">Dashboard</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/bookmarks" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
-                    <img src="/bookmarks-logo.png" alt="bookmarks" className="w-5 h-5 object-contain" />
-                    <span>Bookmarks</span>
+                  <Link to="/bookmarks" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
+                    <img src="/bookmarks-logo.png" alt="bookmarks" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
+                    <span className="font-medium">Bookmarks</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/my-files" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
-                    <img src="/yourfiles-logo.png" alt="your files" className="w-5 h-5 object-contain" />
-                    <span>Your Files</span>
+                  <Link to="/my-files" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
+                    <img src="/yourfiles-logo.png" alt="your files" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
+                    <span className="font-medium">Your Files</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/spaces" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
-                    <img src="/collaborate-logo.png" alt="collaboration" className="w-5 h-5 object-contain" />
-                    <span>Collaboration</span>
+                  <Link to="/spaces" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
+                    <img src="/collaborate-logo.png" alt="collaboration" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
+                    <span className="font-medium">Collaboration</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/profile" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-base text-[#1D2F58] px-2 py-2 rounded-md hover:bg-gray-50">
-                    <img src="/profile-logo.png" alt="profile" className="w-5 h-5 object-contain" />
-                    <span>Profile</span>
+                  <Link to="/profile" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 text-lg md:text-xl text-[#1D2F58] px-4 py-3 rounded-lg hover:bg-gray-50">
+                    <img src="/profile-logo.png" alt="profile" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
+                    <span className="font-medium">Profile</span>
                   </Link>
                 </li>
               </ul>
@@ -163,9 +163,9 @@ export default function AppShell({ children }) {
                   <button
                     onClick={() => { localStorage.removeItem('accessToken'); localStorage.removeItem('userEmail'); setMobileOpen(false); navigate('/'); }}
                     aria-label="Logout"
-                    className="w-12 h-12 mx-auto flex items-center justify-center rounded-full text-white shadow-md"
+                    className="w-14 h-14 mx-auto flex items-center justify-center rounded-full text-white shadow-md"
                   >
-                    <img src="/logout-icon.png" alt="logout" className="w-5 h-5" />
+                    <img src="/logout-icon.png" alt="logout" className="w-6 h-6" />
                   </button>
                 </div>
             </nav>
