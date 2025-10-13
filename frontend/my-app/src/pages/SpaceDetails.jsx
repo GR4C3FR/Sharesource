@@ -261,7 +261,16 @@ export default function SpaceDetails() {
                       return filtered.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {filtered.map((d) => (
-                            <div key={d._id} className="border p-3 rounded-md bg-white shadow-sm flex flex-col justify-between">
+                            <div key={d._id} className="relative border p-3 rounded-md bg-white shadow-sm flex flex-col justify-between">
+                              {/* Mobile-only overlay: open actual Google Doc link in new tab when tapped on mobile */}
+                              <a
+                                href={d.link || '#'}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="lg:hidden absolute inset-0 z-10"
+                                aria-label={`Open ${d.title} in Google Docs`}
+                              />
+
                               <div onClick={() => navigate(`/spaces/${spaceId}/docs/${d._id}`)} className="cursor-pointer">
                                 <h4 className="text-md font-semibold">{d.title}</h4>
                                 <p className="text-sm text-gray-600 mt-2">{d.description || "No description"}</p>
@@ -269,7 +278,7 @@ export default function SpaceDetails() {
                               </div>
 
                               {(space.members?.some(m => String(m.userId?._id || m.userId) === String(localStorage.getItem('userId'))) || profile?.role === 'Admin') && (
-                                <div className="mt-3 flex justify-end">
+                                <div className="mt-3 flex justify-end z-20">
                                   <button onClick={async (e) => {
                                     e.stopPropagation();
                                     if (!confirm('Delete this shared Google Doc? This will remove it from the space and delete the record.')) return;
