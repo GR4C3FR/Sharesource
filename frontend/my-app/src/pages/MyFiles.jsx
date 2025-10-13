@@ -239,6 +239,7 @@ export default function MyFiles() {
         <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
           <div className="flex-1">
             {/* Search + Filters (CSS-only toggle like Bookmarks/Homepage) */}
+            <h1 className="text-3xl font-semibold text-[#1D2F58] mb-7">Your Files</h1>
             <div className="mb-4 relative">
               <div className="flex items-center gap-2">
                 <input
