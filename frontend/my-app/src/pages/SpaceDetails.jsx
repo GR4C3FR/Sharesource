@@ -154,10 +154,61 @@ export default function SpaceDetails() {
               </button>
             </div>
 
+            {/* Mobile-only: inject the space details + members + add buttons directly under Back button */}
+            <div className="lg:hidden">
+              <div className="py-6 px-4 border rounded-md bg-white shadow-sm mb-4">
+                <section className="flex justify-between items-center mb-3">
+                  <h1 className="text-[16px]">Space Details:</h1>
+                  {profile?.role !== 'Admin' && (
+                    <div>
+                      <button onClick={() => setEditMode(true)} className="px-4 py-1 bg-gray-100 rounded-md text-sm cursor-pointer">Edit</button>
+                    </div>
+                  )}
+                </section>
+                <h2 className="text-lg font-semibold">{space.spaceName}</h2>
+                <p className="text-sm text-gray-600 mt-2">{space.description}</p>
+              </div>
+
+              <div className="p-4 border rounded-md bg-white shadow-sm mb-4">
+                <div onClick={() => setShowMembersDropdown(s => !s)} className="flex items-center justify-between cursor-pointer">
+                    <h3 className="font-medium">Members</h3>
+                    <div className="text-sm text-gray-500">{space.members?.length || 0} ▾</div>
+                  </div>
+                  {showMembersDropdown && (
+                  <div className="mt-3 max-h-40 overflow-y-auto space-y-2">
+                    {space.members?.length > 0 ? space.members.map((m) => (
+                      <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm">
+                        <div>{m.userId?.username || m.userId?.email || 'Unknown User'}</div>
+                        <div className="text-xs text-gray-500">{m.role}</div>
+                      </div>
+                    )) : <div className="text-sm text-gray-600">No members yet</div>}
+                  </div>
+                )}
+              </div>
+
+              {String(space.ownerUserId?._id || space.ownerUserId) === String(localStorage.getItem('userId')) && (
+                  <div className="mb-4">
+                    <button onClick={() => setShowAddMember(true)} className="px-3 py-3 bg-[#1D2F58] text-white rounded-md cursor-pointer w-full flex justify-center items-center gap-4">
+                       <img src="/add-member-logo.png" className="h-7 w-7"/>
+                       Add Member
+                    </button>
+                  </div>
+                )}
+
+                {profile?.role !== 'Admin' && (
+                  <div className="mb-4">
+                    <button onClick={() => setShowAddDoc(true)} className="w-full px-3 py-3 bg-[#1D2F58] text-white rounded-md cursor-pointer flex justify-center items-center gap-4">
+                      <img src="/add-post.png" className="h-7 w-7"/>
+                       Add Collaborative File
+                    </button>
+                  </div>
+                )}
+            </div>
+
             {/* Shared files in center column */}
             <section className="flex flex-col flex-1 min-h-0">
               <div className="flex items-center justify-between flex-none mb-5">
-                <h3 className="text-lg font-medium">Shared Files (Google Docs)</h3>
+                <h3 className="text-lg font-medium">Shared Files</h3>
 
                 {/* Search + Filters (homepage-style, but scoped to document title) */}
                 <div className="ml-4 relative w-1/2">
@@ -247,8 +298,8 @@ export default function SpaceDetails() {
             </section>
           </div>
 
-          {/* Right-side panel */}
-          <aside className="w-full lg:w-80 flex-shrink-0">
+          {/* Right-side panel (hidden on mobile; mobile copy injected above Back button) */}
+          <aside className="hidden lg:block w-full lg:w-80 flex-shrink-0">
             <div className="overflow-auto space-y-4">
               <div className="py-10 px-8 border rounded-md bg-white shadow-sm">
                 <section className="flex justify-between items-center mb-4">
