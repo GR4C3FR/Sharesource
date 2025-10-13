@@ -344,7 +344,7 @@ const toggleBookmark = async (fileID) => {
           {/* Center column: use flexible width so right panel feels like part of the page */}
           <section className="w-full lg:flex-1 min-w-0">
           {profile && (
-            <h1 className="text-[32px] font-inter font-normal leading-[14px] tracking-[0%] mb-7">Welcome, {profile.firstName}! </h1>
+            <h1 className="text-3xl font-semibold text-[#103E93] mb-7">Welcome, {profile.username}!</h1>
           )}
 
           {/* Realtime search: filter uploaded files by filename or uploader */}
