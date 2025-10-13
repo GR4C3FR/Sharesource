@@ -4,6 +4,7 @@ import CommentsSection from "../components/CommentsSection";
 import RatingSection from "../components/RatingSection";
 import TopRatedPanel from "../components/TopRatedPanel";
 import FilePreviewModal from "../components/FilePreviewModal";
+import Avatar from "../components/Avatar";
 import API from "../api";
 import AppShell from "../components/AppShell";
 
@@ -306,14 +307,15 @@ export default function MyFiles() {
                     <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
                       <div className="flex gap-3">
                         <div className="w-[72px] flex flex-col items-center gap-2 flex-shrink-0">
-                          {/* reserved space for avatar/profile (hidden per design) */}
+                          <Avatar user={file.user} size={50} className="rounded-full" />
                         </div>
 
                         <div className="flex-1 w-[40em]">
                           <section className="flex justify-between items-start">
                             <div className="flex flex-col mb-2 justify-between min-w-0">
+                              {/* Owner username on top (above icon & filename) */}
                               <section className="flex gap-4 mb-3 items-center min-w-0">
-                                <p className="font-inter font-normal text-[16px] leading-[16px] text-[#103E93] w-[70%] truncate">Subject: {file.subject?.name || "No subject"}</p>
+                                <p className="font-inter font-medium text-sm text-[#103E93] w-[70%] truncate">{file.user?.username || file.user?.email || "Unknown"}</p>
                               </section>
 
                               <div className="flex flex-col justify-between w-full">
@@ -329,11 +331,14 @@ export default function MyFiles() {
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <button onClick={() => setPreviewFile(file)} title={file.originalName} className="bg-transparent border-0 p-0 text-[#0b66c3] underline text-left cursor-pointer truncate block">{file.originalName}</button>
+
+                                    {/* Subject value below file name (no 'Subject:' label) */}
+                                    <p className="text-sm text-[#103E93] mt-2 truncate">{file.subject?.name || "No subject"}</p>
                                   </div>
                                 </div>
 
                                 <div className="w-44 flex-shrink-0 mt-1.5 text-left">
-                                  <h1 className="text-sm font-semibold mb-1">Description</h1>
+                                  {/* Keep description value but remove literal 'Description' label */}
                                   <p className="text-[15px] text-[#D05A02] break-words">{file.description || "No description"}</p>
                                 </div>
                               </div>
