@@ -541,14 +541,26 @@ const toggleBookmark = async (fileID) => {
 
         {previewFile && <FilePreviewModal file={previewFile} token={token} onClose={() => setPreviewFile(null)} />}
 
-        {/* Floating Upload File button (bottom-right) */}
-        <button
-          onClick={() => setShowUploadModal(true)}
-          className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer hide-when-mobile-open"
-        >
-          <img src="/file-upload.png" className="h-5"/>
-          Upload File
-        </button>
+        {/* Floating action button: Upload for regular users, Manage Subjects for Admins */}
+        {profile?.role === 'Admin' ? (
+          <button
+            onClick={openManageSubjects}
+            className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer hide-when-mobile-open"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+              <path d="M10 2a1 1 0 011 1v1h3a1 1 0 011 1v2h-1V6h-2V4h-2V3a1 1 0 00-1-1zM3 7h1v9a1 1 0 001 1h10a1 1 0 001-1V7h1v9a3 3 0 01-3 3H6a3 3 0 01-3-3V7z" />
+            </svg>
+            Manage Subjects
+          </button>
+        ) : (
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="fixed right-6 bottom-6 z-50 inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#1D2F58] text-white shadow-lg hover:bg-[#16325a] cursor-pointer hide-when-mobile-open"
+          >
+            <img src="/file-upload.png" className="h-5"/>
+            Upload File
+          </button>
+        )}
 
         {/* Upload Modal (reuses existing handlers/state) */}
         {showUploadModal && (
