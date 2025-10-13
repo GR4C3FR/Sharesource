@@ -33,14 +33,14 @@ export default function Signup() {
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden py-0 px-4">
 
-  <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6 px-4 mx-auto relative z-50">
-        {/* Logo Section */}
-        <section className="flex items-center justify-start gap-4 relative z-50">
+  <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-center sm:justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6 px-4 mx-auto relative z-50">
+        {/* Logo Section (match landing mobile sizes/stacking) */}
+        <section className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-4 relative z-50">
           <a href="/" aria-label="ShareSource Home" onClick={(e) => { if (localStorage.getItem('accessToken')) { e.preventDefault(); window.location.href = '/homepage'; } }} className="p-0 bg-transparent border-0 cursor-pointer">
-            <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[90px] h-auto" />
+            <img src="/sharessource-logo.png" alt="ShareSource Logo" className="w-[60px] sm:w-[90px] h-auto" />
           </a>
-          <a href="/" aria-label="ShareSource Landing" className="p-0 bg-transparent border-0 cursor-pointer">
-            <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[180px] h-auto"/>
+          <a href="/" aria-label="ShareSource Landing" className="p-0 bg-transparent border-0 cursor-pointer -mt-2 sm:mt-0">
+            <img src="/sharessource-text.png" alt="ShareSource Text" className="w-[120px] sm:w-[180px] h-auto"/>
           </a>
         </section>
 
@@ -48,6 +48,7 @@ export default function Signup() {
           <button
             type="button"
             onClick={() => { window.location.href = '/'; }}
+            className="hidden sm:block"
             style={{
               background: 'url("/close-btn.png") no-repeat center center',
               backgroundSize: "contain",
@@ -61,27 +62,27 @@ export default function Signup() {
         </section>
       </div>
 
-  <main className="flex-1 w-full max-w-xl mx-auto flex flex-col my-0 px-4 mt-[-15px]">
-        <section className="mb-9">
-                <h1 className="inter-text font-normal text-[36px] leading-[36px] tracking-[0%] mb-5 text-[#1D2F58]">Sign Up</h1>
-                <p className="inter-text font-normal text-[16px] leading-[16px] tracking-[0%] pl-5 text-[#1D2F58]">Ready to collaborate? Let’s get you started.</p>
+  <main className="flex-1 w-full max-w-xl mx-auto flex flex-col items-center sm:items-start text-center sm:text-left my-0 px-4 mt-[-15px]">
+        <section className="mb-6 w-full px-4 sm:px-0">
+                <h1 className="inter-text font-normal text-2xl sm:text-[36px] leading-tight mb-3 text-[#1D2F58]">Sign Up</h1>
+                <p className="inter-text font-normal text-sm sm:text-[16px] leading-[16px] text-[#1D2F58]">Ready to collaborate? Let’s get you started.</p>
               </section>
 
-        <section className="flex bg-[#1D2F58] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-6 w-full">
+        <section className="flex bg-[#1D2F58] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-4 sm:p-6 w-full">
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col justify-center w-full gap-5"
+            className="flex flex-col justify-center w-full gap-4 sm:gap-5"
           >
             {/* Username */}
-            <section className="flex flex-col w-full">
-                    <label htmlFor="username" className="mb-2 text-md font-medium text-left text-[#FFFFFF] bg-transparent">Username</label>
-              <input
+      <section className="flex flex-col w-full">
+        <label htmlFor="username" className="mb-2 text-sm sm:text-md font-medium text-left sm:text-left text-[#FFFFFF] bg-transparent">Username</label>
+        <input
                 id="username"
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                      className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
+          className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 sm:p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
@@ -95,13 +96,13 @@ export default function Signup() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 sm:p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* Email */}
             <section className="flex flex-col w-full">
-              <label htmlFor="email" className="mb-2 text-md font-medium text-left text-[#FFFFFF]">Email</label>
+              <label htmlFor="email" className="mb-2 text-sm sm:text-md font-medium text-left text-[#FFFFFF]">Email</label>
               <input
                 id="email"
                 type="email"
@@ -109,33 +110,33 @@ export default function Signup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 sm:p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* First Name */}
             <section className="flex flex-col w-full">
-              <label htmlFor="firstName" className="mb-2 text-md font-medium text-left text-[#FFFFFF]">First Name</label>
+              <label htmlFor="firstName" className="mb-2 text-sm sm:text-md font-medium text-left text-[#FFFFFF]">First Name</label>
               <input
                 id="firstName"
                 placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 sm:p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D2F58]"
               />
             </section>
 
             {/* Last Name */}
             <section className="flex flex-col w-full">
-              <label htmlFor="lastName" className="mb-2 text-md font-medium text-left text-[#FFFFFF]">Last Name</label>
+              <label htmlFor="lastName" className="mb-2 text-sm sm:text-md font-medium text-left text-[#FFFFFF]">Last Name</label>
               <input
                 id="lastName"
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 focus:outline-none focus:ring-2 focus:ring-[#1D2F58] mb-4"
+                className="w-full border border-[#D9D9D9] bg-white text-[#1D2F58] rounded-[8px] p-2 sm:p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D2F58] mb-4"
               />
             </section>
 
@@ -145,7 +146,7 @@ export default function Signup() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full border-2 border-[#F8F8FF] text-white rounded-[8px] p-2 hover:bg-[#F8F8FF] hover:text-[#1D2F58] mt-2 mb-5 cursor-pointer transition-colors duration-150"
+              className="w-full border-2 border-[#F8F8FF] text-white rounded-[8px] py-2 px-3 text-sm sm:text-base hover:bg-[#F8F8FF] hover:text-[#1D2F58] mt-2 mb-5 cursor-pointer transition-colors duration-150"
             >
               Sign up
             </button>
