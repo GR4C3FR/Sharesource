@@ -146,7 +146,7 @@ export default function Profile() {
           {/* Right: Profile details */}
           <div className="w-full lg:w-2/3 relative">
             <div>
-              <div>
+              <div className="text-center lg:text-left">
                 <h2 className="text-4xl font-semibold text-[#103E93]">{profile.firstName} {profile.lastName}</h2>
                 <p className="text-lg text-gray-700">{profile.email}</p>
               </div>
@@ -155,7 +155,7 @@ export default function Profile() {
               <div className="mt-6">
                 <p className="text-base font-medium">Username</p>
                 {!showUsernameInput ? (
-                  <div className="flex items-center gap-3 mt-2">
+                  <div className="flex items-center gap-3 mt-2 justify-between">
                     <p className="text-lg text-[#103E93]">{profile.username}</p>
                     <button onClick={() => setShowUsernameInput(true)} className="px-3 py-1 bg-gray-100 rounded-md cursor-pointer">Change</button>
                   </div>
@@ -170,10 +170,14 @@ export default function Profile() {
             </div>
 
             <div className="mt-8">
-              <h3 className="text-lg font-medium mb-2">Password</h3>
-              {!showPasswordForm ? (
-                <button onClick={() => setShowPasswordForm(true)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Change Password</button>
-              ) : (
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium mb-2 lg:mb-0">Password</h3>
+                {!showPasswordForm && (
+                  <button onClick={() => setShowPasswordForm(true)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Change Password</button>
+                )}
+              </div>
+
+              {showPasswordForm && (
                 <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
                   <div>
                     <label className="block text-sm mb-1">Current Password</label>
