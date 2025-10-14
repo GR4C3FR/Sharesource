@@ -236,10 +236,10 @@ export default function MyFiles() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-screen-xl px-4 min-h-screen">
+      <div className="mx-auto w-full px-4 min-h-screen lg:max-w-screen-xl">
         <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">My Files</h1>
         <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
-          <div className="flex-1">
+          <div className="w-full lg:flex-1">
             {/* Search + Filters (CSS-only toggle like Bookmarks/Homepage) */}
             <div className="mb-4 relative">
               <div className="flex items-center gap-2">
@@ -304,7 +304,7 @@ export default function MyFiles() {
               <div className="overflow-hidden bg-transparent">
                 <div className="overflow-y-auto max-h-[65vh] pr-2">
                   {displayedFiles.map((file) => (
-                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md mx-auto sm:mx-0">
+                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
                       <div className="flex flex-col sm:flex-row gap-3">
                         <div className="w-[72px] flex flex-col items-center gap-2 flex-shrink-0">
                           <Avatar user={file.user} size={50} className="rounded-full" />
