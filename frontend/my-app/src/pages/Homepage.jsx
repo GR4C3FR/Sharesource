@@ -410,7 +410,7 @@ const toggleBookmark = async (fileID) => {
             {/* Admin: Manage Subjects button */}
             {profile?.role === 'Admin' && (
               <div className="ml-3">
-                <button onClick={openManageSubjects} className="px-3 py-1.5 bg-[#2b6cb0] text-white border-0 rounded-md">
+                <button onClick={openManageSubjects} className="px-3 py-1.5 bg-[#1D2F58] text-white border-0 rounded-md hover:bg-[#0f1f38] transition-colors">
                   Manage Subjects
                 </button>
               </div>
@@ -653,17 +653,17 @@ const toggleBookmark = async (fileID) => {
         {showManageSubjects && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
             <div className="bg-white p-5 rounded-md w-[600px] max-h-[80vh] overflow-auto">
-              <h3>Manage Subjects</h3>
+              <h3 className="text-[#1D2F58]">Manage Subjects</h3>
               <div className="flex gap-2 mb-3">
-                <input placeholder="New subject" value={manageSubjectName} onChange={(e) => setManageSubjectName(e.target.value)} className="flex-1 p-2 border rounded-md" />
-                <button onClick={handleManageAdd} className="bg-[#1D2F58] text-white border-0 px-3 py-1.5 rounded-md">Add</button>
-                <button onClick={() => setShowManageSubjects(false)} className="ml-2">Close</button>
+                <input placeholder="New subject" value={manageSubjectName} onChange={(e) => setManageSubjectName(e.target.value)} className="flex-1 p-2 border rounded-md text-[#1D2F58]" />
+                <button onClick={handleManageAdd} className="bg-[#1D2F58] text-white border-0 px-3 py-1.5 rounded-md hover:bg-[#0f1f38] transition-colors">Add</button>
+                <button onClick={() => setShowManageSubjects(false)} className="ml-2 border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 px-3 py-1.5 rounded-md transition-colors">Close</button>
               </div>
               <ul>
                 {subjects.map(s => (
                   <li key={s._id} className="flex justify-between items-center py-1.5 border-b border-gray-100">
-                    <span>{s.name}</span>
-                    <button onClick={() => handleManageDelete(s._id)} className="bg-red-600 text-white border-0 px-2 py-1 rounded-md">Delete</button>
+                    <span className="text-[#1D2F58]">{s.name}</span>
+                    <button onClick={() => handleManageDelete(s._id)} className="bg-red-600 text-white border-0 px-2 py-1 rounded-md hover:bg-red-700 transition-colors">Delete</button>
                   </li>
                 ))}
               </ul>

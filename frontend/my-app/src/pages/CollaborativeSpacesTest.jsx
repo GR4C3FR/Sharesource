@@ -379,7 +379,7 @@ export default function CollaborativeSpaces() {
 
                             {profile?.role === "Admin" && (
                               <>
-                                <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 py-1 rounded-md border">
+                                <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 py-1 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors">
                                   View Space
                                 </button>
                                 <button
