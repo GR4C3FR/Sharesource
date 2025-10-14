@@ -59,11 +59,11 @@ export default function GoogleDocView() {
 
   return (
     <AppShell>
-  <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen overflow-auto">
-        <div className="flex flex-col lg:flex-row items-start gap-6 h-full min-h-0">
+  <div className="mx-auto w-full max-w-screen-xl px-4 -mt-11 pb-1 min-h-screen overflow-auto">
+        <div className="flex flex-col lg:flex-row items-start gap-4 h-full min-h-0">
           {/* Main centered embed */}
           <main className="flex-1 h-full min-h-0 flex flex-col">
-            <div className="mb-5">
+            <div className="mb-2">
               <button onClick={() => navigate(`/spaces/${spaceId}`)} className="inline-flex items-center gap-2 text-sm text-[#1D2F58] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm cursor-pointer hover:bg-gray-50">
                 <img src="/back-logo.png" className="h-4 w-4"/>
                 Back to Shared Files
@@ -71,20 +71,20 @@ export default function GoogleDocView() {
             </div>
 
             {/* Compact doc header above the embed: title -> description -> uploader */}
-            <div className="mb-5">
+            <div className="mb-2">
               <h2 className="text-lg font-semibold truncate text-[24px] text-[#1D2F58]">{doc.title}</h2>
               {doc.description && <p className="text-sm text-[#1D2F58] mt-1 text-[14px]">{doc.description}</p>}
               {doc.createdBy && <div className="text-xs text-[#1D2F58] mt-1 text-[14px]">Added by: {doc.createdBy.username || doc.createdBy.email}</div>}
             </div>
 
-              <div className="flex-1 min-h-0 flex flex-col mb-10">
-                <button onClick={() => window.open(doc.link, '_blank')} className="w-full px-3 py-4 bg-white text-[#1D2F58] underline rounded-md cursor-pointer">Open in Google Docs</button>
+              <div className="flex-1 min-h-0 flex flex-col mb-2">
+                <button onClick={() => window.open(doc.link, '_blank')} className="w-full px-3 py-2 bg-white text-[#1D2F58] underline rounded-md cursor-pointer mb-2">Open in Google Docs</button>
                 <div className="rounded-md overflow-hidden border w-full flex-1 min-h-0">
                   <iframe
                     src={embeddedUrl}
                     title={doc.title}
                     width="100%"
-                    className="block w-full h-[clamp(800px,80vh,1200px)]"
+                    className="block w-full h-[clamp(800px,88vh,1200px)]"
                     style={{ border: 'none' }}
                     allow="clipboard-read; clipboard-write; microphone; camera"
                   />
