@@ -25,9 +25,9 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center overflow-auto py-0 px-4 mb-10">
+    <div className="w-full h-screen flex flex-col items-center justify-start px-4 overflow-hidden pt-0">
 
-  <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-6 px-4 mx-auto relative z-50">
+  <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-2 sm:mb-6 relative z-50">
         {/* Logo Section (match landing mobile sizes/stacking) */}
         <section className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-4 relative z-50">
           <a href="/" aria-label="ShareSource Home" onClick={(e) => { if (localStorage.getItem('accessToken')) { e.preventDefault(); window.location.href = '/homepage'; } }} className="p-0 bg-transparent border-0 cursor-pointer">
@@ -56,7 +56,7 @@ export default function Login() {
           </section>
       </div>
       
-    <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-center justify-center px-4">
+    <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-center justify-center px-4 -mt-8">
       <div className="w-full max-w-xl flex flex-col my-0 sm:mt-0">
           <section className="mb-6">
             <h1 className="inter-text font-normal text-2xl sm:text-3xl leading-tight mb-2 text-[#1D2F58] text-center sm:text-left">Sign In</h1>
