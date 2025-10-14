@@ -158,10 +158,10 @@ export default function SpaceDetails() {
             <div className="lg:hidden">
               <div className="py-6 px-4 border rounded-md bg-white shadow-sm mb-4">
                 <section className="flex justify-between items-center mb-3">
-                  <h1 className="text-[16px]">Space Details:</h1>
+                  <h1 className="text-[16px] text-[#1D2F58]">Space Details:</h1>
                   {profile?.role !== 'Admin' && (
                     <div>
-                      <button onClick={() => setEditMode(true)} className="px-4 py-1 bg-gray-100 rounded-md text-sm cursor-pointer">Edit</button>
+                      <button onClick={() => setEditMode(true)} className="px-4 py-1 bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors rounded-md text-sm cursor-pointer">Edit</button>
                     </div>
                   )}
                 </section>
@@ -176,12 +176,15 @@ export default function SpaceDetails() {
                   </div>
                   {showMembersDropdown && (
                   <div className="mt-3 max-h-40 overflow-y-auto space-y-2">
-                    {space.members?.length > 0 ? space.members.map((m) => (
-                      <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm text-[#1D2F58]">
-                        <div>{m.userId?.username || m.userId?.email || 'Unknown User'}</div>
-                        <div className="text-xs text-[#1D2F58]">{m.role}</div>
-                      </div>
-                    )) : <div className="text-sm text-[#1D2F58]">No members yet</div>}
+                    {space.members?.length > 0 ? space.members.map((m) => {
+                      const isOwner = String(m.userId?._id || m.userId) === String(space.ownerUserId?._id || space.ownerUserId);
+                      return (
+                        <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm text-[#1D2F58]">
+                          <div>{m.userId?.username || m.userId?.email || 'Unknown User'}</div>
+                          {isOwner && <div className="text-xs text-[#1D2F58]">{m.role}</div>}
+                        </div>
+                      );
+                    }) : <div className="text-sm text-[#1D2F58]">No members yet</div>}
                   </div>
                 )}
               </div>
@@ -208,7 +211,7 @@ export default function SpaceDetails() {
             {/* Shared files in center column */}
             <section className="flex flex-col flex-1 min-h-0">
               <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between mb-5 gap-3">
-                <h3 className="text-lg font-medium w-full md:w-auto text-center md:text-left">Shared Files</h3>
+                <h3 className="text-lg text-[#1D2F58] font-medium w-full md:w-auto text-center md:text-left">Shared Files</h3>
 
                 {/* Search + Filters (homepage-style, but scoped to document title) */}
                 <div className="w-full md:w-1/2 relative">
@@ -312,10 +315,10 @@ export default function SpaceDetails() {
             <div className="overflow-auto space-y-4">
               <div className="py-10 px-8 border rounded-md bg-white shadow-sm">
                 <section className="flex justify-between items-center mb-4">
-                  <h1 className="text-[16px]">Space Details:</h1>
+                  <h1 className="text-[16px] text-[#1D2F58]">Space Details:</h1>
                   {profile?.role !== 'Admin' && (
                     <div className="mt-3">
-                      <button onClick={() => setEditMode(true)} className="px-9 py-1 bg-gray-100 rounded-md text-[14px] cursor-pointer">Edit</button>
+                      <button onClick={() => setEditMode(true)} className="px-9 py-1 bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors rounded-md text-[14px] cursor-pointer">Edit</button>
                     </div>
                   )}
                 </section>
@@ -330,12 +333,15 @@ export default function SpaceDetails() {
                   </div>
                   {showMembersDropdown && (
                   <div className="mt-3 max-h-40 overflow-y-auto space-y-2">
-                    {space.members?.length > 0 ? space.members.map((m) => (
-                      <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm text-[#1D2F58]">
-                        <div>{m.userId?.username || m.userId?.email || 'Unknown User'}</div>
-                        <div className="text-xs text-[#1D2F58]">{m.role}</div>
-                      </div>
-                    )) : <div className="text-sm text-[#1D2F58]">No members yet</div>}
+                    {space.members?.length > 0 ? space.members.map((m) => {
+                      const isOwner = String(m.userId?._id || m.userId) === String(space.ownerUserId?._id || space.ownerUserId);
+                      return (
+                        <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm text-[#1D2F58]">
+                          <div>{m.userId?.username || m.userId?.email || 'Unknown User'}</div>
+                          {isOwner && <div className="text-xs text-[#1D2F58]">{m.role}</div>}
+                        </div>
+                      );
+                    }) : <div className="text-sm text-[#1D2F58]">No members yet</div>}
                   </div>
                 )}
               </div>
@@ -399,13 +405,13 @@ export default function SpaceDetails() {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black opacity-30" onClick={() => setShowAddDoc(false)} />
             <div className="flex flex-col gap-4 relative z-10 w-full max-w-lg bg-white rounded-md shadow-lg p-6">
-              <h4 className="font-medium">Add Google Doc</h4>
-              <input placeholder="Document title" value={docTitle} onChange={(e) => setDocTitle(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
-              <input placeholder="Short description (optional)" value={docDesc} onChange={(e) => setDocDesc(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
-              <input placeholder="Google Docs link (must be shareable: Anyone with the link)" value={docLink} onChange={(e) => setDocLink(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
+              <h4 className="font-medium text-[#1D2F58]">Add Google Doc</h4>
+              <input placeholder="Document title" value={docTitle} onChange={(e) => setDocTitle(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
+              <input placeholder="Short description (optional)" value={docDesc} onChange={(e) => setDocDesc(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
+              <input placeholder="Google Docs link (must be shareable: Anyone with the link)" value={docLink} onChange={(e) => setDocLink(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
               <div className="mt-4 flex justify-end gap-2">
-                <button onClick={() => setShowAddDoc(false)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
-                <button onClick={addGoogleDoc} disabled={addingDoc} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">{addingDoc ? 'Adding...' : 'Add Document'}</button>
+                <button onClick={() => setShowAddDoc(false)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer text-[#1D2F58] hover:bg-gray-200">Cancel</button>
+                <button onClick={addGoogleDoc} disabled={addingDoc} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer hover:bg-[#0f1f38] transition-colors">{addingDoc ? 'Adding...' : 'Add Document'}</button>
               </div>
             </div>
           </div>
