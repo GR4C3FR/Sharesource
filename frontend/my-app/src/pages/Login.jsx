@@ -56,7 +56,7 @@ export default function Login() {
           </section>
       </div>
       
-    <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-center justify-center px-4 -mt-8">
+    <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-start justify-center px-4 pt-12">
       <div className="w-full max-w-xl flex flex-col my-0 sm:mt-0">
           <section className="mb-6">
             <h1 className="inter-text font-normal text-2xl sm:text-3xl leading-tight mb-2 text-[#1D2F58] text-center sm:text-left">Sign In</h1>
