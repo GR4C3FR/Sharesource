@@ -193,7 +193,7 @@ export default function AppShell({ children }) {
         <section className="hidden lg:block w-40">
           <section className="w-max h-auto flex flex-col justify-center mb-8 min-w-0">
             {/* Dynamic page title based on current route */}
-            <h1 className="text-2xl md:text-3xl font-inter font-normal text-[#1D2F58]">{pageTitle}</h1>
+            <h1 className="text-2xl md:text-3xl font-inter font-bold text-[#1D2F58]">{pageTitle}</h1>
           </section>
 
           <section className="flex flex-col gap-6 max-h-[60vh] md:max-h-[520px] overflow-auto">
