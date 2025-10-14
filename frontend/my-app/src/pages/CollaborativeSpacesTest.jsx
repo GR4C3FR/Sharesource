@@ -232,7 +232,7 @@ export default function CollaborativeSpaces() {
                       displayedMySpaces.map((space) => (
                         <div key={space._id} className="relative py-6 px-5 bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em] flex">
                           <div className="flex-1 min-w-0 pr-4">
-                            <h3 className="text-lg font-medium text-[#103E93] truncate">{space.spaceName}</h3>
+                            <h3 className="text-lg font-medium text-[#103E93]">{space.spaceName}</h3>
                             <p className="text-sm text-gray-600 mt-1 truncate">{space.description}</p>
 
                             <div className="flex items-center gap-3 mt-3">
