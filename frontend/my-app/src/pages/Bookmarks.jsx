@@ -176,7 +176,7 @@ export default function Bookmarks() {
 
   return (
     <AppShell>
-  <div className="mx-auto w-full max-w-screen-xl px-4 min-h-screen">
+  <div className="mx-auto w-full px-4 min-h-screen lg:max-w-screen-xl">
       <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">Bookmarks</h1>
       {/* Title */}
       {/* Filter & Sort for bookmarks (CSS-only toggle like Homepage) */}
@@ -236,7 +236,7 @@ export default function Bookmarks() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
-        <div className="flex-1">
+        <div className="w-full lg:flex-1">
           {displayedBookmarks.filter(file => file && file._id).length === 0 ? (
             <p>No bookmarks yet.</p>
           ) : (
@@ -244,7 +244,7 @@ export default function Bookmarks() {
               <div className="overflow-y-auto max-h-[65vh] pr-2 min-h-0">
                 {displayedBookmarks.filter(file => file && file._id).map((file) => {
                   return (
-                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md mx-auto sm:mx-0">
+                    <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
                       {/* Bookmark icon button (top-right) */}
                       {profile?.role !== 'Admin' && (
                         <button
