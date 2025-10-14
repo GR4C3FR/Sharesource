@@ -62,26 +62,26 @@ function App() {
               </section>
             </div>
             
-            <div className="w-full max-w-screen-xl min-h-[68vh] md:min-h-[75vh] flex flex-col lg:flex-row justify-between items-center gap-4 md:gap-6 px-4 text-[#1D2F58] text-center lg:text-left -mt-8">
-              <section className="flex flex-col gap-4 md:gap-6 flex-1 max-w-2xl items-center text-center sm:items-start sm:text-left">
-                <h1 className="inter-text font-normal text-3xl md:text-4xl lg:text-5xl leading-tight">
-                  <span className="font-sans font-medium text-2xl md:text-4xl lg:text-5xl">
+            <div className="w-full max-w-screen-xl flex-1 md:min-h-[68vh] lg:min-h-[75vh] flex flex-col lg:flex-row justify-center md:justify-between items-center gap-6 md:gap-4 lg:gap-6 px-4 text-[#1D2F58] text-center lg:text-left mt-0 md:-mt-16">
+              <section className="flex flex-col gap-6 md:gap-4 lg:gap-6 flex-1 max-w-2xl items-center text-center sm:items-start sm:text-left">
+                <h1 className="inter-text font-normal text-4xl md:text-3xl lg:text-4xl xl:text-5xl leading-tight">
+                  <span className="font-sans font-medium text-3xl md:text-2xl lg:text-4xl xl:text-5xl">
                     Welcome to our space —
                   </span>
                   <br />
-                  <span className="text-2xl md:text-4xl lg:text-5xl">a place to learn, connect, and make it your own.</span>
+                  <span className="text-3xl md:text-2xl lg:text-4xl xl:text-5xl">a place to learn, connect, and make it your own.</span>
                 </h1>
 
                 {/* Mobile-only hero image: shown below md, hidden on md+ (desktop keeps the existing hero) */}
                 <div className="block md:hidden w-full flex justify-center pt-2">
-                  <img src="/landingArt.png" alt="hero mobile" className="w-48 sm:w-72 object-contain" />
+                  <img src="/landingArt.png" alt="hero mobile" className="w-64 sm:w-72 object-contain" />
                 </div>
 
                 <div>
-                  <p className="font-geologica font-normal text-base md:text-xl leading-relaxed mb-4 text-[#1D2F58]">Join the Sharesource community and make it yours.</p>
+                  <p className="font-geologica font-normal text-lg md:text-base lg:text-xl leading-relaxed mb-6 md:mb-4 text-[#1D2F58]">Join the Sharesource community and make it yours.</p>
 
                   <button
-                    className="px-6 py-2 md:px-8 md:py-3 font-geologica text-sm md:text-base bg-[#1D2F58] text-white sm:bg-transparent sm:text-[#1D2F58] border-2 border-[#1D2F58] rounded-lg hover:bg-[#162240] hover:text-[#FFFFFF] transition-colors duration-200 cursor-pointer"
+                    className="px-8 py-3 md:px-6 md:py-2 lg:px-8 lg:py-3 font-geologica text-base md:text-sm lg:text-base bg-[#1D2F58] text-white sm:bg-transparent sm:text-[#1D2F58] border-2 border-[#1D2F58] rounded-lg hover:bg-[#162240] hover:text-[#FFFFFF] transition-colors duration-200 cursor-pointer"
                     onClick={() => (window.location.href = "/login")}
                   >
                     Get Started
