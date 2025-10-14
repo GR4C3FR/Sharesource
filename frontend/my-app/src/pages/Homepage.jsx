@@ -340,7 +340,7 @@ const toggleBookmark = async (fileID) => {
     <AppShell>
       {/* Center and constrain homepage content width to match AppShell and let center column flex */}
       <div className="mx-auto w-full max-w-screen-xl px-4 -mt-5 lg:pt-0">
-        <div className="flex flex-col lg:flex-row justify-between gap-10 items-start w-full">
+        <div className="flex flex-col lg:flex-row justify-between gap-2 lg:gap-10 items-start w-full">
           {/* Center column: use flexible width so right panel feels like part of the page */}
           <section className="w-full lg:flex-1 min-w-0">
           {/* Mobile: show simple 'Dashboard'; Desktop: show welcome with username (exclamation) */}
@@ -532,7 +532,7 @@ const toggleBookmark = async (fileID) => {
           </section>
 
           {/* Right-side Top Rated panel */}
-          <div className="w-full lg:w-72 flex-shrink-0">
+          <div className="w-full lg:w-72 flex-shrink-0 -mt-6 lg:mt-0">
             <div className="sticky top-6">
               <TopRatedPanel scope="all" token={token} />
             </div>
