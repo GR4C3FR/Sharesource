@@ -568,8 +568,8 @@ const toggleBookmark = async (fileID) => {
             <div className="absolute inset-0 bg-black/40" onClick={() => setShowUploadModal(false)} />
             <div className="relative z-70 w-full max-w-2xl bg-white rounded-lg shadow-xl px-8 py-10">
               <div className="flex items-center justify-between mb-7">
-                <h3 className="text-lg font-medium">Upload a File</h3>
-                <button onClick={() => setShowUploadModal(false)} className="text-gray-500 hover:text-gray-700 cursor-pointer">Close</button>
+                <h3 className="text-lg font-medium text-[#1D2F58]">Upload a File</h3>
+                <button onClick={() => setShowUploadModal(false)} className="text-[#1D2F58] hover:text-gray-700 cursor-pointer">Close</button>
               </div>
 
                 <form onSubmit={(e) => { handleFileUpload(e); setShowUploadModal(false); }}>
@@ -577,7 +577,7 @@ const toggleBookmark = async (fileID) => {
                     type="file"
                     onChange={(e) => setSelectedFile(e.target.files[0])}
                     accept=".pdf,.doc,.docx,.txt"
-                    className="block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#1D2F58] file:text-white hover:file:bg-[#103E93] mb-5"
+                    className="block w-full text-sm text-[#1D2F58] border rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#1D2F58] file:text-white hover:file:bg-[#0f1f38] mb-5"
                   />
 
                   <div className="mt-4">
@@ -586,7 +586,7 @@ const toggleBookmark = async (fileID) => {
                       value={selectedSubject}
                       onChange={(e) => setSelectedSubject(e.target.value)}
                       required
-                      className="w-full p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#103E93] focus:outline-none max-h-[10rem] overflow-auto"
+                      className="w-full p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#103E93] focus:outline-none max-h-[10rem] overflow-auto [&>option:checked]:bg-[#1D2F58] [&>option:checked]:text-white"
                       size={Math.min(subjects.length, 8)}
                     >
                       <option value="">Select a Subject</option>
@@ -611,7 +611,7 @@ const toggleBookmark = async (fileID) => {
                       <button
                         type="button"
                         onClick={handleAddSubject}
-                        className="px-3 py-2 rounded-md bg-[#103E93] text-white hover:bg-[#1D2F58] transition-colors cursor-pointer"
+                        className="px-3 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer"
                       >
                         Add New Subject
                       </button>
@@ -626,7 +626,7 @@ const toggleBookmark = async (fileID) => {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       required
-                      className="w-full p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                      className="w-full p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
                     />
                   </div>
 
@@ -634,13 +634,13 @@ const toggleBookmark = async (fileID) => {
                     <button
                       type="button"
                       onClick={() => setShowUploadModal(false)}
-                      className="mr-2 px-4 py-2 rounded-md border border-[#1D2F58] text-[#103E93] hover:bg-gray-100 cursor-pointer transition-colors"
+                      className="mr-2 px-4 py-2 rounded-md border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 cursor-pointer transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#103E93] transition-colors cursor-pointer"
+                      className="px-4 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer"
                     >
                       Upload
                     </button>
