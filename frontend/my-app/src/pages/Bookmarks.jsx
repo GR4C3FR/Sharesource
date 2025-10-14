@@ -176,7 +176,7 @@ export default function Bookmarks() {
 
   return (
     <AppShell>
-  <div className="mx-auto w-full px-4 min-h-screen lg:max-w-screen-xl">
+  <div className="mx-auto w-full px-4 min-h-screen -mt-5 lg:pt-0 lg:max-w-screen-xl">
       <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">Bookmarks</h1>
       {/* Title */}
       {/* Filter & Sort for bookmarks (CSS-only toggle like Homepage) */}

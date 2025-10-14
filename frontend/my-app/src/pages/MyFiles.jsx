@@ -236,7 +236,7 @@ export default function MyFiles() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full px-4 min-h-screen lg:max-w-screen-xl">
+      <div className="mx-auto w-full px-4 min-h-screen -mt-5 lg:pt-0 lg:max-w-screen-xl">
         <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">My Files</h1>
         <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
           <div className="w-full lg:flex-1">

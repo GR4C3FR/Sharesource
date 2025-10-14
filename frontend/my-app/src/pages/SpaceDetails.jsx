@@ -144,7 +144,7 @@ export default function SpaceDetails() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full px-4 py-6 min-h-screen overflow-auto lg:max-w-screen-xl">
+      <div className="mx-auto w-full px-4 -mt-5 lg:pt-6 min-h-screen overflow-auto lg:max-w-screen-xl">
   <div className="flex flex-col lg:flex-row items-start gap-6">
           <div className="w-full lg:flex-1 flex flex-col min-h-0">
             <div className="mb-6">
