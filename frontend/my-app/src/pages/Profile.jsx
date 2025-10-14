@@ -161,10 +161,12 @@ export default function Profile() {
                     <button onClick={() => setShowUsernameInput(true)} className="px-3 py-1 bg-gray-100 rounded-md cursor-pointer">Change</button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 mt-2">
-                    <input value={form.username} onChange={(e) => setForm(s => ({ ...s, username: e.target.value }))} className="p-3 border rounded-md text-lg" />
-                    <button onClick={handleUsernameChange} className="px-3 py-1 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save</button>
-                    <button onClick={() => { setShowUsernameInput(false); setForm({ username: profile.username }); }} className="px-3 py-1 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-2">
+                    <input value={form.username} onChange={(e) => setForm(s => ({ ...s, username: e.target.value }))} className="p-3 border rounded-md text-lg w-full sm:flex-1" />
+                    <div className="flex items-center gap-2">
+                      <button onClick={handleUsernameChange} className="flex-1 sm:flex-none px-3 py-1 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save</button>
+                      <button onClick={() => { setShowUsernameInput(false); setForm({ username: profile.username }); }} className="flex-1 sm:flex-none px-3 py-1 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
+                    </div>
                   </div>
                 )}
               </div>
