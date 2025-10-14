@@ -41,12 +41,12 @@ export default function FilePreviewModal({ file, token, onClose }) {
               if (name.endsWith('.doc') || name.endsWith('.docx')) return <img src="/icons/doc.svg" alt="doc" className="h-7 w-7" />;
               return <img src="/icons/file.svg" alt="file" className="h-7 w-7" />;
             })()}
-            <h3 className="text-lg font-semibold m-0 text-[#1D2F58]">{file.originalName}</h3>
+            <h3 className="text-lg font-bold m-0 text-[#1D2F58]">{file.originalName}</h3>
           </div>
           <button onClick={onClose} className="text-[#1D2F58] hover:text-gray-700 text-xl cursor-pointer">Close</button>
         </div>
 
-        <div className="mt-2 text-sm text-gray-600 space-y-1">
+        <div className="mt-2 text-sm text-[#1D2F58] space-y-1">
           <div><strong>Uploader:</strong> {file.user?.username || file.uploaderName || 'Unknown'}</div>
           <div><strong>Subject:</strong> {file.subject?.name || 'n/a'}</div>
           <div><strong>Description:</strong> {file.description || 'No description'}</div>
@@ -58,8 +58,8 @@ export default function FilePreviewModal({ file, token, onClose }) {
           <div className="w-full h-[40rem] md:h-[60vh] border border-gray-200 rounded-md overflow-hidden">
             <iframe title="file-preview" src={fileUrl} className="w-full h-full border-0" />
           </div>
-          <div className="mt-3 text-sm">
-            <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-[#1D2F58] hover:underline">Open in new tab</a>
+          <div className="mt-3">
+            <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 bg-[#1D2F58] text-white rounded-md hover:bg-[#0f1f38] transition-colors cursor-pointer text-sm">Open in new tab</a>
           </div>
         </div>
       </div>

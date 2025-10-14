@@ -469,7 +469,7 @@ const toggleBookmark = async (fileID) => {
 
                         <div className="flex flex-col justify-between w-full">
                           <div className="w-[calc(100%-11rem)]">
-                            <div className="flex gap-3 items-start">
+                            <div className="flex gap-3 items-center">
                               <div className="w-[36px] h-[36px] flex items-center justify-center flex-shrink-0">
                                 {(() => {
                                   const name = (file.originalName || file.filename || '').toLowerCase();
@@ -480,7 +480,7 @@ const toggleBookmark = async (fileID) => {
                                 })()}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="    bg-transparent border-0 p-0 text-[#1D2F58] underline text-left cursor-pointer
+                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="    bg-transparent border-0 p-0 text-[#1D2F58] font-bold text-left cursor-pointer
                                 block truncate overflow-hidden text-ellipsis whitespace-nowrap
                                 w-[150px] sm:w-[180px] md:w-auto lg:w-auto ">
                                 {file.originalName}

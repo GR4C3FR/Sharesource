@@ -63,7 +63,7 @@ export default function TopRatedPanel({ scope = 'all', token }) {
               })()}
 
                 <div className="flex-1 min-w-0 ml-4">
-                <button onClick={() => setActive(file)} title={file.originalName} className="text-sm text-[#1D2F58] underline block truncate font-medium text-left cursor-pointer max-w-[10rem]">{file.originalName}</button>
+                <button onClick={() => setActive(file)} title={file.originalName} className="text-sm text-[#1D2F58] font-bold block truncate text-left cursor-pointer max-w-[10rem]">{file.originalName}</button>
                 <div className="text-xs mt-2 space-y-1 text-[#1D2F58]">
                   <div>
                     <span className="text-[#1D2F58]">Uploader:</span>
