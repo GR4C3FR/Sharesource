@@ -463,7 +463,7 @@ const toggleBookmark = async (fileID) => {
                       <section className="flex justify-between items-start">
                         <div className="flex flex-col mb-2 justify-between">
                           <section className="flex flex-col sm:flex-row gap-4 mb-3 items-center sm:items-center min-w-0">
-                            <p className="font-inter font-medium text-[20px] leading-[16px] text-[#1D2F58] w-full sm:w-[10em]">{file.user?.username || "Unknown"}</p>
+                            <p className="font-inter font-extrabold text-[20px] leading-[16px] text-[#1D2F58] w-full sm:w-[10em]">{file.user?.username || "Unknown"}</p>
                             {/* Subject value moved below and displayed in uppercase near the description */}
                           </section>
 
@@ -480,7 +480,7 @@ const toggleBookmark = async (fileID) => {
                                 })()}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="    bg-transparent border-0 p-0 text-[#1D2F58] font-bold text-left cursor-pointer
+                                <button onClick={() => setPreviewFile(file)} title={file.originalName} className="    bg-transparent border-0 p-0 text-[#1D2F58] font-semibold text-left cursor-pointer
                                 block truncate overflow-hidden text-ellipsis whitespace-nowrap
                                 w-[150px] sm:w-[180px] md:w-auto lg:w-auto ">
                                 {file.originalName}
@@ -491,9 +491,9 @@ const toggleBookmark = async (fileID) => {
 
                           <div className="w-44 flex-shrink-0 mt-1.5 text-left">
                             {/* Subject (uppercase) - label removed but value kept */}
-                            <p className="text-xs font-semibold mb-1 text-[#1D2F58] uppercase">{(file.subject?.name || "NO SUBJECT").toUpperCase()}</p>
+                            <p className="text-xs font-medium mb-1 text-[#1D2F58] uppercase">{(file.subject?.name || "NO SUBJECT").toUpperCase()}</p>
                             {/* Description value kept; label removed per requirement */}
-                            <p className="font-inter font-normal text-[15px] leading-[16px] text-[#1D2F58] break-words">{file.description || "No description"}</p>
+                            <p className="font-inter font-light text-[15px] leading-[16px] text-[#1D2F58] break-words">{file.description || "No description"}</p>
                           </div>
                         </div>
 
