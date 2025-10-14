@@ -138,7 +138,7 @@ export default function Profile() {
                 )}
               </div>
               {previewUrl && (
-                <p className="mt-1 lg:mt-2 text-xs text-gray-500">Click upload to save.</p>
+                <p className="mt-1 lg:mt-2 text-xs text-[#1D2F58]">Click upload to save.</p>
               )}
             </div>
           </div>
@@ -147,24 +147,24 @@ export default function Profile() {
           <div className="w-full lg:w-2/3 relative bg-white rounded-lg border py-3 px-4 lg:py-6 lg:px-9">
             <div>
               <div className="text-center lg:text-left">
-                <h2 className="text-2xl lg:text-4xl font-semibold text-[#103E93]">{profile.firstName} {profile.lastName}</h2>
-                <p className="text-sm lg:text-lg text-gray-700">{profile.email}</p>
+                <h2 className="text-2xl lg:text-4xl font-semibold text-[#1D2F58]">{profile.firstName} {profile.lastName}</h2>
+                <p className="text-sm lg:text-lg text-[#1D2F58]">{profile.email}</p>
               </div>
 
               {/* Username block: under the name/email and above the password section */}
               <div className="mt-3 lg:mt-6 border py-2 px-3 lg:py-3 lg:px-5">
-                <p className="text-sm lg:text-base font-medium">Username</p>
+                <p className="text-sm lg:text-base font-medium text-[#1D2F58]">Username</p>
                 {!showUsernameInput ? (
                   <div className="flex items-center gap-3 mt-2 justify-between">
-                    <p className="text-lg text-[#103E93]">{profile.username}</p>
-                    <button onClick={() => setShowUsernameInput(true)} className="px-3 py-1 bg-gray-100 rounded-md cursor-pointer">Change</button>
+                    <p className="text-lg text-[#1D2F58]">{profile.username}</p>
+                    <button onClick={() => setShowUsernameInput(true)} className="px-3 py-1 bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors rounded-md cursor-pointer">Change</button>
                   </div>
                 ) : (
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-2">
                     <input value={form.username} onChange={(e) => setForm(s => ({ ...s, username: e.target.value }))} className="p-3 border rounded-md text-lg w-full sm:flex-1" />
                     <div className="flex items-center gap-2">
-                      <button onClick={handleUsernameChange} className="flex-1 sm:flex-none px-3 py-1 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save</button>
-                      <button onClick={() => { setShowUsernameInput(false); setForm({ username: profile.username }); }} className="flex-1 sm:flex-none px-3 py-1 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
+                      <button onClick={handleUsernameChange} className="flex-1 sm:flex-none px-3 py-1 bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors rounded-md cursor-pointer">Save</button>
+                      <button onClick={() => { setShowUsernameInput(false); setForm({ username: profile.username }); }} className="flex-1 sm:flex-none px-3 py-1 rounded-md border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 cursor-pointer transition-colors">Cancel</button>
                     </div>
                   </div>
                 )}
@@ -173,29 +173,29 @@ export default function Profile() {
 
             <div className="mt-4 lg:mt-8">
               <div className="flex items-center justify-between border rounded-md py-2 px-3 lg:py-3 lg:px-5">
-                <h3 className="text-base lg:text-lg font-medium mb-0">Password</h3>
+                <h3 className="text-base lg:text-lg font-medium mb-0 text-[#1D2F58]">Password</h3>
                 {!showPasswordForm && (
-                  <button onClick={() => setShowPasswordForm(true)} className="px-2 py-1 lg:px-3 lg:py-2 text-sm lg:text-base bg-gray-100 rounded-md cursor-pointer">Change Password</button>
+                  <button onClick={() => setShowPasswordForm(true)} className="px-2 py-1 lg:px-3 lg:py-2 text-sm lg:text-base bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors rounded-md cursor-pointer">Change Password</button>
                 )}
               </div>
 
               {showPasswordForm && (
                 <div className="mt-2 lg:mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 max-w-lg px-3 lg:px-5">
                   <div>
-                    <label className="block text-xs lg:text-sm mb-1">Current Password</label>
-                    <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm(s => ({ ...s, currentPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md" />
+                    <label className="block text-xs lg:text-sm mb-1 text-[#1D2F58]">Current Password</label>
+                    <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm(s => ({ ...s, currentPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md text-[#1D2F58]" />
                   </div>
                   <div>
-                    <label className="block text-xs lg:text-sm mb-1">New Password</label>
-                    <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm(s => ({ ...s, newPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md" />
+                    <label className="block text-xs lg:text-sm mb-1 text-[#1D2F58]">New Password</label>
+                    <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm(s => ({ ...s, newPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md text-[#1D2F58]" />
                   </div>
                   <div>
-                    <label className="block text-xs lg:text-sm mb-1">Confirm New Password</label>
-                    <input type="password" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm(s => ({ ...s, confirmPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md" />
+                    <label className="block text-xs lg:text-sm mb-1 text-[#1D2F58]">Confirm New Password</label>
+                    <input type="password" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm(s => ({ ...s, confirmPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md text-[#1D2F58]" />
                   </div>
                   <div className="flex items-end gap-2">
-                    <button onClick={handlePasswordChange} className="px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-[#1D2F58] text-white rounded-md cursor-pointer">Save Password</button>
-                    <button onClick={() => setShowPasswordForm(false)} className="px-2 py-1.5 lg:px-3 lg:py-2 text-sm lg:text-base bg-gray-100 rounded-md cursor-pointer">Cancel</button>
+                    <button onClick={handlePasswordChange} className="px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors rounded-md cursor-pointer">Save Password</button>
+                    <button onClick={() => setShowPasswordForm(false)} className="px-2 py-1.5 lg:px-3 lg:py-2 text-sm lg:text-base rounded-md border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 cursor-pointer transition-colors">Cancel</button>
                   </div>
                 </div>
               )}

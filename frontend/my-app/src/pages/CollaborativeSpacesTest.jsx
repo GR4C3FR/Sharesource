@@ -175,7 +175,7 @@ export default function CollaborativeSpaces() {
               />
 
               <div className="flex justify-end gap-2 mt-4">
-                <button onClick={() => setEditingSpace(null)} className="px-3 py-2 rounded-md border text-[#1D2F58] hover:bg-gray-100">Cancel</button>
+                <button onClick={() => setEditingSpace(null)} className="px-3 py-2 rounded-md border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 cursor-pointer transition-colors">Cancel</button>
                 <button
                   onClick={async () => {
                     await saveEdit();
@@ -312,13 +312,13 @@ export default function CollaborativeSpaces() {
                   </div>
 
                   <form onSubmit={(e) => { handleCreate(e); setShowCreateModal(false); }} className="flex flex-col gap-3">
-                    <input type="text" placeholder="Space name" value={spaceName} onChange={(e) => setSpaceName(e.target.value)} required className="p-2 rounded-md border" />
-                    <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="p-2 rounded-md border" />
+                    <input type="text" placeholder="Space name" value={spaceName} onChange={(e) => setSpaceName(e.target.value)} required className="p-2 rounded-md border text-[#1D2F58]" />
+                    <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} className="p-2 rounded-md border text-[#1D2F58]" />
                     <div className="flex justify-end gap-2">
-                      <button type="button" onClick={() => setShowCreateModal(false)} className="px-3 py-2 rounded-md border cursor-pointer">
+                      <button type="button" onClick={() => setShowCreateModal(false)} className="px-3 py-2 rounded-md border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 cursor-pointer transition-colors">
                         Cancel
                       </button>
-                      <button type="submit" className="px-4 py-2 rounded-md bg-[#1D2F58] text-white cursor-pointer">
+                      <button type="submit" className="px-4 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer">
                         Create
                       </button>
                     </div>

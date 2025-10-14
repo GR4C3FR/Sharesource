@@ -393,8 +393,8 @@ export default function SpaceDetails() {
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
               <input type="text" value={desc} onChange={(e) => setDesc(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
               <div className="mt-4 flex justify-end gap-2">
-                <button onClick={() => setEditMode(false)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer text-[#1D2F58]">Cancel</button>
-                <button onClick={saveEdit} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save changes</button>
+                <button onClick={() => setEditMode(false)} className="px-3 py-2 rounded-md border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 cursor-pointer transition-colors">Cancel</button>
+                <button onClick={saveEdit} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer hover:bg-[#0f1f38] transition-colors">Save changes</button>
               </div>
             </div>
           </div>
@@ -410,7 +410,7 @@ export default function SpaceDetails() {
               <input placeholder="Short description (optional)" value={docDesc} onChange={(e) => setDocDesc(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
               <input placeholder="Google Docs link (must be shareable: Anyone with the link)" value={docLink} onChange={(e) => setDocLink(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
               <div className="mt-4 flex justify-end gap-2">
-                <button onClick={() => setShowAddDoc(false)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer text-[#1D2F58] hover:bg-gray-200">Cancel</button>
+                <button onClick={() => setShowAddDoc(false)} className="px-3 py-2 rounded-md border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 cursor-pointer transition-colors">Cancel</button>
                 <button onClick={addGoogleDoc} disabled={addingDoc} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer hover:bg-[#0f1f38] transition-colors">{addingDoc ? 'Adding...' : 'Add Document'}</button>
               </div>
             </div>
