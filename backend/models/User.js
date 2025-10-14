@@ -43,7 +43,7 @@ userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     { userId: this._id, email: this.email, role: this.role },
     process.env.JWT_SECRET || "defaultsecret",
-    { expiresIn: "1h" }
+    { expiresIn: "30d" }
   );
 };
 
