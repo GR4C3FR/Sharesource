@@ -27,7 +27,7 @@ function App() {
           isLoggedIn ? (
             <Navigate to="/homepage" />
           ) : (
-          <div className="w-full min-h-screen flex flex-col items-center justify-center px-4 mb-10">
+          <div className="w-full h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
             {/* Header */}
             <div className="w-full max-w-screen-xl flex flex-col sm:flex-row justify-between items-center space-y-6 sm:space-y-0 py-6 mb-2 sm:mb-6 relative z-50">
               {/* Logo Section (mobile: stacked & smaller; desktop: inline) */}
@@ -62,7 +62,7 @@ function App() {
               </section>
             </div>
             
-            <div className="w-full max-w-screen-xl min-h-[68vh] md:min-h-[75vh] flex flex-col lg:flex-row justify-between items-center gap-4 md:gap-6 px-4 text-[#1D2F58] text-center lg:text-left">
+            <div className="w-full max-w-screen-xl min-h-[68vh] md:min-h-[75vh] flex flex-col lg:flex-row justify-between items-center gap-4 md:gap-6 px-4 text-[#1D2F58] text-center lg:text-left -mt-8">
               <section className="flex flex-col gap-4 md:gap-6 flex-1 max-w-2xl items-center text-center sm:items-start sm:text-left">
                 <h1 className="inter-text font-normal text-3xl md:text-4xl lg:text-5xl leading-tight">
                   <span className="font-sans font-medium text-2xl md:text-4xl lg:text-5xl">
