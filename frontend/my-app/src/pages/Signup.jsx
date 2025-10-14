@@ -62,11 +62,11 @@ export default function Signup() {
         </section>
       </div>
 
-  <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-center justify-center px-4 -mt-8">
+  <main className="flex-1 w-full max-w-screen-xl mx-auto flex items-start justify-center px-4 pt-4">
       <div className="w-full max-w-xl flex flex-col my-0 sm:mt-0">
-        <section className="mb-6 w-full px-4 sm:px-0">
-                <h1 className="inter-text font-normal text-2xl sm:text-[36px] leading-tight mb-3 text-[#1D2F58]">Sign Up</h1>
-                <p className="inter-text font-normal text-sm sm:text-[16px] leading-[16px] text-[#1D2F58]">Ready to collaborate? Let’s get you started.</p>
+        <section className="mb-6">
+                <h1 className="inter-text font-normal text-2xl sm:text-3xl leading-tight mb-2 text-[#1D2F58] text-center sm:text-left">Sign Up</h1>
+                <p className="inter-text font-normal text-xs sm:text-sm leading-[16px] text-[#1D2F58] text-center sm:text-left">Ready to collaborate? Let's get you started.</p>
               </section>
 
         <section className="flex bg-[#1D2F58] rounded-[8px] shadow-[0_0_10px_rgba(0,0,0,0.15)] p-4 sm:p-6 w-full">
