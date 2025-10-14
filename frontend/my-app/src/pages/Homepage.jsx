@@ -403,19 +403,8 @@ const toggleBookmark = async (fileID) => {
                 >
                   Clear Filters
                 </button>
-
-                {/* Admin: Manage Subjects button kept here for convenience */}
               </div>
             </div>
-            {/* Admin: Manage Subjects button */}
-            {profile?.role === 'Admin' && (
-              <div className="ml-3">
-                <button onClick={openManageSubjects} className="px-3 py-1.5 bg-[#1D2F58] text-white border-0 rounded-md hover:bg-[#0f1f38] transition-colors">
-                  Manage Subjects
-                </button>
-              </div>
-            )}
-            
           </div>
           </div>
 

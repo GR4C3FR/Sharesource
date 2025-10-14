@@ -209,7 +209,7 @@ export default function SpaceDetails() {
             </div>
 
             {/* Shared files in center column */}
-            <section className="flex flex-col flex-1 min-h-0">
+            <section className="flex flex-col flex-1 min-h-0 pb-6 md:pb-0">
               <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between mb-5 gap-3">
                 <h3 className="text-lg text-[#1D2F58] font-medium w-full md:w-auto text-center md:text-left">Shared Files</h3>
 

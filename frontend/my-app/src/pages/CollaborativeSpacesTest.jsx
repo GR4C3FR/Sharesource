@@ -263,14 +263,14 @@ export default function CollaborativeSpaces() {
                           </div>
 
                           <div className="flex flex-col items-end justify-end gap-2">
-                            <div className="flex gap-2">
-                              <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer">
+                            <div className="flex flex-col sm:flex-row gap-2">
+                              <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer whitespace-nowrap">
                                 View Space
                               </button>
-                              <button onClick={() => startEdit(space)} className="px-3 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer">
+                              <button onClick={() => startEdit(space)} className="px-3 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer">
                                 Edit
                               </button>
-                              <button onClick={() => handleLeave(space._id)} className="px-3 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer">
+                              <button onClick={() => handleLeave(space._id)} className="px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer">
                                 Leave
                               </button>
                             </div>
@@ -378,8 +378,8 @@ export default function CollaborativeSpaces() {
                             )}
 
                             {profile?.role === "Admin" && (
-                              <>
-                                <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 py-1 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors">
+                              <div className="flex flex-col sm:flex-row gap-2">
+                                <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors whitespace-nowrap">
                                   View Space
                                 </button>
                                 <button
@@ -397,11 +397,11 @@ export default function CollaborativeSpaces() {
                                       setLoading(false);
                                     }
                                   }}
-                                  className="px-3 py-1 rounded-md bg-red-600 text-white"
+                                  className="px-3 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
                                 >
                                   Delete
                                 </button>
-                              </>
+                              </div>
                             )}
                           </div>
                         </div>
