@@ -353,9 +353,9 @@ export default function MyFiles() {
                             </div>
 
                             <div className="flex flex-col items-end gap-3">
-                              <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-[8em]">Download</button>
+                              <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer w-[8em]">Download</button>
                               {(file.user?._id === userId || profile?.role === 'Admin') && (
-                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-[8em]">Delete</button>
+                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer w-[8em]">Delete</button>
                               )}
                             </div>
                           </div>

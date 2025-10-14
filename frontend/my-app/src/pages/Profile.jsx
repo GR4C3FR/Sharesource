@@ -134,7 +134,7 @@ export default function Profile() {
               <div className="flex items-center justify-center gap-2 lg:gap-3">
                 <button onClick={handleImageUpload} className="px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-[#1D2F58] text-white rounded-md cursor-pointer">Upload</button>
                 {profile.profileImageURL && (
-                  <button onClick={handleRemoveImage} className="px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-red-600 text-white rounded-md cursor-pointer">Remove</button>
+                  <button onClick={handleRemoveImage} className="px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-red-600 text-white hover:bg-red-700 transition-colors rounded-md cursor-pointer">Remove</button>
                 )}
               </div>
               {previewUrl && (
@@ -216,7 +216,7 @@ export default function Profile() {
                     </div>
 
                     <div className="w-full sm:w-auto">
-                      <button onClick={handleDeleteProfile} className="w-full sm:w-auto px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
+                      <button onClick={handleDeleteProfile} className="w-full sm:w-auto px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-red-600 text-white hover:bg-red-700 transition-colors rounded-md cursor-pointer">Delete</button>
                     </div>
                   </div>
                 </div>

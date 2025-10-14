@@ -291,7 +291,7 @@ export default function SpaceDetails() {
                                       console.error('Failed to delete google doc', err);
                                       alert(err?.response?.data?.message || 'Failed to delete');
                                     }
-                                  }} className="px-3 py-1 bg-red-600 text-white rounded-md">Delete</button>
+                                  }} className="px-3 py-1 bg-red-600 text-white hover:bg-red-700 transition-colors rounded-md cursor-pointer">Delete</button>
                                 </div>
                               )}
                             </div>
@@ -369,7 +369,7 @@ export default function SpaceDetails() {
                         console.error('Failed to delete space', err);
                         alert(err?.response?.data?.message || 'Failed to delete space');
                       }
-                    }} className="w-full px-3 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete Space</button>
+                    }} className="w-full px-3 py-2 bg-red-600 text-white hover:bg-red-700 transition-colors rounded-md cursor-pointer">Delete Space</button>
                   </div>
                 )}
 

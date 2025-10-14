@@ -75,23 +75,23 @@ export default function CommentsSection({ fileId, userId }) {
         <button type="submit" disabled={loading} className="px-3 py-1 -mt-1 rounded-md bg-[#1D2F58] text-[14px] text-white hover:bg-[#16325a] focus:outline-none focus:ring-2 focus:ring-[#103E93] cursor-pointer">{loading ? "Posting..." : "Post Comment"}</button>
       </form>
 
-      <h4 className="mb-2 mt-4 text-sm font-medium">Comments</h4>
+      <h4 className="mb-2 mt-4 text-sm font-medium text-[#1D2F58]">Comments</h4>
       {comments.length === 0 ? (
-        <p className="text-sm text-gray-600">No comments yet.</p>
+        <p className="text-sm text-[#1D2F58]">No comments yet.</p>
       ) : (
         comments.map((comment) => (
           <div key={comment._id} className="bg-white border rounded-md p-3 mb-2 shadow-sm">
             <div className="mb-1 flex items-center justify-between">
               <div>
-                <strong className="text-sm text-[#103E93]">{comment.userId?.username || comment.userId?.email || "Unknown"}</strong>
-                <small className="ml-2 text-xs text-gray-500">{new Date(comment.createdAt).toLocaleString()}</small>
+                <strong className="text-sm text-[#1D2F58]">{comment.userId?.username || comment.userId?.email || "Unknown"}</strong>
+                <small className="ml-2 text-xs text-[#1D2F58]">{new Date(comment.createdAt).toLocaleString()}</small>
               </div>
               {comment.userId?._id === userId && (
-                <button onClick={() => handleDeleteComment(comment._id)} className="px-2 py-0.5 rounded-md text-red-500 underline text-xs cursoer-pointer">Delete Comment</button>
+                <button onClick={() => handleDeleteComment(comment._id)} className="px-2 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors text-xs cursor-pointer">Delete</button>
               )}
             </div>
 
-            <div className="mb-1 text-sm text-gray-800">{comment.text}</div>
+            <div className="mb-1 text-sm text-[#1D2F58]">{comment.text}</div>
           </div>
         ))
       )}

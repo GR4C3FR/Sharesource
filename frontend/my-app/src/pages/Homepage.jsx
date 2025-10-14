@@ -375,8 +375,8 @@ const toggleBookmark = async (fileID) => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col">
-                  <label className="text-xs text-gray-600 mb-1">Filter by Subject</label>
-                  <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                  <label className="text-xs text-[#1D2F58] mb-1">Filter by Subject</label>
+                  <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)} className="p-2 rounded-md border bg-white text-sm text-[#1D2F58]">
                     <option value="">All Subjects</option>
                     {subjects.map((subj) => (
                       <option key={subj._id} value={subj._id}>{subj.name}</option>
@@ -385,8 +385,8 @@ const toggleBookmark = async (fileID) => {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="text-xs text-gray-600 mb-1">Sort by</label>
-                  <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                  <label className="text-xs text-[#1D2F58] mb-1">Sort by</label>
+                  <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm text-[#1D2F58]">
                     <option value="newest">Newest - Oldest</option>
                     <option value="oldest">Oldest - Newest</option>
                   </select>
@@ -399,7 +399,7 @@ const toggleBookmark = async (fileID) => {
                     setFilterSubject("");
                     setSortOption("newest");
                   }}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer"
                 >
                   Clear Filters
                 </button>
@@ -423,7 +423,7 @@ const toggleBookmark = async (fileID) => {
           <div className="overflow-hidden bg-transparent py-1 mb-10 min-h-0">
             <div className="overflow-y-auto max-h-[65vh] pr-2 mb-10 min-h-0">
               {displayedFiles.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-gray-500">No matching files.</div>
+                <div className="flex items-center justify-center h-full text-[#1D2F58]">No matching files.</div>
               ) : (
                 displayedFiles.map((file) => (
                   <div key={file._id} className="relative py-5 px-5 bg-white mb-4 rounded-lg shadow-md">
@@ -504,13 +504,13 @@ const toggleBookmark = async (fileID) => {
                       <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-start justify-between">
                         <div className="flex flex-col">
                           <RatingSection itemId={file._id} userId={profile?._id} showAverageOnly liveAverage={fileAverages[file._id]} onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
-                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-gray-700">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
+                          <button onClick={() => toggleComments(file._id)} className="mt-2 text-sm text-[#1D2F58]">{openComments[file._id] ? "Hide Comments & Ratings" : "Show Comments & Ratings"}</button>
                         </div>
 
                         <div className="flex flex-col items-start sm:items-end gap-3 mt-3 sm:mt-0 w-full sm:w-auto">
-                          <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-green-50 border border-green-100 cursor-pointer w-full sm:w-[8em]">Download</button>
+                          <button onClick={() => downloadFile(file.filename )} className="px-3 py-1 text-sm rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer w-full sm:w-[8em]">Download</button>
                               {(file.user?._id === profile?._id || profile?.role === 'Admin') && (
-                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-50 border border-red-100 text-red-700 cursor-pointer w-full sm:w-[8em]">Delete</button>
+                                <button onClick={() => handleDeleteFile(file._id)} className="px-3 py-1 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer w-full sm:w-[8em]">Delete</button>
                               )}
                         </div>
                       </div>
@@ -569,7 +569,7 @@ const toggleBookmark = async (fileID) => {
             <div className="relative z-70 w-full max-w-2xl bg-white rounded-lg shadow-xl px-8 py-10">
               <div className="flex items-center justify-between mb-7">
                 <h3 className="text-lg font-medium text-[#1D2F58]">Upload a File</h3>
-                <button onClick={() => setShowUploadModal(false)} className="text-[#1D2F58] hover:text-gray-700 cursor-pointer">Close</button>
+                <button onClick={() => setShowUploadModal(false)} className="text-[#1D2F58] hover:text-[#0f1f38] cursor-pointer">Close</button>
               </div>
 
                 <form onSubmit={(e) => { handleFileUpload(e); setShowUploadModal(false); }}>

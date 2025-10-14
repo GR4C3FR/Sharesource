@@ -59,7 +59,7 @@ export default function RatingSection({
     return (
       <div className="flex items-center gap-2 geologica text-sm">
         {/* show no decimals when average is a whole number, otherwise one decimal */}
-        <span className="font-medium text-sm text-[#103E93]">{Number.isInteger(average) ? average : average.toFixed(1)} / 5</span>
+        <span className="font-medium text-sm text-[#1D2F58]">{Number.isInteger(average) ? average : average.toFixed(1)} / 5</span>
         <img src="/star-logo.png" className="w-5 h-5" alt="star" />
       </div>
     );
@@ -67,7 +67,7 @@ export default function RatingSection({
 
   return (
     <div className="mt-2">
-      <h4 className="mb-1 text-sm font-medium">Rate this File</h4>
+      <h4 className="mb-1 text-sm font-medium text-[#1D2F58]">Rate this File</h4>
       <div className="flex gap-2 items-center text-2xl">
         {[1, 2, 3, 4, 5].map((val) => (
           <button
@@ -83,7 +83,7 @@ export default function RatingSection({
         ))}
       </div>
       {rating > 0 && (
-        <p className="mt-1 text-sm text-gray-600">Your Rating: {rating} / 5</p>
+        <p className="mt-1 text-sm text-[#1D2F58]">Your Rating: {rating} / 5</p>
       )}
     </div>
   );
