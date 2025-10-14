@@ -113,48 +113,47 @@ export default function Profile() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-screen-xl px-4 -mt-5 lg:pt-6 min-h-screen">
-        <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">Profile</h1>
-        <div className="flex flex-col lg:flex-row gap-8">
+      <div className="mx-auto w-full max-w-screen-xl px-4 -mt-8 lg:pt-6 min-h-screen overflow-hidden lg:overflow-auto">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
           {/* Left: Avatar + controls */}
           <div className="w-full lg:w-1/3 flex flex-col items-center">
             <div className="relative group">
               {previewUrl ? (
-                <img src={previewUrl} alt="preview" className="w-40 h-40 rounded-full object-cover" />
+                <img src={previewUrl} alt="preview" className="w-24 h-24 lg:w-40 lg:h-40 rounded-full object-cover" />
               ) : (
-                <Avatar user={profile} size={160} className="rounded-full" />
+                <Avatar user={profile} size={96} className="rounded-full lg:w-40 lg:h-40" />
               )}
 
               <label htmlFor="profile-pic-input" className="absolute inset-0 bg-black/0 group-hover:bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl text-[#1D2F58] font-bold">+</div>
+                <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded-full flex items-center justify-center text-lg lg:text-xl text-[#1D2F58] font-bold">+</div>
               </label>
               <input id="profile-pic-input" type="file" accept="image/*" className="hidden" onChange={(e) => setImageFile(e.target.files[0])} />
             </div>
 
-            <div className="w-full mt-4 text-center ">
-              <div className="flex items-center justify-center gap-3">
-                <button onClick={handleImageUpload} className="px-4 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">Upload</button>
+            <div className="w-full mt-2 lg:mt-4 text-center ">
+              <div className="flex items-center justify-center gap-2 lg:gap-3">
+                <button onClick={handleImageUpload} className="px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-[#1D2F58] text-white rounded-md cursor-pointer">Upload</button>
                 {profile.profileImageURL && (
-                  <button onClick={handleRemoveImage} className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Remove</button>
+                  <button onClick={handleRemoveImage} className="px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-red-600 text-white rounded-md cursor-pointer">Remove</button>
                 )}
               </div>
               {previewUrl && (
-                <p className="mt-2 text-xs text-gray-500">Click upload to save.</p>
+                <p className="mt-1 lg:mt-2 text-xs text-gray-500">Click upload to save.</p>
               )}
             </div>
           </div>
 
           {/* Right: Profile details */}
-          <div className="w-full lg:w-2/3 relative bg-white rounded-lg border py-6 px-9">
+          <div className="w-full lg:w-2/3 relative bg-white rounded-lg border py-3 px-4 lg:py-6 lg:px-9">
             <div>
               <div className="text-center lg:text-left">
-                <h2 className="text-4xl font-semibold text-[#103E93]">{profile.firstName} {profile.lastName}</h2>
-                <p className="text-lg text-gray-700">{profile.email}</p>
+                <h2 className="text-2xl lg:text-4xl font-semibold text-[#103E93]">{profile.firstName} {profile.lastName}</h2>
+                <p className="text-sm lg:text-lg text-gray-700">{profile.email}</p>
               </div>
 
               {/* Username block: under the name/email and above the password section */}
-              <div className="mt-6 border py-3 px-5">
-                <p className="text-base font-medium">Username</p>
+              <div className="mt-3 lg:mt-6 border py-2 px-3 lg:py-3 lg:px-5">
+                <p className="text-sm lg:text-base font-medium">Username</p>
                 {!showUsernameInput ? (
                   <div className="flex items-center gap-3 mt-2 justify-between">
                     <p className="text-lg text-[#103E93]">{profile.username}</p>
@@ -172,31 +171,31 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="mt-8">
-              <div className="flex items-center justify-between border rounded-md py-3 px-5">
-                <h3 className="text-lg font-medium mb-2 lg:mb-0">Password</h3>
+            <div className="mt-4 lg:mt-8">
+              <div className="flex items-center justify-between border rounded-md py-2 px-3 lg:py-3 lg:px-5">
+                <h3 className="text-base lg:text-lg font-medium mb-0">Password</h3>
                 {!showPasswordForm && (
-                  <button onClick={() => setShowPasswordForm(true)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Change Password</button>
+                  <button onClick={() => setShowPasswordForm(true)} className="px-2 py-1 lg:px-3 lg:py-2 text-sm lg:text-base bg-gray-100 rounded-md cursor-pointer">Change Password</button>
                 )}
               </div>
 
               {showPasswordForm && (
-                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg 3 px-5">
+                <div className="mt-2 lg:mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 max-w-lg px-3 lg:px-5">
                   <div>
-                    <label className="block text-sm mb-1">Current Password</label>
-                    <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm(s => ({ ...s, currentPassword: e.target.value }))} className="w-full p-2 border rounded-md" />
+                    <label className="block text-xs lg:text-sm mb-1">Current Password</label>
+                    <input type="password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm(s => ({ ...s, currentPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md" />
                   </div>
                   <div>
-                    <label className="block text-sm mb-1">New Password</label>
-                    <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm(s => ({ ...s, newPassword: e.target.value }))} className="w-full p-2 border rounded-md" />
+                    <label className="block text-xs lg:text-sm mb-1">New Password</label>
+                    <input type="password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm(s => ({ ...s, newPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md" />
                   </div>
                   <div>
-                    <label className="block text-sm mb-1">Confirm New Password</label>
-                    <input type="password" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm(s => ({ ...s, confirmPassword: e.target.value }))} className="w-full p-2 border rounded-md" />
+                    <label className="block text-xs lg:text-sm mb-1">Confirm New Password</label>
+                    <input type="password" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm(s => ({ ...s, confirmPassword: e.target.value }))} className="w-full p-1.5 lg:p-2 text-sm lg:text-base border rounded-md" />
                   </div>
-                  <div className="flex items-end">
-                    <button onClick={handlePasswordChange} className="px-4 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save Password</button>
-                    <button onClick={() => setShowPasswordForm(false)} className="ml-2 px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
+                  <div className="flex items-end gap-2">
+                    <button onClick={handlePasswordChange} className="px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-[#1D2F58] text-white rounded-md cursor-pointer">Save Password</button>
+                    <button onClick={() => setShowPasswordForm(false)} className="px-2 py-1.5 lg:px-3 lg:py-2 text-sm lg:text-base bg-gray-100 rounded-md cursor-pointer">Cancel</button>
                   </div>
                 </div>
               )}
@@ -204,20 +203,20 @@ export default function Profile() {
             {/* Danger Zone aligned under the right column (aligned with header signout) 
             NOTE: hidden for Admin users per admin-profile UI requirement */}
             {profile?.role !== 'Admin' && (
-              <div className="mt-20 w-full border py-3 px-5 rounded-md mb-5">
+              <div className="mt-4 lg:mt-20 w-full border py-2 px-3 lg:py-3 lg:px-5 rounded-md mb-2 lg:mb-5">
                 {/* empty left column aligns with avatar column */}
                 <div className="lg:col-span-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-md gap-4">
-                    <div className="flex items-start gap-4">
-                      <img src="/delete-icon.png" alt="trash" className="w-10 h-10 text-red-600 flex-shrink-0" />
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 lg:p-4 rounded-md gap-3 lg:gap-4">
+                    <div className="flex items-start gap-2 lg:gap-4">
+                      <img src="/delete-icon.png" alt="trash" className="w-8 h-8 lg:w-10 lg:h-10 text-red-600 flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-base font-semibold text-red-600">DELETE MY ACCOUNT</p>
-                        <p className="text-sm text-red-500 break-words">Say goodbye to your account and exit all workspaces.</p>
+                        <p className="text-sm lg:text-base font-semibold text-red-600">DELETE MY ACCOUNT</p>
+                        <p className="text-xs lg:text-sm text-red-500 break-words">Say goodbye to your account and exit all workspaces.</p>
                       </div>
                     </div>
 
                     <div className="w-full sm:w-auto">
-                      <button onClick={handleDeleteProfile} className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
+                      <button onClick={handleDeleteProfile} className="w-full sm:w-auto px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
                     </div>
                   </div>
                 </div>
