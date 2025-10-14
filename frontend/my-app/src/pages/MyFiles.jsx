@@ -237,7 +237,7 @@ export default function MyFiles() {
   return (
     <AppShell>
       <div className="mx-auto w-full px-4 min-h-screen -mt-5 lg:pt-0 lg:max-w-screen-xl">
-        <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">My Files</h1>
+        <h1 className="block sm:hidden text-2xl font-semibold text-[#1D2F58] mb-4">My Files</h1>
         <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
           <div className="w-full lg:flex-1">
             {/* Search + Filters (CSS-only toggle like Bookmarks/Homepage) */}
@@ -258,24 +258,24 @@ export default function MyFiles() {
               <div className="filter-panel absolute left-0 mt-2 w-full z-50 transform origin-top scale-y-0 peer-checked:scale-y-100 peer-checked:block hidden bg-white rounded-lg shadow-2xl p-4 py-6 border">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-[#103E93]">Filters & Sorting</h4>
+                    <h4 className="text-sm font-semibold text-[#1D2F58]">Filters & Sorting</h4>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col">
-                      <label className="text-xs text-gray-600 mb-1">Filter by Subject</label>
-                      <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                      <label className="text-xs text-[#1D2F58] mb-1">Filter by Subject</label>
+                      <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)} className="p-2 rounded-md border bg-white text-sm text-[#1D2F58]">
                         <option value="">All Subjects</option>
                         {Array.from(new Set(files.map(f => f.subject?._id))).map(subjId => {
                           const subjName = files.find(f => f.subject?._id === subjId)?.subject?.name || "No subject";
                           return <option key={subjId} value={subjId}>{subjName}</option>;
                         })}
                       </select>
-                    </div>
+                      </div>
 
-                    <div className="flex flex-col">
-                      <label className="text-xs text-gray-600 mb-1">Sort by</label>
-                      <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                      <div className="flex flex-col">
+                      <label className="text-xs text-[#1D2F58] mb-1">Sort by</label>
+                      <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm text-[#1D2F58]">
                         <option value="newest">Newest - Oldest</option>
                         <option value="oldest">Oldest - Newest</option>
                       </select>
@@ -288,7 +288,7 @@ export default function MyFiles() {
                         setFilterSubject("");
                         setSortOption("newest");
                       }}
-                      className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200"
+                      className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer"
                     >
                       Clear Filters
                     </button>
@@ -395,7 +395,7 @@ export default function MyFiles() {
             <div className="relative z-70 w-full max-w-2xl bg-white rounded-lg shadow-xl px-8 py-10">
               <div className="flex items-center justify-between mb-7">
                 <h3 className="text-lg font-medium">Upload a File</h3>
-                <button onClick={() => setShowUploadModal(false)} className="text-gray-500 hover:text-gray-700 cursor-pointer">Close</button>
+                <button onClick={() => setShowUploadModal(false)} className="text-[#1D2F58] hover:text-[#0f1f38] cursor-pointer">Close</button>
               </div>
 
                 <form onSubmit={(e) => { handleFileUpload(e); setShowUploadModal(false); }}>
@@ -403,7 +403,7 @@ export default function MyFiles() {
                     type="file"
                     onChange={(e) => setSelectedFile(e.target.files[0])}
                     accept=".pdf,.doc,.docx,.txt"
-                    className="block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#1D2F58] file:text-white hover:file:bg-[#103E93] mb-5"
+                    className="block w-full text-sm text-[#1D2F58] border rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#1D2F58] file:text-white hover:file:bg-[#0f1f38] mb-5"
                   />
 
                   <div className="mt-4">
@@ -452,7 +452,7 @@ export default function MyFiles() {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       required
-                      className="w-full p-2 rounded-md border text-[#103E93] focus:ring-2 focus:ring-[#103E93] focus:outline-none"
+                      className="w-full p-2 rounded-md border text-[#1D2F58] focus:ring-2 focus:ring-[#1D2F58] focus:outline-none"
                     />
                   </div>
 
@@ -460,7 +460,7 @@ export default function MyFiles() {
                     <button
                       type="button"
                       onClick={() => setShowUploadModal(false)}
-                      className="mr-2 px-4 py-2 rounded-md border border-[#1D2F58] text-[#103E93] hover:bg-gray-100 cursor-pointer transition-colors"
+                      className="mr-2 px-4 py-2 rounded-md border border-[#1D2F58] text-[#1D2F58] hover:bg-gray-100 cursor-pointer transition-colors"
                     >
                       Cancel
                     </button>
