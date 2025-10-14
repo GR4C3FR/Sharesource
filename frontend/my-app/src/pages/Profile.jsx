@@ -207,17 +207,17 @@ export default function Profile() {
               <div className="mt-20 w-full border py-3 px-5 rounded-md mb-5">
                 {/* empty left column aligns with avatar column */}
                 <div className="lg:col-span-2">
-                  <div className="flex items-center justify-between p-4 rounded-md">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 rounded-md gap-4">
                     <div className="flex items-start gap-4">
-                      <img src="/delete-icon.png" alt="trash" className="w-10 h-10 text-red-600" />
-                      <div>
+                      <img src="/delete-icon.png" alt="trash" className="w-10 h-10 text-red-600 flex-shrink-0" />
+                      <div className="min-w-0">
                         <p className="text-base font-semibold text-red-600">DELETE MY ACCOUNT</p>
-                        <p className="text-sm text-red-500">Say goodbye to your account and exit all workspaces.</p>
+                        <p className="text-sm text-red-500 break-words">Say goodbye to your account and exit all workspaces.</p>
                       </div>
                     </div>
 
-                    <div>
-                      <button onClick={handleDeleteProfile} className="px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
+                    <div className="w-full sm:w-auto">
+                      <button onClick={handleDeleteProfile} className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md cursor-pointer">Delete</button>
                     </div>
                   </div>
                 </div>
