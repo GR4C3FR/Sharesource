@@ -64,7 +64,7 @@ export default function GoogleDocView() {
           {/* Main centered embed */}
           <main className="flex-1 h-full min-h-0 flex flex-col">
             <div className="mb-5">
-              <button onClick={() => navigate(`/spaces/${spaceId}`)} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm cursor-pointer hover:bg-gray-50">
+              <button onClick={() => navigate(`/spaces/${spaceId}`)} className="inline-flex items-center gap-2 text-sm text-[#1D2F58] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm cursor-pointer hover:bg-gray-50">
                 <img src="/back-logo.png" className="h-4 w-4"/>
                 Back to Shared Files
                 </button>
@@ -72,9 +72,9 @@ export default function GoogleDocView() {
 
             {/* Compact doc header above the embed: title -> description -> uploader */}
             <div className="mb-5">
-              <h2 className="text-lg font-semibold truncate text-[24px]">{doc.title}</h2>
-              {doc.description && <p className="text-sm text-gray-600 mt-1 text-[14px]">{doc.description}</p>}
-              {doc.createdBy && <div className="text-xs text-gray-500 mt-1 text-[14px]">Added by: {doc.createdBy.username || doc.createdBy.email}</div>}
+              <h2 className="text-lg font-semibold truncate text-[24px] text-[#1D2F58]">{doc.title}</h2>
+              {doc.description && <p className="text-sm text-[#1D2F58] mt-1 text-[14px]">{doc.description}</p>}
+              {doc.createdBy && <div className="text-xs text-[#1D2F58] mt-1 text-[14px]">Added by: {doc.createdBy.username || doc.createdBy.email}</div>}
             </div>
 
               <div className="flex-1 min-h-0 flex flex-col mb-10">

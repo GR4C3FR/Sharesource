@@ -148,7 +148,7 @@ export default function SpaceDetails() {
   <div className="flex flex-col lg:flex-row items-start gap-6">
           <div className="w-full lg:flex-1 flex flex-col min-h-0">
             <div className="mb-6">
-              <button onClick={() => navigate('/spaces')} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50 cursor-pointer">
+              <button onClick={() => navigate('/spaces')} className="inline-flex items-center gap-2 text-sm text-[#1D2F58] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50 cursor-pointer">
                 <img src="/back-logo.png" className="h-4 w-4"/>
                 Back to Spaces
               </button>
@@ -165,23 +165,23 @@ export default function SpaceDetails() {
                     </div>
                   )}
                 </section>
-                <h2 className="text-lg font-semibold">{space.spaceName}</h2>
-                <p className="text-sm text-gray-600 mt-2">{space.description}</p>
+                <h2 className="text-lg font-semibold text-[#1D2F58]">{space.spaceName}</h2>
+                <p className="text-sm text-[#1D2F58] mt-2">{space.description}</p>
               </div>
 
               <div className="p-4 border rounded-md bg-white shadow-sm mb-4">
                 <div onClick={() => setShowMembersDropdown(s => !s)} className="flex items-center justify-between cursor-pointer">
-                    <h3 className="font-medium">Members</h3>
-                    <div className="text-sm text-gray-500">{space.members?.length || 0} ▾</div>
+                    <h3 className="font-medium text-[#1D2F58]">Members</h3>
+                    <div className="text-sm text-[#1D2F58]">{space.members?.length || 0} ▾</div>
                   </div>
                   {showMembersDropdown && (
                   <div className="mt-3 max-h-40 overflow-y-auto space-y-2">
                     {space.members?.length > 0 ? space.members.map((m) => (
-                      <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm">
+                      <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm text-[#1D2F58]">
                         <div>{m.userId?.username || m.userId?.email || 'Unknown User'}</div>
-                        <div className="text-xs text-gray-500">{m.role}</div>
+                        <div className="text-xs text-[#1D2F58]">{m.role}</div>
                       </div>
-                    )) : <div className="text-sm text-gray-600">No members yet</div>}
+                    )) : <div className="text-sm text-[#1D2F58]">No members yet</div>}
                   </div>
                 )}
               </div>
@@ -228,19 +228,19 @@ export default function SpaceDetails() {
                   <div className="filter-panel absolute right-0 mt-2 w-[260px] z-50 transform origin-top scale-y-0 peer-checked:scale-y-100 peer-checked:block hidden bg-white rounded-lg shadow-2xl p-3 border">
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold text-[#103E93]">Filters & Sorting</h4>
+                        <h4 className="text-sm font-semibold text-[#1D2F58]">Filters & Sorting</h4>
                       </div>
 
                       <div className="flex flex-col">
-                        <label className="text-xs text-gray-600 mb-1">Sort by</label>
-                        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                        <label className="text-xs text-[#1D2F58] mb-1">Sort by</label>
+                        <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm text-[#1D2F58]">
                           <option value="newest">Newest - Oldest</option>
                           <option value="oldest">Oldest - Newest</option>
                         </select>
                       </div>
 
                       <div className="flex items-center justify-between mt-2">
-                        <button onClick={() => setSortOption('newest')} className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200">Clear Filters</button>
+                        <button onClick={() => setSortOption('newest')} className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-[#1D2F58] text-white hover:bg-[#0f1f38]">Clear Filters</button>
                       </div>
                     </div>
                   </div>
@@ -272,9 +272,9 @@ export default function SpaceDetails() {
                               />
 
                               <div onClick={() => navigate(`/spaces/${spaceId}/docs/${d._id}`)} className="cursor-pointer">
-                                <h4 className="text-md font-semibold">{d.title}</h4>
-                                <p className="text-sm text-gray-600 mt-2">{d.description || "No description"}</p>
-                                <small className="text-xs text-gray-500">Added: {new Date(d.createdAt).toLocaleString()}</small>
+                                <h4 className="text-md font-semibold text-[#1D2F58]">{d.title}</h4>
+                                <p className="text-sm text-[#1D2F58] mt-2">{d.description || "No description"}</p>
+                                <small className="text-xs text-[#1D2F58]">Added: {new Date(d.createdAt).toLocaleString()}</small>
                               </div>
 
                               {(space.members?.some(m => String(m.userId?._id || m.userId) === String(localStorage.getItem('userId'))) || profile?.role === 'Admin') && (
@@ -298,7 +298,7 @@ export default function SpaceDetails() {
                           ))}
                       </div>
                     ) : (
-                      <p className="mt-2 text-sm text-gray-600">No Google Docs shared yet.</p>
+                      <p className="mt-2 text-sm text-[#1D2F58]">No Google Docs shared yet.</p>
                     );
                   })()}
                   </div>
@@ -319,23 +319,23 @@ export default function SpaceDetails() {
                     </div>
                   )}
                 </section>
-                <h2 className="text-lg font-semibold">{space.spaceName}</h2>
-                <p className="text-sm text-gray-600 mt-2">{space.description}</p>
+                <h2 className="text-lg font-semibold text-[#1D2F58]">{space.spaceName}</h2>
+                <p className="text-sm text-[#1D2F58] mt-2">{space.description}</p>
               </div>
 
               <div className="p-4 border rounded-md bg-white shadow-sm mb-7">
                 <div onClick={() => setShowMembersDropdown(s => !s)} className="flex items-center justify-between cursor-pointer">
-                    <h3 className="font-medium">Members</h3>
-                    <div className="text-sm text-gray-500">{space.members?.length || 0} ▾</div>
+                    <h3 className="font-medium text-[#1D2F58]">Members</h3>
+                    <div className="text-sm text-[#1D2F58]">{space.members?.length || 0} ▾</div>
                   </div>
                   {showMembersDropdown && (
                   <div className="mt-3 max-h-40 overflow-y-auto space-y-2">
                     {space.members?.length > 0 ? space.members.map((m) => (
-                      <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm">
+                      <div key={m.userId?._id || m.userId} className="flex items-center justify-between text-sm text-[#1D2F58]">
                         <div>{m.userId?.username || m.userId?.email || 'Unknown User'}</div>
-                        <div className="text-xs text-gray-500">{m.role}</div>
+                        <div className="text-xs text-[#1D2F58]">{m.role}</div>
                       </div>
-                    )) : <div className="text-sm text-gray-600">No members yet</div>}
+                    )) : <div className="text-sm text-[#1D2F58]">No members yet</div>}
                   </div>
                 )}
               </div>
@@ -382,12 +382,12 @@ export default function SpaceDetails() {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black opacity-30" onClick={() => setEditMode(false)} />
             <div className="relative z-10 w-full max-w-lg bg-white rounded-md shadow-lg p-6">
-              <h2 className="text-xl font-semibold">Edit Space</h2>
-              <p className="text-sm text-gray-500 mt-1">Change the space name and description below.</p>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
-              <input type="text" value={desc} onChange={(e) => setDesc(e.target.value)} className="block w-full mt-3 p-2 border rounded-md" />
+              <h2 className="text-xl font-semibold text-[#1D2F58]">Edit Space</h2>
+              <p className="text-sm text-[#1D2F58] mt-1">Change the space name and description below.</p>
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
+              <input type="text" value={desc} onChange={(e) => setDesc(e.target.value)} className="block w-full mt-3 p-2 border rounded-md text-[#1D2F58]" />
               <div className="mt-4 flex justify-end gap-2">
-                <button onClick={() => setEditMode(false)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer">Cancel</button>
+                <button onClick={() => setEditMode(false)} className="px-3 py-2 bg-gray-100 rounded-md cursor-pointer text-[#1D2F58]">Cancel</button>
                 <button onClick={saveEdit} className="px-3 py-2 bg-[#1D2F58] text-white rounded-md cursor-pointer">Save changes</button>
               </div>
             </div>
@@ -416,13 +416,13 @@ export default function SpaceDetails() {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black opacity-30" onClick={() => setShowAddMember(false)} />
             <div className="relative z-10 w-full max-w-lg bg-white rounded-md shadow-lg p-6">
-              <section className="flex justify-between items-center mb-4">
-                <h4 className="font-medium">Add Member</h4>
+              <section className="flex items-center justify-between">
+                <h4 className="font-medium text-[#1D2F58]">Add Member</h4>
                 <div className="mt-4 flex justify-end">
-                  <button onClick={() => setShowAddMember(false)} className="px-3 py-2 cursor-pointer">Close</button>
+                  <button onClick={() => setShowAddMember(false)} className="px-3 py-2 cursor-pointer text-[#1D2F58]">Close</button>
                 </div>
               </section>
-              <p className="text-sm text-gray-500 mt-1">Search by email and invite a user to this space.</p>
+              <p className="text-sm text-[#1D2F58] mt-1">Search by email and invite a user to this space.</p>
               <div className="mt-4">
                 <div className="flex items-center gap-2 mb-5">
                   <input value={searchEmail} onChange={(e) => setSearchEmail(e.target.value)} placeholder="Search by email" className="flex-1 px-3 py-2 border rounded" />
@@ -440,12 +440,12 @@ export default function SpaceDetails() {
                     }
                   }} className="px-3 py-2 bg-[#1D2F58] text-white rounded cursor-pointer">Search</button>
                 </div>
-                {searchingUser && <div className="mt-2 text-sm">Searching...</div>}
+                {searchingUser && <div className="mt-2 text-sm text-[#1D2F58]">Searching...</div>}
                 {foundUser && (
                   <div className="mt-2 p-2 border rounded flex items-center justify-between">
                     <div>
-                      <div className="font-medium">{foundUser.name || foundUser.email}</div>
-                      <div className="text-xs text-gray-500">{foundUser.email}</div>
+                      <div className="font-medium text-[#1D2F58]">{foundUser.name || foundUser.email}</div>
+                      <div className="text-xs text-[#1D2F58]">{foundUser.email}</div>
                     </div>
                     <div>
                       <button onClick={async () => {

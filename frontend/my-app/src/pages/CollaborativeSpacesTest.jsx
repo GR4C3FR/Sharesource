@@ -153,12 +153,12 @@ export default function CollaborativeSpaces() {
           <div className="absolute inset-0 bg-black/40" onClick={() => setEditingSpace(null)} />
           <div className="relative z-70 w-full max-w-lg bg-white rounded-lg shadow-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Edit Space</h3>
-              <button onClick={() => setEditingSpace(null)} className="text-gray-500 hover:text-gray-700">Close</button>
+              <h3 className="text-lg font-medium text-[#1D2F58]">Edit Space</h3>
+              <button onClick={() => setEditingSpace(null)} className="text-[#1D2F58] hover:text-[#0f1f38]">Close</button>
             </div>
 
             <div className="flex flex-col gap-3">
-              <label className="text-sm text-gray-600">Title</label>
+              <label className="text-sm text-[#1D2F58]">Title</label>
               <input
                 className="p-2 rounded-md border"
                 value={editName}
@@ -166,7 +166,7 @@ export default function CollaborativeSpaces() {
                 placeholder={editingSpace?.spaceName || "Space title"}
               />
 
-              <label className="text-sm text-gray-600">Description</label>
+              <label className="text-sm text-[#1D2F58]">Description</label>
               <textarea
                 className="p-2 rounded-md border min-h-[8rem]"
                 value={editDesc}
@@ -191,7 +191,7 @@ export default function CollaborativeSpaces() {
         </div>
       )}
   <div className="mx-auto w-full max-w-screen-xl px-4 -mt-5 lg:pt-6 min-h-screen">
-    <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">Collaboration</h1>
+    <h1 className="block sm:hidden text-2xl font-semibold text-[#1D2F58] mb-4">Collaboration</h1>
         {/* Set a taller viewport for spaces and keep titles/search bars sticky */}
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           {/* My Spaces (hidden for Admins) */}
@@ -232,11 +232,11 @@ export default function CollaborativeSpaces() {
                       displayedMySpaces.map((space) => (
                         <div key={space._id} className="relative py-6 px-5 bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em] flex">
                           <div className="flex-1 min-w-0 pr-4">
-                            <h3 className="text-lg font-medium text-[#103E93]">{space.spaceName}</h3>
-                            <p className="text-sm text-gray-600 mt-1 truncate">{space.description}</p>
+                            <h3 className="text-lg font-medium text-[#1D2F58]">{space.spaceName}</h3>
+                            <p className="text-sm text-[#1D2F58] mt-1 truncate">{space.description}</p>
 
                             <div className="flex items-center gap-3 mt-3">
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-[#1D2F58]">
                                 <strong>Members:</strong> {(space.members || []).length}
                               </p>
                               <button onClick={() => toggleMembers(space._id, "my")} className="px-2 py-0.5 rounded-md bg-gray-100 text-sm cursor-pointer">
@@ -244,12 +244,12 @@ export default function CollaborativeSpaces() {
                               </button>
                             </div>
 
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-sm text-[#1D2F58] mt-1">
                               <strong>Owner:</strong> {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
                             </p>
 
                             {expandedMembers[`my:${space._id}`] && (
-                              <ul className="mt-2 pl-4 list-disc text-sm text-gray-700">
+                              <ul className="mt-2 pl-4 list-disc text-sm text-[#1D2F58]">
                                 {(space.members || []).map((m) => {
                                   const user = m.userId;
                                   const displayName = (user && (user.username || user.email)) || (typeof user === "string" ? `UserId:${user}` : "Unknown User");
@@ -306,8 +306,8 @@ export default function CollaborativeSpaces() {
                 <div className="absolute inset-0 bg-black/40" onClick={() => setShowCreateModal(false)} />
                 <div className="relative z-70 w-full max-w-md bg-white rounded-lg shadow-xl px-6 py-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-medium">Create a Collaborative Space</h3>
-                    <button onClick={() => setShowCreateModal(false)} className="text-gray-500 hover:text-gray-700 cursor-pointer">
+                    <h3 className="text-lg font-medium text-[#1D2F58]">Create a Collaborative Space</h3>
+                    <button onClick={() => setShowCreateModal(false)} className="text-[#1D2F58] hover:text-[#0f1f38] cursor-pointer">
                       Close
                     </button>
                   </div>
@@ -340,11 +340,11 @@ export default function CollaborativeSpaces() {
                     <li key={space._id} className={"relative py-6 " + (profile?.role === 'Admin' ? 'px-6' : 'px-5') + " bg-white mb-4 rounded-lg shadow-md h-auto min-h-[12em] w-full"}>
                       <div className="flex items-start justify-between">
                         <div className="min-w-0 pr-4">
-                          <h3 className="text-lg font-medium text-[#103E93] truncate">{space.spaceName}</h3>
-                          <p className="text-sm text-gray-600 mt-1 truncate">{space.description}</p>
+                          <h3 className="text-lg font-medium text-[#1D2F58] truncate">{space.spaceName}</h3>
+                          <p className="text-sm text-[#1D2F58] mt-1 truncate">{space.description}</p>
 
                           <div className="flex items-center gap-3 mt-3">
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-[#1D2F58]">
                               <strong>Members:</strong> {(space.members || []).length}
                             </p>
                             <button onClick={() => toggleMembers(space._id, "available")} className="px-2 py-0.5 rounded-md bg-gray-100 text-sm cursor-pointer">
@@ -352,11 +352,11 @@ export default function CollaborativeSpaces() {
                             </button>
                           </div>
 
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-sm text-[#1D2F58] mt-1">
                             <strong>Owner:</strong> {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
                           </p>
                           {expandedMembers[`available:${space._id}`] && (
-                          <ul className="mt-2 pl-4 list-disc text-sm text-gray-700">
+                          <ul className="mt-2 pl-4 list-disc text-sm text-[#1D2F58]">
                             {(space.members || []).map((m) => (
                               <li key={m.userId?._id || m.userId}>
                                 {m.userId?.username || m.userId?.email || "Unknown User"} ({m.role})
