@@ -299,7 +299,7 @@ export default function CollaborativeSpaces() {
                 />
               </div>
             </div>
-            <div className="mt-3 max-h-[65vh] overflow-y-auto pl-2">
+            <div className="mt-3 max-h-[65vh] overflow-y-auto pr-2">{/* removed pl-2 */}
 
             {showCreateModal && (
               <div className="fixed inset-0 z-60 flex items-center justify-center">
