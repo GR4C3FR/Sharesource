@@ -89,7 +89,7 @@ function App() {
                 </div>
               </section>
 
-                <section className="hidden md:flex flex-1 items-center justify-center">
+                <section className="hidden md:flex flex-1 items-center justify-end pl-8 lg:pl-16">
                   <img src="/landingArt.png" className="w-full max-w-md md:max-w-lg lg:max-w-xl object-contain" alt="hero"/>
                 </section>
             </div>
