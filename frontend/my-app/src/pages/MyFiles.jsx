@@ -363,8 +363,8 @@ export default function MyFiles() {
 
                           {openComments[file._id] && (
                             <div className="mt-3 border-t border-dashed border-gray-300 pt-3">
-                              <CommentsSection fileId={file._id} userId={file.user?._id} />
                               <RatingSection itemId={file._id} userId={file.user?._id} allowRating onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
+                              <CommentsSection fileId={file._id} userId={file.user?._id} />
                             </div>
                           )}
                         </div>

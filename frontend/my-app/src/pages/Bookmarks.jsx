@@ -174,10 +174,18 @@ export default function Bookmarks() {
     }
   };
 
+  const toggleComments = (fileId) => {
+    setOpenComments(prev => ({ ...prev, [fileId]: !prev[fileId] }));
+  };
+
+  const handleAverageUpdate = (fileId, newAvg) => {
+    setFileAverages(prev => ({ ...prev, [fileId]: newAvg }));
+  };
+
   return (
     <AppShell>
   <div className="mx-auto w-full px-4 min-h-screen -mt-5 lg:pt-0 lg:max-w-screen-xl">
-      <h1 className="block sm:hidden text-2xl font-semibold text-[#103E93] mb-4">Bookmarks</h1>
+      <h1 className="block sm:hidden text-2xl font-semibold text-[#1D2F58] mb-4">Bookmarks</h1>
       {/* Title */}
       {/* Filter & Sort for bookmarks (CSS-only toggle like Homepage) */}
       <div className="mb-4 relative">
@@ -197,13 +205,13 @@ export default function Bookmarks() {
         <div className="filter-panel absolute left-0 mt-2 w-full z-50 transform origin-top scale-y-0 peer-checked:scale-y-100 peer-checked:block hidden bg-white rounded-lg shadow-2xl p-4 py-6 border">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-[#103E93]">Filters & Sorting</h4>
+              <h4 className="text-sm font-semibold text-[#1D2F58]">Filters & Sorting</h4>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="flex flex-col">
-                <label className="text-xs text-gray-600 mb-1">Filter by Subject</label>
-                <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                <label className="text-xs text-[#1D2F58] mb-1">Filter by Subject</label>
+                <select value={filterSubject} onChange={(e) => setFilterSubject(e.target.value)} className="p-2 rounded-md border bg-white text-sm text-[#1D2F58]">
                   <option value="">All Subjects</option>
                   {subjects.map((subj) => (
                     <option key={subj._id} value={subj._id}>{subj.name}</option>
@@ -212,8 +220,8 @@ export default function Bookmarks() {
               </div>
 
               <div className="flex flex-col">
-                <label className="text-xs text-gray-600 mb-1">Sort by</label>
-                <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm">
+                <label className="text-xs text-[#1D2F58] mb-1">Sort by</label>
+                <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="p-2 rounded-md border bg-white text-sm text-[#1D2F58]">
                   <option value="newest">Newest - Oldest</option>
                   <option value="oldest">Oldest - Newest</option>
                 </select>
@@ -226,7 +234,7 @@ export default function Bookmarks() {
                   setFilterSubject("");
                   setSortOption("newest");
                 }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer"
               >
                 Clear Filters
               </button>
@@ -330,8 +338,8 @@ export default function Bookmarks() {
 
                           {openComments[file._id] && (
                             <div className="mt-3 border-t border-dashed border-gray-300 pt-3">
-                              <CommentsSection fileId={file._id} userId={file.user?._id} />
                               <RatingSection itemId={file._id} userId={file.user?._id} allowRating onAverageUpdate={(avg) => handleAverageUpdate(file._id, avg)} />
+                              <CommentsSection fileId={file._id} userId={file.user?._id} />
                             </div>
                           )}
                         </div>
