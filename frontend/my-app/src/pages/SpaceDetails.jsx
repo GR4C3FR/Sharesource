@@ -144,9 +144,9 @@ export default function SpaceDetails() {
 
   return (
     <AppShell>
-      <div className="mx-auto w-full max-w-screen-xl px-4 py-6 min-h-screen overflow-auto">
-  <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6">
-          <div className="flex-1 flex flex-col min-h-0">
+      <div className="mx-auto w-full px-4 py-6 min-h-screen overflow-auto lg:max-w-screen-xl">
+  <div className="flex flex-col lg:flex-row items-start gap-6">
+          <div className="w-full lg:flex-1 flex flex-col min-h-0">
             <div className="mb-6">
               <button onClick={() => navigate('/spaces')} className="inline-flex items-center gap-2 text-sm text-[#103E93] px-5 py-2 rounded-md border border-gray-200 bg-white shadow-sm hover:bg-gray-50 cursor-pointer">
                 <img src="/back-logo.png" className="h-4 w-4"/>
@@ -206,7 +206,7 @@ export default function SpaceDetails() {
             </div>
 
             {/* Shared files in center column */}
-            <section className="flex flex-col flex-1 min-h-0 items-center md:items-stretch">
+            <section className="flex flex-col flex-1 min-h-0">
               <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between mb-5 gap-3">
                 <h3 className="text-lg font-medium w-full md:w-auto text-center md:text-left">Shared Files</h3>
 
