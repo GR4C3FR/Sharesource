@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api';
+import { cn } from '../lib/utils';
 import Avatar from './Avatar';
 
 export default function AppShell({ children }) {
@@ -66,7 +67,7 @@ export default function AppShell({ children }) {
               if (t) navigate('/homepage');
               else navigate('/');
             }}
-            className="p-0 bg-transparent border-0 cursor-pointer"
+            className={cn('p-0 bg-transparent border-0 cursor-pointer', 'order-2 lg:order-1')}
           >
             <img src="/sharessource-logo.png" alt="ShareSource Logo" className={`${token ? 'w-10' : 'w-9'} h-auto`} />
           </button>
@@ -75,7 +76,7 @@ export default function AppShell({ children }) {
             onClick={() => setMobileOpen((s) => !s)}
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#103E93] bg-transparent"
+            className={cn('p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#103E93] bg-transparent', 'order-1 lg:order-2')}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 transform transition-transform duration-200 ${mobileOpen ? 'rotate-90' : 'rotate-0'}`}>
               <path d="M4 7H20" stroke="#1D2F58" strokeWidth="3" strokeLinecap="round" />
