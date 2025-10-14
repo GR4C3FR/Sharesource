@@ -160,7 +160,7 @@ export default function CollaborativeSpaces() {
             <div className="flex flex-col gap-3">
               <label className="text-sm text-[#1D2F58]">Title</label>
               <input
-                className="p-2 rounded-md border"
+                className="p-2 rounded-md border text-[#1D2F58]"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
                 placeholder={editingSpace?.spaceName || "Space title"}
@@ -168,20 +168,20 @@ export default function CollaborativeSpaces() {
 
               <label className="text-sm text-[#1D2F58]">Description</label>
               <textarea
-                className="p-2 rounded-md border min-h-[8rem]"
+                className="p-2 rounded-md border min-h-[8rem] text-[#1D2F58]"
                 value={editDesc}
                 onChange={(e) => setEditDesc(e.target.value)}
                 placeholder={editingSpace?.description || "Description"}
               />
 
               <div className="flex justify-end gap-2 mt-4">
-                <button onClick={() => setEditingSpace(null)} className="px-3 py-2 rounded-md border">Cancel</button>
+                <button onClick={() => setEditingSpace(null)} className="px-3 py-2 rounded-md border text-[#1D2F58] hover:bg-gray-100">Cancel</button>
                 <button
                   onClick={async () => {
                     await saveEdit();
                     setEditingSpace(null);
                   }}
-                  className="px-4 py-2 rounded-md bg-[#1D2F58] text-white"
+                  className="px-4 py-2 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors"
                 >
                   Save
                 </button>
@@ -235,43 +235,42 @@ export default function CollaborativeSpaces() {
                             <h3 className="text-lg font-medium text-[#1D2F58]">{space.spaceName}</h3>
                             <p className="text-sm text-[#1D2F58] mt-1 truncate">{space.description}</p>
 
-                            <div className="flex items-center gap-3 mt-3">
+                            <div onClick={() => toggleMembers(space._id, "my")} className="flex items-center justify-between mt-3 cursor-pointer">
                               <p className="text-sm text-[#1D2F58]">
-                                <strong>Members:</strong> {(space.members || []).length}
+                                Members
                               </p>
-                              <button onClick={() => toggleMembers(space._id, "my")} className="px-2 py-0.5 rounded-md bg-gray-100 text-sm cursor-pointer">
-                                {expandedMembers[`my:${space._id}`] ? "Hide" : "Show"}
-                              </button>
+                              <div className="text-sm text-[#1D2F58]">{(space.members || []).length} ▾</div>
                             </div>
 
-                            <p className="text-sm text-[#1D2F58] mt-1">
-                              <strong>Owner:</strong> {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
-                            </p>
-
                             {expandedMembers[`my:${space._id}`] && (
-                              <ul className="mt-2 pl-4 list-disc text-sm text-[#1D2F58]">
-                                {(space.members || []).map((m) => {
-                                  const user = m.userId;
-                                  const displayName = (user && (user.username || user.email)) || (typeof user === "string" ? `UserId:${user}` : "Unknown User");
-                                  return (
-                                    <li key={user?._id || user}>
-                                      {displayName} ({m.role})
-                                    </li>
-                                  );
-                                })}
-                              </ul>
+                              <div className="mt-2">
+                                <p className="text-sm text-[#1D2F58]">
+                                  Owner: {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
+                                </p>
+                                <ul className="mt-2 pl-4 list-disc text-sm text-[#1D2F58]">
+                                  {(space.members || []).map((m) => {
+                                    const user = m.userId;
+                                    const displayName = (user && (user.username || user.email)) || (typeof user === "string" ? `UserId:${user}` : "Unknown User");
+                                    return (
+                                      <li key={user?._id || user}>
+                                        {displayName}
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              </div>
                             )}
                           </div>
 
                           <div className="flex flex-col items-end justify-end gap-2">
                             <div className="flex gap-2">
-                              <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 rounded-md bg-gray-100 cursor-pointer">
+                              <button onClick={() => navigate(`/spaces/${space._id}`)} className="px-3 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer">
                                 View Space
                               </button>
-                              <button onClick={() => startEdit(space)} className="px-3 rounded-md bg-yellow-50 cursor-pointer">
+                              <button onClick={() => startEdit(space)} className="px-3 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer">
                                 Edit
                               </button>
-                              <button onClick={() => handleLeave(space._id)} className="px-3 rounded-md bg-red-50 text-red-700 cursor-pointer">
+                              <button onClick={() => handleLeave(space._id)} className="px-3 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer">
                                 Leave
                               </button>
                             </div>
@@ -343,36 +342,36 @@ export default function CollaborativeSpaces() {
                           <h3 className="text-lg font-medium text-[#1D2F58] truncate">{space.spaceName}</h3>
                           <p className="text-sm text-[#1D2F58] mt-1 truncate">{space.description}</p>
 
-                          <div className="flex items-center gap-3 mt-3">
+                          <div onClick={() => toggleMembers(space._id, "available")} className="flex items-center justify-between mt-3 cursor-pointer">
                             <p className="text-sm text-[#1D2F58]">
-                              <strong>Members:</strong> {(space.members || []).length}
+                              Members
                             </p>
-                            <button onClick={() => toggleMembers(space._id, "available")} className="px-2 py-0.5 rounded-md bg-gray-100 text-sm cursor-pointer">
-                              {expandedMembers[`available:${space._id}`] ? "Hide" : "Show"}
-                            </button>
+                            <div className="text-sm text-[#1D2F58]">{(space.members || []).length} ▾</div>
                           </div>
 
-                          <p className="text-sm text-[#1D2F58] mt-1">
-                            <strong>Owner:</strong> {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
-                          </p>
                           {expandedMembers[`available:${space._id}`] && (
-                          <ul className="mt-2 pl-4 list-disc text-sm text-[#1D2F58]">
-                            {(space.members || []).map((m) => (
-                              <li key={m.userId?._id || m.userId}>
-                                {m.userId?.username || m.userId?.email || "Unknown User"} ({m.role})
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                            <div className="mt-2">
+                              <p className="text-sm text-[#1D2F58]">
+                                Owner: {space.ownerUserId?.username || space.ownerUserId?.email || "Unknown"}
+                              </p>
+                              <ul className="mt-2 pl-4 list-disc text-sm text-[#1D2F58]">
+                                {(space.members || []).map((m) => (
+                                  <li key={m.userId?._id || m.userId}>
+                                    {m.userId?.username || m.userId?.email || "Unknown User"}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                         </div>
 
                         <div className="flex flex-col items-end justify-end gap-2">
                           <div className="flex gap-2">
                             {joined ? (
-                              <span className="text-green-600 font-semibold self-center">Joined</span>
+                              <span className="text-[#1D2F58] font-semibold self-center border-2 border-[#1D2F58] px-3 py-1 rounded-md">Joined</span>
                             ) : (
                               profile?.role !== "Admin" ? (
-                                <button onClick={() => handleJoin(space._id)} className="px-3 py-1 rounded-md bg-blue-50">
+                                <button onClick={() => handleJoin(space._id)} className="px-3 py-1 rounded-md bg-[#1D2F58] text-white hover:bg-[#0f1f38] transition-colors cursor-pointer">
                                   Join
                                 </button>
                               ) : null
