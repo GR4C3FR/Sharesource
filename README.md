@@ -1,5 +1,9 @@
 ShareSource is a web-based platform designed to streamline file sharing, collaboration, and accessibility across users. This document provides setup and run instructions for local development.
 
+ADMIN ACCOUNT: 
+admin@sharesource.com
+123admin123
+
 **HOW TO RUN SHARESOURCE**
 
 **Prerequisites**
